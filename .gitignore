@@ -1,9 +1,16 @@
 *.class
 *.log
+*.jar
+*.zip
+*.exe
+README.md~
+.gitignore~
+LICENSE~
+*BuildVersion*
 
 # sbt specific
-.cache
-.history
+.cache/
+.history/
 .lib/
 dist/*
 target/
@@ -15,3 +22,23 @@ project/plugins/project/
 # Scala-IDE specific
 .scala_dependencies
 .worksheet
+
+# temp files
+*~
+temp/
+
+# eclipse stuff
+.project
+.classpath
+.cache
+.settings
+.settings/
+
+# intellij
+.idea
+.idea/
+
+*.so
+*.dll
+*.jnilib
+natives/
