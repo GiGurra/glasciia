@@ -5,33 +5,34 @@ import se.gigurra.glasciia.helpers.{Scoped, ScopedSet}
 /**
   * Created by johan on 2016-09-19.
   */
-abstract class Window(val windowConf: WindowConf,
-                      val renderConf: RenderConf) {
+abstract class Window(val initialWindowConf: WindowConf,
+                      val initialCameraConf: CameraConf) {
 
   //////////////////////
   // Public API
 
-  final def drawFrame(at: Vec2[Float], conf: RenderConf = renderConf)(content: => Unit): Unit = Scoped(beginFrame(at, conf), content, endFrame())
+  final def drawFrame(cameraConf: CameraConf = _cameraConf)(content: => Unit): Unit = Scoped(beginFrame(cameraConf), content, endFrame())
   final def withBackground(color: Color)(content: => Unit): Unit = ScopedSet(background, setBackgroundColor, color)(content)
   final def withForeground(color: Color)(content: => Unit): Unit = ScopedSet(foreground, setForegroundColor, color)(content)
 
-  final def withCameraPos(pos: Vec2[Float])(content: => Unit): Unit = ScopedSet(_cameraPos, setCameraPos, pos)(content)
+  final def withCamera(cameraConf: CameraConf)(content: => Unit): Unit = ScopedSet(_cameraConf, setCamera, cameraConf)(content)
 
   def draw(c: Char,
+           size: Float,
            bold: Boolean = false,
            italic: Boolean = false,
            foreground: Color = foreground,
-           background: Color = background,
-           size: Float = renderConf.characterSize): Unit
+           background: Color = background): Unit
 
 
   //////////////////////
   // For implementations
 
+  protected def doBeginFrame(): Unit = {}
   protected def doClearScreen(): Unit = {}
-  protected def doSetCameraPos(): Unit = {}
+  protected def doSetCamera(): Unit = {}
   protected def doEndFrame(): Unit = {}
-  protected final def cameraPos: Vec2[Float] = _cameraPos
+  protected final def camera: CameraConf = _cameraConf
 
 
   //////////////////////
@@ -39,15 +40,20 @@ abstract class Window(val windowConf: WindowConf,
 
   private var background = Color.BLACK
   private var foreground = Color.WHITE
-  private var _cameraPos = Vec2[Float](0.0f, 0.0f)
+  private var _cameraConf = initialCameraConf
 
-  private def setCameraPos(pos: Vec2[Float]): Unit = { _cameraPos = pos; doSetCameraPos() }
+  private def setCamera(cameraConf: CameraConf): Unit = {
+    _cameraConf = cameraConf
+    doSetCamera()
+  }
+
   private def setBackgroundColor(color: Color): Unit = background = color
   private def setForegroundColor(color: Color): Unit = foreground = color
 
-  private def beginFrame(at: Vec2[Float], renderConf: RenderConf): Unit = {
+  private def beginFrame(cameraConf: CameraConf): Unit = {
+    doBeginFrame()
+    doSetCamera()
     doClearScreen()
-    doSetCameraPos()
   }
 
   private def endFrame(): Unit = {
