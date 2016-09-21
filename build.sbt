@@ -1,4 +1,6 @@
-lazy val commonSettings = Seq(
+val libgdxVersion = "1.9.4"
+
+val commonSettings = Seq(
   organization := "se.gigurra",
   version := "SNAPSHOT",
   scalaVersion := "2.11.8",
@@ -9,15 +11,38 @@ lazy val commonSettings = Seq(
   )
 )
 
-lazy val glasciia_core = Project(
+val glasciia_core = Project(
   id = "glasciia-core",
   base = file("glasciia-core"),
   settings = commonSettings
 )
 
-
-lazy val glasciia = Project(id = "glasciia", base = file("."), settings = commonSettings).dependsOn(
-  glasciia_core
-).aggregate(
-  glasciia_core
+val glasciia_gdx = Project(
+  id = "glasciia-gdx",
+  base = file("glasciia-gdx"),
+  settings = commonSettings,
+  dependencies = Seq(glasciia_core)
+).settings(
+  libraryDependencies ++= Seq(
+    "com.badlogicgames.gdx" %   "gdx"                   % libgdxVersion,
+    "com.badlogicgames.gdx" %   "gdx-freetype"          % libgdxVersion,
+    "com.badlogicgames.gdx" %   "gdx-backend-lwjgl"     % libgdxVersion,
+    "com.badlogicgames.gdx" %   "gdx-platform"          % libgdxVersion classifier "natives-desktop",
+    "com.badlogicgames.gdx" %   "gdx-freetype-platform" % libgdxVersion classifier "natives-desktop"
+  )
 )
+
+val glasciia = aggregate(glasciia_core, glasciia_gdx)
+
+def aggregate(projects: Project*): Project = {
+  def toDependency(p: Project): ClasspathDep[ProjectReference] = p
+  def toReference(p: Project): ProjectReference = p
+  Project(
+    id = "glasciia",
+    base = file("."),
+    settings = commonSettings,
+    dependencies = projects.map(toDependency)
+  ).aggregate(
+    projects.map(toReference):_*
+  )
+}
