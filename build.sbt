@@ -1,5 +1,3 @@
-val libgdxVersion = "1.9.4"
-
 val commonSettings = Seq(
   organization := "se.gigurra",
   version := "SNAPSHOT",
@@ -11,28 +9,28 @@ val commonSettings = Seq(
   )
 )
 
-val glasciia_core = Project(
-  id = "glasciia-core",
-  base = file("glasciia-core"),
-  settings = commonSettings
-)
+val glasciia_core = module("core")
 
-val glasciia_gdx = Project(
-  id = "glasciia-gdx",
-  base = file("glasciia-gdx"),
-  settings = commonSettings,
-  dependencies = Seq(glasciia_core)
-).settings(
+val glasciia_gdx = module("gdx", glasciia_core).settings(
   libraryDependencies ++= Seq(
-    "com.badlogicgames.gdx" %   "gdx"                   % libgdxVersion,
-    "com.badlogicgames.gdx" %   "gdx-freetype"          % libgdxVersion,
-    "com.badlogicgames.gdx" %   "gdx-backend-lwjgl"     % libgdxVersion,
-    "com.badlogicgames.gdx" %   "gdx-platform"          % libgdxVersion classifier "natives-desktop",
-    "com.badlogicgames.gdx" %   "gdx-freetype-platform" % libgdxVersion classifier "natives-desktop"
+    "com.badlogicgames.gdx" %   "gdx"                   % "1.9.4",
+    "com.badlogicgames.gdx" %   "gdx-freetype"          % "1.9.4",
+    "com.badlogicgames.gdx" %   "gdx-backend-lwjgl"     % "1.9.4",
+    "com.badlogicgames.gdx" %   "gdx-platform"          % "1.9.4" classifier "natives-desktop",
+    "com.badlogicgames.gdx" %   "gdx-freetype-platform" % "1.9.4" classifier "natives-desktop"
   )
 )
 
 val glasciia = aggregate(glasciia_core, glasciia_gdx)
+
+def module(name: String, dependencies: ClasspathDep[ProjectReference]*): Project = {
+  Project(
+    id = s"glasciia-$name",
+    base = file(s"glasciia-$name"),
+    settings = commonSettings,
+    dependencies = dependencies
+  )
+}
 
 def aggregate(projects: Project*): Project = {
   def toDependency(p: Project): ClasspathDep[ProjectReference] = p
