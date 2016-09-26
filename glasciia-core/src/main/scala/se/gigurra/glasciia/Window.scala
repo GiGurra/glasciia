@@ -1,6 +1,9 @@
 package se.gigurra.glasciia
 
-import se.gigurra.glasciia.helpers.{Scoped, ScopedSet}
+import rx.lang.scala.Observable
+import se.gigurra.glasciia.helpers.ScopedSet
+
+import scala.util.control.NonFatal
 
 /**
   * Created by johan on 2016-09-19.
@@ -11,10 +14,8 @@ abstract class Window(val initialWindowConf: WindowConf,
   //////////////////////
   // Public API
 
-  final def drawFrame(cameraConf: CameraConf = _cameraConf)(content: => Unit): Unit = Scoped(beginFrame(cameraConf), content, endFrame())
   final def withBackground(color: Color)(content: => Unit): Unit = ScopedSet(background, setBackgroundColor, color)(content)
   final def withForeground(color: Color)(content: => Unit): Unit = ScopedSet(foreground, setForegroundColor, color)(content)
-
   final def withCamera(cameraConf: CameraConf)(content: => Unit): Unit = ScopedSet(_cameraConf, setCamera, cameraConf)(content)
 
   def draw(c: Char,
@@ -24,14 +25,17 @@ abstract class Window(val initialWindowConf: WindowConf,
            foreground: Color = foreground,
            background: Color = background): Unit
 
+  def events: Observable[ApplicationEvent]
+
+  def close(): Unit
+
+  def handleEvents(f: ApplicationEvent => Unit): Unit = {
+    events.foreach(f, Window.defaultCrashLogger)
+  }
 
   //////////////////////
   // For implementations
 
-  protected def doBeginFrame(): Unit = {}
-  protected def doClearScreen(): Unit = {}
-  protected def doSetCamera(): Unit = {}
-  protected def doEndFrame(): Unit = {}
   protected final def camera: CameraConf = _cameraConf
 
 
@@ -44,20 +48,23 @@ abstract class Window(val initialWindowConf: WindowConf,
 
   private def setCamera(cameraConf: CameraConf): Unit = {
     _cameraConf = cameraConf
-    doSetCamera()
   }
 
   private def setBackgroundColor(color: Color): Unit = background = color
   private def setForegroundColor(color: Color): Unit = foreground = color
 
-  private def beginFrame(cameraConf: CameraConf): Unit = {
-    doBeginFrame()
-    doSetCamera()
-    doClearScreen()
-  }
+}
 
-  private def endFrame(): Unit = {
-    doEndFrame()
+object Window {
+  def defaultCrashLogger(err: Throwable): Unit = {
+    err match {
+      case NonFatal(e) =>
+        err.printStackTrace(System.err)
+        System.exit(1)
+      case e =>
+        System.err.println(s"Fatal exception, Logging failure.. OOM?. Attempting stack trace print..\n")
+        err.printStackTrace(System.err)
+        System.exit(2)
+    }
   }
-
 }

@@ -8,7 +8,7 @@ case class CameraConf(pos: Vec2[Float],
                       scaleType: ScaleType)
 
 sealed trait ScaleType
-case object ScaleX_Conformal extends ScaleType
-case object ScaleY_Conformal extends ScaleType
-case object ScaleXY extends ScaleType
-case object WindowScale extends ScaleType
+object ScaleType {
+  case object Conformal extends ScaleType
+  case object Window extends ScaleType
+}

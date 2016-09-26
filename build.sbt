@@ -9,7 +9,11 @@ val commonSettings = Seq(
   )
 )
 
-val glasciia_core = module("core")
+val glasciia_core = module("core").settings(
+  libraryDependencies ++= Seq(
+    "io.reactivex" % "rxscala_2.11" % "0.26.2"
+  )
+)
 
 val glasciia_gdx = module("gdx", glasciia_core).settings(
   libraryDependencies ++= Seq(
