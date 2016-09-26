@@ -23,7 +23,7 @@ object OpenWindowTest {
       scaleType = ScaleType.Conformal
     )
 
-    val window = new GdxWindow(initialWindowConf, initialCameraConf)
+    val window = new GdxWindow(initialWindowConf, initialCameraConf) with LwjglImplementation
 
     window.handleEvents{
       case Render =>
