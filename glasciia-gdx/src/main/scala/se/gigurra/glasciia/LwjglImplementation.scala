@@ -1,14 +1,9 @@
 package se.gigurra.glasciia
 
-import java.util.concurrent.TimeUnit
-
 import com.badlogic.gdx.{ApplicationListener, Gdx, InputProcessor}
 import com.badlogic.gdx.backends.lwjgl.{LwjglApplication, LwjglApplicationConfiguration}
 import rx.lang.scala.Subject
 import se.gigurra.glasciia.ApplicationEvent._
-
-import scala.concurrent.duration.Duration
-import scala.concurrent.{Await, Promise}
 
 /**
   * Created by johan on 2016-09-26.
@@ -44,15 +39,13 @@ trait LwjglImplementation { _: GdxWindow =>
     true
   }
 
-  private val startupWaiter = Promise[Unit]()
-
   private val appListener = new ApplicationListener {
     override def resize(width: Int, height: Int): Unit = consume(Resize(Vec2(width, height)))
     override def dispose(): Unit = consume(Exit)
     override def pause(): Unit = consume(Pause)
     override def render(): Unit = consume(Render)
     override def resume(): Unit = consume(Resume)
-    override def create(): Unit = startupWaiter.success(())
+    override def create(): Unit = consume(Init)
   }
 
   private val inputListener = new InputProcessor {
@@ -68,7 +61,5 @@ trait LwjglImplementation { _: GdxWindow =>
 
   private val lwjglApplication = new LwjglApplication(appListener, lwjglConf)
   Gdx.input.setInputProcessor(inputListener)
-
-  Await.result(startupWaiter.future, Duration.apply(5, TimeUnit.MINUTES))
 
 }

@@ -6,6 +6,7 @@ package se.gigurra.glasciia
 sealed trait ApplicationEvent
 object ApplicationEvent {
   sealed trait WindowEvent extends ApplicationEvent
+  case object Init extends WindowEvent
   case object Render extends WindowEvent
   case object Pause extends WindowEvent
   case object Resume extends WindowEvent
