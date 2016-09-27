@@ -10,34 +10,28 @@ import scala.util.control.NonFatal
   * Created by johan on 2016-09-19.
   */
 abstract class Window(val initialWindowConf: WindowConf,
-                      val initialCameraConf: CameraConf) {
+                      val initialCameraConf: CameraConf,
+                      val initialGlConf: GlConf) {
 
   //////////////////////
   // Public API
 
-  final def withBackground(color: Color)(content: => Unit): Unit = ScopedSet(background, setBackgroundColor, color)(content)
-  final def withForeground(color: Color)(content: => Unit): Unit = ScopedSet(foreground, setForegroundColor, color)(content)
-  final def withCamera(cameraConf: CameraConf)(content: => Unit): Unit = ScopedSet(_cameraConf, setCamera, cameraConf)(content)
+  def withBackground(color: Color)(content: => Unit): Unit = ScopedSet(background, setBackgroundColor, color)(content)
+  def withForeground(color: Color)(content: => Unit): Unit = ScopedSet(foreground, setForegroundColor, color)(content)
+  def withCamera(cameraConf: CameraConf)(content: => Unit): Unit = ScopedSet(_cameraConf, setCamera, cameraConf)(content)
 
   def draw(c: Char,
            size: Float,
            bold: Boolean = false,
            italic: Boolean = false,
            foreground: Color = foreground,
-           background: Color = background): Unit
-
-  def events: Observable[ApplicationEvent]
-
-  def close(): Unit
-
-  def handleEvents(f: ApplicationEvent => Unit): Unit = {
-    events.foreach(f, Window.defaultCrashLogger)
+           background: Color = background): Unit = {
+    ???
   }
 
-  //////////////////////
-  // For implementations
-
-  protected final def camera: CameraConf = _cameraConf
+  def close(): Unit
+  def events: Observable[ApplicationEvent]
+  def camera: CameraConf = _cameraConf
 
 
   //////////////////////

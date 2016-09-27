@@ -1,6 +1,6 @@
 package se.gigurra.glasciia
 
-import ApplicationEvent.Render
+import ApplicationEvent._
 import se.gigurra.glasciia.impl.LwjglImplementation
 import se.gigurra.math.Vec2
 
@@ -25,7 +25,14 @@ object OpenWindowTest {
       scaleType = ScaleType.Conformal
     )
 
-    val window = new GdxWindow(initialWindowConf, initialCameraConf) with LwjglImplementation
+    val initialGlConf = GlConf(
+      vsync = true,
+      msaa = 4,
+      foregroundFpsCap = None,
+      backgroundFpsCap = Some(30)
+    )
+
+    val window = new Window(initialWindowConf, initialCameraConf, initialGlConf) with LwjglImplementation
 
     window.handleEvents{
       case Render =>

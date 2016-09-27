@@ -2,22 +2,28 @@ package se.gigurra.glasciia.impl
 
 import com.badlogic.gdx.backends.lwjgl.{LwjglApplication, LwjglApplicationConfiguration}
 import com.badlogic.gdx.{ApplicationListener, Gdx, InputProcessor}
-import rx.lang.scala.Subject
+import rx.lang.scala.{Observable, Subject}
 import se.gigurra.glasciia.ApplicationEvent._
-import se.gigurra.glasciia.{ApplicationEvent, GdxWindow}
+import se.gigurra.glasciia.{ApplicationEvent, Window}
 import se.gigurra.math.Vec2
 
 /**
   * Created by johan on 2016-09-26.
   */
-trait LwjglImplementation { _: GdxWindow =>
+trait LwjglImplementation { _: Window =>
 
-  override def events = subject
-  override def close(): Unit = lwjglApplication.stop()
+  def handleEvents(f: ApplicationEvent => Unit): Unit = {
+    events.foreach(f, Window.defaultCrashLogger)
+  }
 
+  def close(): Unit = lwjglApplication.stop()
+
+  def events: Observable[ApplicationEvent] = subject
 
   ///////////////////////////
   // startup sequence below
+
+  import this.initialGlConf._
 
   private val lwjglConf = new LwjglApplicationConfiguration {
     title = s"${initialWindowConf.title}"
