@@ -13,7 +13,7 @@ val glasciia_core = module("core").settings(
   libraryDependencies ++= Seq(
     "io.reactivex" % "rxscala_2.11" % "0.26.2"
   )
-).dependsOn(uri("git://github.com/gigurra/scala-libgurra.git#0.1.0"))
+).dependsOn(uri("git://github.com/gigurra/scala-libgurra.git#0.1.1"))
 
 val glasciia_gdx = module("gdx", glasciia_core).settings(
   libraryDependencies ++= Seq(
