@@ -1,5 +1,6 @@
 package se.gigurra.glasciia
 
+import com.badlogic.gdx.graphics.Color
 import rx.lang.scala.Observable
 import se.gigurra.lang.ScopedSet
 

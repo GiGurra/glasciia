@@ -1,6 +1,7 @@
 package se.gigurra.glasciia
 
-import se.gigurra.glasciia.ApplicationEvent.Render
+import ApplicationEvent.Render
+import se.gigurra.glasciia.impl.LwjglImplementation
 import se.gigurra.math.Vec2
 
 /**

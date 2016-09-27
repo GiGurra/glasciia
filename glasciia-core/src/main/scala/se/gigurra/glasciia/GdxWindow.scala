@@ -1,5 +1,7 @@
 package se.gigurra.glasciia
 
+import com.badlogic.gdx.graphics.Color
+
 /**
   * Created by johan on 2016-09-21.
   */

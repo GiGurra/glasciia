@@ -1,9 +1,10 @@
-package se.gigurra.glasciia
+package se.gigurra.glasciia.impl
 
 import com.badlogic.gdx.backends.lwjgl.{LwjglApplication, LwjglApplicationConfiguration}
 import com.badlogic.gdx.{ApplicationListener, Gdx, InputProcessor}
 import rx.lang.scala.Subject
 import se.gigurra.glasciia.ApplicationEvent._
+import se.gigurra.glasciia.{ApplicationEvent, GdxWindow}
 import se.gigurra.math.Vec2
 
 /**
