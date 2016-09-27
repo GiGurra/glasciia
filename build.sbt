@@ -11,21 +11,16 @@ val commonSettings = Seq(
 
 val glasciia_core = module("core").settings(
   libraryDependencies ++= Seq(
-    "io.reactivex" % "rxscala_2.11" % "0.26.2"
-  )
-).dependsOn(uri("git://github.com/gigurra/scala-libgurra.git#0.1.1"))
-
-val glasciia_gdx = module("gdx", glasciia_core).settings(
-  libraryDependencies ++= Seq(
+    "io.reactivex"          % "rxscala_2.11"            % "0.26.2",
     "com.badlogicgames.gdx" %   "gdx"                   % "1.9.4",
     "com.badlogicgames.gdx" %   "gdx-freetype"          % "1.9.4",
     "com.badlogicgames.gdx" %   "gdx-backend-lwjgl"     % "1.9.4",
     "com.badlogicgames.gdx" %   "gdx-platform"          % "1.9.4" classifier "natives-desktop",
     "com.badlogicgames.gdx" %   "gdx-freetype-platform" % "1.9.4" classifier "natives-desktop"
   )
-)
+).dependsOn(uri("git://github.com/gigurra/scala-libgurra.git#0.1.1"))
 
-val glasciia = aggregate(glasciia_core, glasciia_gdx)
+val glasciia = aggregate(glasciia_core)
 
 def module(name: String, dependencies: ClasspathDep[ProjectReference]*): Project = {
   Project(
