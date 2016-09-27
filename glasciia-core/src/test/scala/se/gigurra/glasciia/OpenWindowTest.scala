@@ -1,6 +1,7 @@
 package se.gigurra.glasciia
 
 import ApplicationEvent._
+import se.gigurra.glasciia.conf.{CameraConf, GlConf, ScaleType, WindowConf}
 import se.gigurra.glasciia.impl.LwjglImplementation
 import se.gigurra.math.Vec2
 
@@ -34,9 +35,12 @@ object OpenWindowTest {
 
     val window = new Window(initialWindowConf, initialCameraConf, initialGlConf) with LwjglImplementation
 
-    window.handleEvents{
+    window.handleEvents {
       case Render =>
-      case event =>
+        window.drawFrame {
+
+        }
+      case event => // mouse, kb, resize, ..
         println(event)
     }
 

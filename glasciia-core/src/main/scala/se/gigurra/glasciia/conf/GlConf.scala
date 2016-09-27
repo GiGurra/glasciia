@@ -1,4 +1,4 @@
-package se.gigurra.glasciia
+package se.gigurra.glasciia.conf
 
 /**
   * Created by johan on 2016-09-27.

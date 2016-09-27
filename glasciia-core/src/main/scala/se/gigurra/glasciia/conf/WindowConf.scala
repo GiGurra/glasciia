@@ -1,4 +1,4 @@
-package se.gigurra.glasciia
+package se.gigurra.glasciia.conf
 
 import se.gigurra.math.Vec2
 
