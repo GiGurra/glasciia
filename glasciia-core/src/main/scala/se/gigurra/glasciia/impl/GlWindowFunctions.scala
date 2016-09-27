@@ -1,5 +1,6 @@
 package se.gigurra.glasciia.impl
 
+import com.badlogic.gdx.graphics.Color
 import com.badlogic.gdx.{Gdx, Graphics}
 import se.gigurra.glasciia.{GLCStyle, Window}
 
@@ -8,7 +9,8 @@ import se.gigurra.glasciia.{GLCStyle, Window}
   */
 trait GlWindowFunctions extends GLCStyle {  _: Window =>
 
-  def drawFrame(content: => Unit): Unit = {
+  def drawFrame(background: Color = Color.BLACK)(content: => Unit): Unit = {
+    gl.glClearColor(background.r, background.g, background.b, background.a)
     gl.glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT)
     content
   }
