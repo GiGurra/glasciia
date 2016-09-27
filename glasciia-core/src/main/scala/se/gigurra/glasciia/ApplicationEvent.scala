@@ -1,5 +1,7 @@
 package se.gigurra.glasciia
 
+import se.gigurra.math.Vec2
+
 /**
   * Created by johan on 2016-09-26.
   */

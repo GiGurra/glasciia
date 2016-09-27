@@ -1,7 +1,7 @@
 package se.gigurra.glasciia
 
 import rx.lang.scala.Observable
-import se.gigurra.glasciia.helpers.ScopedSet
+import se.gigurra.lang.ScopedSet
 
 import scala.util.control.NonFatal
 

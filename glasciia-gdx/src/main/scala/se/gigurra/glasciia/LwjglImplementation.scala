@@ -4,6 +4,7 @@ import com.badlogic.gdx.{ApplicationListener, Gdx, InputProcessor}
 import com.badlogic.gdx.backends.lwjgl.{LwjglApplication, LwjglApplicationConfiguration}
 import rx.lang.scala.Subject
 import se.gigurra.glasciia.ApplicationEvent._
+import se.gigurra.math.Vec2
 
 /**
   * Created by johan on 2016-09-26.
