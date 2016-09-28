@@ -1,33 +1,32 @@
 package se.gigurra.glasciia
 
-import java.io.Closeable
-
 import com.badlogic.gdx.Gdx
 import com.badlogic.gdx.graphics.Color
 import com.badlogic.gdx.graphics.Texture.TextureFilter
 import com.badlogic.gdx.graphics.g2d.freetype.FreeTypeFontGenerator
 import com.badlogic.gdx.graphics.g2d.freetype.FreeTypeFontGenerator.FreeTypeFontParameter
-import com.badlogic.gdx.graphics.g2d.{BitmapFont, GlyphLayout, PixmapPacker}
+import com.badlogic.gdx.graphics.g2d.{BitmapFont, BitmapFontCache, GlyphLayout, PixmapPacker}
 import com.badlogic.gdx.utils.Align
-import se.gigurra.glasciia.impl.RichGlyphLayout
+import se.gigurra.math.Vec2
 
-case class Font(font: BitmapFont, size: Float)
-  extends Closeable
-  with Glasciia {
+case class Font(font: BitmapFont, size: Float) extends Glasciia {
 
-  def prep(str: CharSequence,
-           align: Int = Align.left,
-           targetWidth: Float = 0.0f,
-           wrap: Boolean = false,
-           color: Color = null,
-           alphaScale: Float = 1.0f): RichGlyphLayout = {
-    RichGlyphLayout(new GlyphLayout(
+  def preload(str: CharSequence,
+              at: Vec2[Float],
+              align: Int = Align.left,
+              targetWidth: Float = 0.0f,
+              wrap: Boolean = false,
+              color: Color = null,
+              alphaScale: Float = 1.0f): BitmapFontCache = {
+    val cached = font.newFontCache()
+    cached.addText(new GlyphLayout(
       font,
       str,
       Option(color).getOrElse(font.getColor).scaleAlpha(alphaScale),
       targetWidth,
       align,
-      wrap), this)
+      wrap), at.x, at.y)
+    cached
   }
 
   def widthOf(lines: Seq[String]): Float = {
@@ -43,10 +42,6 @@ case class Font(font: BitmapFont, size: Float)
 
   def lineHeight: Float = {
     font.getLineHeight
-  }
-
-  override def close(): Unit = {
-    // Nothing really cached yet..
   }
 
 }
