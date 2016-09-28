@@ -7,7 +7,7 @@ import se.gigurra.glasciia.Window
 /**
   * Created by johan on 2016-09-27.
   */
-trait GlWindowFunctions {  _: Window =>
+trait GlWindow {  _: Window =>
 
   def drawFrame(background: Color = Color.BLACK)(content: => Unit): Unit = {
     gl.glClearColor(background.r, background.g, background.b, background.a)
@@ -17,7 +17,7 @@ trait GlWindowFunctions {  _: Window =>
 
 }
 
-object GlWindowFunctions {
+object GlWindow {
   import scala.language.implicitConversions
-  implicit def window2funcs(glwf: GlWindowFunctions): Graphics = Gdx.graphics
+  implicit def window2funcs(glwf: GlWindow): Graphics = Gdx.graphics
 }

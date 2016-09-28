@@ -3,7 +3,7 @@ package se.gigurra.glasciia
 import com.badlogic.gdx.graphics.Color
 import rx.lang.scala.Observable
 import se.gigurra.glasciia.conf.{CameraConf, GlConf, WindowConf}
-import se.gigurra.glasciia.impl.GlWindowFunctions
+import se.gigurra.glasciia.impl.GlWindow
 import se.gigurra.lang.ScopedSet
 
 import scala.util.control.NonFatal
@@ -13,7 +13,7 @@ import scala.util.control.NonFatal
   */
 abstract class Window(val initialWindowConf: WindowConf,
                       val initialCameraConf: CameraConf,
-                      val initialGlConf: GlConf) extends GlWindowFunctions with Glasciia {
+                      val initialGlConf: GlConf) extends GlWindow with Glasciia {
 
   //////////////////////
   // Public API

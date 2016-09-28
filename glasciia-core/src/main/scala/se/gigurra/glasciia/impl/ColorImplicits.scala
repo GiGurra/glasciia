@@ -5,7 +5,7 @@ import com.badlogic.gdx.graphics.Color
 /**
   * Created by johan on 2016-09-28.
   */
-trait ColorHelpers {
+trait ColorImplicits {
 
   implicit class RichGdxColor(val color: Color) {
     def scaleAlpha(s: Float): Color = new Color(color.r, color.g, color.b, color.a * s)
@@ -15,4 +15,4 @@ trait ColorHelpers {
   }
 }
 
-object ColorHelpers extends ColorHelpers
+object ColorImplicits extends ColorImplicits
