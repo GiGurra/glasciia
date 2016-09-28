@@ -12,7 +12,7 @@ import se.gigurra.math.Vec2
 case class Font(font: BitmapFont, size: Float) extends Glasciia {
 
   def preload(str: CharSequence,
-              at: Vec2[Float],
+              at: Vec2[Float] = Vec2[Float](),
               align: Int = Align.left,
               targetWidth: Float = 0.0f,
               wrap: Boolean = false,
