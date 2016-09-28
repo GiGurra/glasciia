@@ -13,7 +13,7 @@ import scala.util.control.NonFatal
   */
 abstract class Window(val initialWindowConf: WindowConf,
                       val initialCameraConf: CameraConf,
-                      val initialGlConf: GlConf) extends GlWindowFunctions {
+                      val initialGlConf: GlConf) extends GlWindowFunctions with Glasciia {
 
   //////////////////////
   // Public API

@@ -2,12 +2,12 @@ package se.gigurra.glasciia.impl
 
 import com.badlogic.gdx.graphics.Color
 import com.badlogic.gdx.{Gdx, Graphics}
-import se.gigurra.glasciia.{GLCStyle, Window}
+import se.gigurra.glasciia.Window
 
 /**
   * Created by johan on 2016-09-27.
   */
-trait GlWindowFunctions extends GLCStyle {  _: Window =>
+trait GlWindowFunctions {  _: Window =>
 
   def drawFrame(background: Color = Color.BLACK)(content: => Unit): Unit = {
     gl.glClearColor(background.r, background.g, background.b, background.a)

@@ -1,8 +1,7 @@
-package se.gigurra.glasciia
+package se.gigurra.glasciia.impl
 
 import com.badlogic.gdx.Gdx
 import com.badlogic.gdx.graphics.GL20
-import se.gigurra.glasciia.impl.GlConstants
 
 import scala.language.implicitConversions
 
