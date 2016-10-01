@@ -88,7 +88,7 @@ object OpenWindowTest {
             font = monospaceFont,
             color = Color.GREEN,
             at = Vec2(400, 400),
-            rotate = 180,
+            rotate = 180 + app.time.toFloat * 360.0f,
             scale = 50
           )
 
