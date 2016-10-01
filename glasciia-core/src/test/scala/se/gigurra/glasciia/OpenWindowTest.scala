@@ -2,8 +2,10 @@ package se.gigurra.glasciia
 
 import ApplicationEvent._
 import com.badlogic.gdx.graphics.Color
+import com.badlogic.gdx.graphics.glutils.ShaderProgram
 import se.gigurra.glasciia.conf.{GlConf, WindowConf}
 import se.gigurra.glasciia.impl.{ApplicationEventListener, LwjglImplementation, ResourceManager}
+import se.gigurra.glasciia.util.Shader
 import se.gigurra.math.Vec2
 
 import scala.util.Random
@@ -36,10 +38,15 @@ object OpenWindowTest {
       with LwjglImplementation
 
     app.storeResource[Font]("font:monospace-default", Font.fromTtfFile("pt-mono/PTM55FT.ttf"), _.close())
+    app.storeResource[ShaderProgram]("shader:default", Shader.fromLocation("shaders/default-shader.vert", "shaders/default-shader.frag"), _.dispose())
 
     app.handleEvents {
 
       case Init(canvas) =>
+
+        val otherShader = app.resource[ShaderProgram]("shader:default")
+        canvas.batch.setShader(otherShader)
+
         println()
         println("VERTEX SHADER SOURCE")
         println("--------------------")
