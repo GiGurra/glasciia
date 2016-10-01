@@ -1,86 +1,18 @@
 package se.gigurra.glasciia
 
-import com.badlogic.gdx.graphics.{Camera, Color, OrthographicCamera, PerspectiveCamera}
-import com.badlogic.gdx.graphics.g2d.SpriteBatch
-import se.gigurra.glasciia.math.Matrix4Stack
-import se.gigurra.math.{Vec2, Zero}
+import se.gigurra.glasciia.impl._
+import se.gigurra.math.Vec2
 
 /**
   * Created by johan on 2016-09-29.
   */
-case class Canvas(app: App) extends Glasciia {
-
-  val batch = new SpriteBatch
-  val orthographicCamera = new OrthographicCamera
-  val perspectiveCamera = new PerspectiveCamera
-  var camera: Camera = orthographicCamera
-  private val transform = Matrix4Stack(depth = 32)
-
-  def drawFrame(background: Color, camPos: Vec2[Float] = camera.position)(content: => Unit): Unit = {
-    gl.glClearColor(background.r, background.g, background.b, background.a)
-    gl.glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT)
-    drawSubFrame(content, camPos)
-  }
-
-  def drawSubFrame(content: => Unit, camPos: Vec2[Float] = camera.position): Unit = {
-    camera.position.set(camPos)
-    camera.update()
-    batch.setProjectionMatrix(camera.combined)
-    transform.pushPop {
-      content
-      if (batch.isDrawing)
-        batch.end()
-    }
-  }
-
-  def drawString(char: String,
-                 font: Font,
-                 color: Color,
-                 at: Vec2[Float] = Zero[Vec2[Float]],
-                 scale: Float = 1.0f,
-                 rotate: Float = 0.0f,
-                 normalizeFontScale: Boolean = true): Unit = {
-    draw(at, if (normalizeFontScale) scale / font.size else scale, rotate) {
-      font.setColor(color)
-      font.draw(batch, char, 0.0f, 0.0f)
-    }
-  }
-
-  def draw(at: Vec2[Float] = Zero[Vec2[Float]],
-           scale: Float = 1.0f,
-           rotate: Float = 0.0f)(content: => Unit): Unit = {
-
-    if (!batch.isDrawing)
-      batch.begin()
-
-    val needAt = at != Zero[Vec2[Float]]
-    val needScale = scale != 1.0f
-    val needRotate = rotate != 0.0f
-    val needTransform = needAt || needScale || needRotate
-
-    if (needTransform) {
-      transform.pushPop(
-        content = {
-          if (needAt) transform.current.translate(at.x, at.y, 0.0f)
-          if (needRotate) transform.current.rotate(0.0f, 0.0f, 1.0f, rotate)
-          if (needScale) transform.current.scale(scale, scale, 1.0f)
-          batch.setTransformMatrix(transform.current)
-          content
-        },
-        after = {
-          batch.setTransformMatrix(transform.current)
-        }
-      )
-    } else {
-      content
-    }
-
-  }
-
-  def setOrtho(yDown: Boolean, width: Float, height: Float): Unit = {
-    orthographicCamera.setToOrtho(yDown, width, height)
-    camera = orthographicCamera
-  }
+case class Canvas(app: App)
+  extends Glasciia
+    with Batcher
+    with Cameras
+    with ContentDrawer
+    with FrameDrawer
+    with TextDrawer {
 
   def size: Vec2[Int] = app.size
   def width: Int = app.width
