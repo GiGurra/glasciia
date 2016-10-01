@@ -13,17 +13,15 @@ import se.gigurra.math.Vec2
   */
 trait ApplicationEventListener { self: App =>
 
-  private val subject = Subject[ApplicationEvent]().toSerialized
-  subject.hasObservers
-
   def events: Observable[ApplicationEvent] = subject
 
   def handleEvents(f: ApplicationEvent => Unit, crashHandler: Throwable => Unit = App.defaultCrashHandler): Unit = {
     events.foreach(f, crashHandler)
   }
 
-  private var canvas: Canvas = _
-  private var initReceived: Boolean = false
+
+  /////////////////////////////////////////////
+  // Implemented expectations
 
   protected val inputListener = new InputProcessor {
     override def keyTyped(character: Char): Boolean = consume(CharTyped(character))
@@ -45,11 +43,27 @@ trait ApplicationEventListener { self: App =>
     override def create(): Unit = {
       canvas = Canvas(self)
       flushQueuedOps()
-      setCreated()
       consume(Init(canvas))
     }
   }
-  protected def setCreated(): Unit
+
+  protected def executeOnRenderThread(op: => Unit): Unit = {
+    if (isOnRenderThread) {
+      op
+    } else {
+      queuedOps.add(() => op)
+    }
+  }
+
+
+  /////////////////////////////////////////////
+  // Expectations
+
+  protected def isOnRenderThread: Boolean
+
+
+  /////////////////////////////////////////////
+  // Private
 
   private def consume(ev: ApplicationEvent): Boolean = {
     flushQueuedOps()
@@ -69,18 +83,14 @@ trait ApplicationEventListener { self: App =>
 
   private val queuedOps = new ConcurrentLinkedQueue[() => Unit]()
 
-  protected def executeOnRenderThread(op: => Unit): Unit = {
-    if (isOnRenderThread) {
-      op
-    } else {
-      queuedOps.add(() => op)
-    }
-  }
-
   private def flushQueuedOps(): Unit = {
     while(!queuedOps.isEmpty) {
       queuedOps.poll().apply()
     }
   }
+
+  private val subject = Subject[ApplicationEvent]().toSerialized
+  private var canvas: Canvas = _
+  private var initReceived: Boolean = false
 
 }

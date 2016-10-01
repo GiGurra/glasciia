@@ -16,9 +16,30 @@ import scala.concurrent.{Await, Promise}
 trait LwjglImplementation { self: App =>
 
   def close(): Unit = lwjglApplication.stop()
+  def width: Int = lwjglApplication.getGraphics.getWidth
+  def height: Int = lwjglApplication.getGraphics.getHeight
+
 
   ///////////////////////////
   // startup sequence below
+
+
+
+  /////////////////////////////////////////////
+  // Expectations
+
+  protected def appListener: ApplicationListener
+  protected def inputListener: InputProcessor
+
+
+  /////////////////////////////////////////////
+  // Implemented expectations
+
+  protected def isOnRenderThread: Boolean = Display.isCurrent
+
+
+  /////////////////////////////////////////////
+  // Private
 
   import initialGlConf._
 
@@ -35,22 +56,16 @@ trait LwjglImplementation { self: App =>
     samples = msaa
     resizable = initialWindowConf.resizable
   }
+  private val startup = Promise[Unit]()
+  private val lwjglApplication = new LwjglApplication(new ApplicationListener {
+    override def resize(width: Int, height: Int): Unit = appListener.resize(width, height)
+    override def dispose(): Unit = appListener.dispose()
+    override def pause(): Unit = appListener.pause()
+    override def render(): Unit = appListener.render()
+    override def resume(): Unit = appListener.resume()
+    override def create(): Unit = { startup.success(()); appListener.create() }
+  }, lwjglConf)
 
-  protected def appListener: ApplicationListener
-  protected def inputListener: InputProcessor
-
-  private val initFuture = Promise[Unit]()
-  private val lwjglApplication = new LwjglApplication(appListener, lwjglConf)
   Gdx.input.setInputProcessor(inputListener)
-
-  override def width: Int = lwjglApplication.getGraphics.getWidth
-  override def height: Int = lwjglApplication.getGraphics.getHeight
-
-  protected def setCreated(): Unit = {
-    initFuture.success(())
-  }
-
-  def isOnRenderThread: Boolean = Display.isCurrent
-
-  Await.result(initFuture.future, Duration(30, TimeUnit.SECONDS))
+  Await.result(startup.future, Duration(30, TimeUnit.SECONDS))
 }

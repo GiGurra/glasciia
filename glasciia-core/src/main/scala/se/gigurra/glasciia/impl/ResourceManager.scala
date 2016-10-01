@@ -19,13 +19,6 @@ trait ResourceManager { self: App =>
     }
   }
 
-  def doGetResource(path: String): Option[Any] = {
-    if (!isOnRenderThread)
-      throw new IllegalAccessError(s"Cannot retrieve resources when GL context is not current")
-    resources.get(path).map(_.resource)
-  }
-
-  /////////////////////////////////
   def getResource[T: ClassTag](path: String): Option[T] = doGetResource(path).map {
     case resource: T => resource
     case resource => throw new ClassCastException(s"Resource of incorrect type (exp: ${implicitly[ClassTag[T]].runtimeClass}, actual: ${resource.getClass}")
@@ -37,7 +30,22 @@ trait ResourceManager { self: App =>
     }
   }
 
+
+  /////////////////////////////////////////////
+  // Expectations
+
+  protected def isOnRenderThread: Boolean
   protected def executeOnRenderThread(f: => Unit): Unit
+
+
+  /////////////////////////////////////////////
+  // Private
+
+  private def doGetResource(path: String): Option[Any] = {
+    if (!isOnRenderThread)
+      throw new IllegalAccessError(s"Cannot retrieve resources when GL context is not current")
+    resources.get(path).map(_.resource)
+  }
 
   private val resources = new scala.collection.concurrent.TrieMap[String, Resource]()
 

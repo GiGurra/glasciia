@@ -14,7 +14,6 @@ abstract class App(val initialWindowConf: WindowConf,
 
   val tStart = System.nanoTime / 1e9
 
-  def isOnRenderThread: Boolean
   def width: Int
   def height: Int
   def size: Vec2[Int] = Vec2(width, height)
