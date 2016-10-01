@@ -13,6 +13,9 @@ import se.gigurra.math.Vec2
   */
 trait ApplicationEventListener { self: App =>
 
+  private val subject = Subject[ApplicationEvent]().toSerialized
+  subject.subscribe()
+
   def events: Observable[ApplicationEvent] = subject
 
   def handleEvents(f: ApplicationEvent => Unit, crashHandler: Throwable => Unit = App.defaultCrashHandler): Unit = {
@@ -20,9 +23,6 @@ trait ApplicationEventListener { self: App =>
   }
 
   private var canvas: Canvas = _
-
-  private val subject = Subject[ApplicationEvent]().toSerialized
-  subject.subscribe()
 
   protected val inputListener = new InputProcessor {
     override def keyTyped(character: Char): Boolean = consume(CharTyped(character))
@@ -36,11 +36,11 @@ trait ApplicationEventListener { self: App =>
   }
 
   protected val appListener = new ApplicationListener {
-    override def resize(width: Int, height: Int): Unit = consume(Resize(Vec2(width, height)))
-    override def dispose(): Unit = consume(Exit)
-    override def pause(): Unit = consume(Pause)
+    override def resize(width: Int, height: Int): Unit = consume(Resize(Vec2(width, height), canvas: Canvas))
+    override def dispose(): Unit = consume(Exit(canvas: Canvas))
+    override def pause(): Unit = consume(Pause(canvas: Canvas))
     override def render(): Unit = consume(Render(canvas))
-    override def resume(): Unit = consume(Resume)
+    override def resume(): Unit = consume(Resume(canvas: Canvas))
     override def create(): Unit = {
       canvas = Canvas(self)
       flushQueuedOps()

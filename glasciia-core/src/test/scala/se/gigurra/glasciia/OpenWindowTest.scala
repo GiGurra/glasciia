@@ -45,7 +45,10 @@ object OpenWindowTest {
 
     app.storeResource[Font]("font:monospace-default", Font.fromTtfFile("pt-mono/PTM55FT.ttf"), _.close())
 
+    Thread.sleep(1000)
+
     app.handleEvents {
+
       case Render(canvas) =>
 
         val monospaceFont = app.resource[Font]("font:monospace-default")
@@ -82,7 +85,7 @@ object OpenWindowTest {
 
         }
       case event => // mouse, kb, resize, ..
-         println(event)
+      //   println(event)
     }
 
   }

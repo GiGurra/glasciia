@@ -9,10 +9,10 @@ sealed trait ApplicationEvent
 object ApplicationEvent {
   sealed trait WindowEvent extends ApplicationEvent
   case class Render(canvas: Canvas) extends WindowEvent
-  case object Pause extends WindowEvent
-  case object Resume extends WindowEvent
-  case object Exit extends WindowEvent
-  case class Resize(newSize: Vec2[Int]) extends WindowEvent
+  case class Pause(canvas: Canvas) extends WindowEvent
+  case class Resume(canvas: Canvas) extends WindowEvent
+  case class Exit(canvas: Canvas) extends WindowEvent
+  case class Resize(newSize: Vec2[Int], canvas: Canvas) extends WindowEvent
 
   sealed trait KeyboardEvent extends ApplicationEvent
   case class CharTyped(char: Char) extends KeyboardEvent
