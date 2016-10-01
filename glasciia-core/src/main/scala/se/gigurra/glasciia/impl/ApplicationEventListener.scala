@@ -57,7 +57,7 @@ trait ApplicationEventListener { self: App =>
 
   private val queuedOps = new ConcurrentLinkedQueue[() => Unit]()
 
-  protected def queueOnNextCallback(f: => Unit): Unit = {
+  protected def executeOnRenderThread(f: => Unit): Unit = {
     queuedOps.add(() => f)
   }
 

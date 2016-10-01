@@ -8,7 +8,7 @@ import scala.reflect.ClassTag
 /**
   * Created by johan on 2016-10-01.
   */
-trait ResourceManager { self: App with ApplicationEventListener =>
+trait ResourceManager { self: App =>
 
   def isOnRenderThread: Boolean
 
@@ -17,7 +17,7 @@ trait ResourceManager { self: App with ApplicationEventListener =>
       val resource = ctor
       resources.put(path, Resource(resource, () => closer(resource))).foreach(_.close())
     } else {
-      queueOnNextCallback(storeResource(path, ctor, closer))
+      executeOnRenderThread(storeResource(path, ctor, closer))
     }
   }
 
@@ -38,6 +38,8 @@ trait ResourceManager { self: App with ApplicationEventListener =>
       case None => throw new NoSuchElementException(s"No resource stored on path '$path'")
     }
   }
+
+  protected def executeOnRenderThread(f: => Unit): Unit
 
   private val resources = new scala.collection.concurrent.TrieMap[String, Resource]()
 
