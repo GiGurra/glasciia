@@ -1,6 +1,6 @@
 package se.gigurra.glasciia
 
-import se.gigurra.glasciia.conf.{CameraConf, GlConf, WindowConf}
+import se.gigurra.glasciia.conf.{GlConf, WindowConf}
 import se.gigurra.math.Vec2
 
 import scala.util.control.NonFatal
@@ -9,7 +9,6 @@ import scala.util.control.NonFatal
   * Created by johan on 2016-09-19.
   */
 abstract class App(val initialWindowConf: WindowConf,
-                   val initialCameraConf: CameraConf,
                    val initialGlConf: GlConf) {
 
   val tStart = System.nanoTime / 1e9

@@ -2,7 +2,7 @@ package se.gigurra.glasciia
 
 import ApplicationEvent._
 import com.badlogic.gdx.graphics.Color
-import se.gigurra.glasciia.conf.{CameraConf, GlConf, ScaleType, WindowConf}
+import se.gigurra.glasciia.conf.{GlConf, WindowConf}
 import se.gigurra.glasciia.impl.{ApplicationEventListener, LwjglImplementation, ResourceManager}
 import se.gigurra.math.Vec2
 
@@ -23,12 +23,6 @@ object OpenWindowTest {
       title = "Test Window"
     )
 
-    val initialCameraConf = CameraConf(
-      pos = Vec2(0.0f, 0.0f),
-      size = 2.0f,
-      scaleType = ScaleType.Conformal
-    )
-
     val initialGlConf = GlConf(
       vsync = true,
       msaa = 4,
@@ -36,14 +30,10 @@ object OpenWindowTest {
       backgroundFpsCap = Some(30)
     )
 
-    val app =
-      new App(
-        initialWindowConf = initialWindowConf,
-        initialCameraConf = initialCameraConf,
-        initialGlConf = initialGlConf
-      ) with ApplicationEventListener
-        with ResourceManager
-        with LwjglImplementation
+    val app = new App(initialWindowConf, initialGlConf)
+      with ApplicationEventListener
+      with ResourceManager
+      with LwjglImplementation
 
     app.storeResource[Font]("font:monospace-default", Font.fromTtfFile("pt-mono/PTM55FT.ttf"), _.close())
 
