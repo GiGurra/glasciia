@@ -48,11 +48,19 @@ object OpenWindowTest {
     app.handleEvents {
       case Render(canvas) =>
 
-        val font = app.resource[Font]("font:monospace-default")
+        val monospaceFont = app.resource[Font]("font:monospace-default")
 
         canvas.setOrtho(yDown = false, width = canvas.width, height = canvas.height)
         canvas.drawFrame(background = Color.GRAY) {
 
+          canvas.drawChar(
+            char = 'C',
+            font = monospaceFont,
+            color = Color.GREEN,
+            at = Vec2(140, 140),
+            rotate = 45,
+            scale = 50
+          )
 
         }
       case event => // mouse, kb, resize, ..

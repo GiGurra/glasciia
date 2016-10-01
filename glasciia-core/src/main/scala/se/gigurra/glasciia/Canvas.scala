@@ -5,8 +5,6 @@ import com.badlogic.gdx.graphics.g2d.SpriteBatch
 import se.gigurra.glasciia.math.Matrix4Stack
 import se.gigurra.math.{Vec2, Zero}
 
-import scala.reflect.ClassTag
-
 /**
   * Created by johan on 2016-09-29.
   */
@@ -31,24 +29,30 @@ case class Canvas(app: App) extends Glasciia {
     transform.pushPop {
       transform.current.mul(camera.view)
       content
+      if (batch.isDrawing)
+        batch.end()
     }
   }
 
-  def drawChar(c: Char,
+  def drawChar(char: Char,
                font: Font,
                color: Color,
                at: Vec2[Float] = Zero[Vec2[Float]],
                scale: Float = 1.0f,
-               rotate: Float = 0.0f): Unit = {
-    draw(at, scale, rotate) {
-      font.font.setColor(color)
-      font.font.draw(batch, "c", 0.0f, 0.0f)
+               rotate: Float = 0.0f,
+               normalizeFontScale: Boolean = true): Unit = {
+    draw(at, if (normalizeFontScale) scale / font.size else scale, rotate) {
+      font.setColor(color)
+      font.draw(batch, "c", 0.0f, 0.0f)
     }
   }
 
   def draw(at: Vec2[Float] = Zero[Vec2[Float]],
            scale: Float = 1.0f,
            rotate: Float = 0.0f)(content: => Unit): Unit = {
+
+    if (!batch.isDrawing)
+      batch.begin()
 
     val needAt = at != Zero[Vec2[Float]]
     val needScale = scale != 1.0f
@@ -58,7 +62,7 @@ case class Canvas(app: App) extends Glasciia {
     if (needTransform) {
       transform.pushPop(
         content = {
-          if (needAt) transform.current.translate(-at.x, -at.y, 0.0f)
+          if (needAt) transform.current.translate(at.x, at.y, 0.0f)
           if (needRotate) transform.current.rotate(0.0f, 0.0f, 1.0f, rotate)
           if (needScale) transform.current.scale(scale, scale, 1.0f)
           batch.setTransformMatrix(transform.current)

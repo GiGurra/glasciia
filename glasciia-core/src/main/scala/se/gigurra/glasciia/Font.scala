@@ -98,4 +98,7 @@ object Font {
     generator.dispose()
     new Font(font, size.toFloat)
   }
+
+  import scala.language.implicitConversions
+  implicit def toFont(font: Font): BitmapFont = font.font
 }
