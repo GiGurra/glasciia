@@ -1,29 +1,26 @@
 package se.gigurra.glasciia.impl
 
+import java.util.concurrent.TimeUnit
+
 import com.badlogic.gdx.backends.lwjgl.{LwjglApplication, LwjglApplicationConfiguration}
 import com.badlogic.gdx.{ApplicationListener, Gdx, InputProcessor}
-import rx.lang.scala.{Observable, Subject}
-import se.gigurra.glasciia.ApplicationEvent._
-import se.gigurra.glasciia.{ApplicationEvent, Window}
-import se.gigurra.math.Vec2
+import org.lwjgl.opengl.Display
+import se.gigurra.glasciia.App
+
+import scala.concurrent.duration.Duration
+import scala.concurrent.{Await, Promise}
 
 /**
   * Created by johan on 2016-09-26.
   */
-trait LwjglImplementation { _: Window =>
-
-  def handleEvents(f: ApplicationEvent => Unit): Unit = {
-    events.foreach(f, Window.defaultCrashLogger)
-  }
+trait LwjglImplementation { self: App =>
 
   def close(): Unit = lwjglApplication.stop()
-
-  def events: Observable[ApplicationEvent] = subject
 
   ///////////////////////////
   // startup sequence below
 
-  import this.initialGlConf._
+  import initialGlConf._
 
   private val lwjglConf = new LwjglApplicationConfiguration {
     title = s"${initialWindowConf.title}"
@@ -39,35 +36,21 @@ trait LwjglImplementation { _: Window =>
     resizable = initialWindowConf.resizable
   }
 
-  private val subject = Subject[ApplicationEvent]().toSerialized
-  subject.subscribe()
+  protected def appListener: ApplicationListener
+  protected def inputListener: InputProcessor
 
-  private def consume(ev: ApplicationEvent): Boolean = {
-    subject.onNext(ev)
-    true
-  }
-
-  private val appListener = new ApplicationListener {
-    override def resize(width: Int, height: Int): Unit = consume(Resize(Vec2(width, height)))
-    override def dispose(): Unit = consume(Exit)
-    override def pause(): Unit = consume(Pause)
-    override def render(): Unit = consume(Render)
-    override def resume(): Unit = consume(Resume)
-    override def create(): Unit = consume(Init)
-  }
-
-  private val inputListener = new InputProcessor {
-    override def keyTyped(character: Char): Boolean = consume(CharTyped(character))
-    override def keyDown(keycode: Int): Boolean = consume(KeyDown(keycode))
-    override def keyUp(keycode: Int): Boolean = consume(KeyUp(keycode))
-    override def mouseMoved(screenX: Int, screenY: Int): Boolean = consume(MouseMove(Vec2(screenX, screenY)))
-    override def scrolled(amount: Int): Boolean = consume(MouseScrolled(amount))
-    override def touchDown(screenX: Int, screenY: Int, pointer: Int, button: Int): Boolean = consume(TouchDown(Vec2(screenX, screenY), pointer, button))
-    override def touchUp(screenX: Int, screenY: Int, pointer: Int, button: Int): Boolean = consume(TouchUp(Vec2(screenX, screenY), pointer, button))
-    override def touchDragged(screenX: Int, screenY: Int, pointer: Int): Boolean = consume(TouchDrag(Vec2(screenX, screenY), pointer))
-  }
-
+  private val initFuture = Promise[Unit]()
   private val lwjglApplication = new LwjglApplication(appListener, lwjglConf)
   Gdx.input.setInputProcessor(inputListener)
 
+  override def width: Int = lwjglApplication.getGraphics.getWidth
+  override def height: Int = lwjglApplication.getGraphics.getHeight
+
+  protected def setCreated(): Unit = {
+    initFuture.success(())
+  }
+
+  def isOnRenderThread: Boolean = Display.isCurrent
+
+  Await.result(initFuture.future, Duration(30, TimeUnit.SECONDS))
 }

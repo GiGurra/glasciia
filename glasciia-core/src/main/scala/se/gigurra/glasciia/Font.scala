@@ -44,6 +44,9 @@ case class Font(font: BitmapFont, size: Float) extends Glasciia {
     font.getLineHeight
   }
 
+  def close(): Unit = {
+    font.dispose()
+  }
 }
 
 object Font {

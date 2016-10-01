@@ -2,9 +2,8 @@ package se.gigurra.glasciia
 
 import ApplicationEvent._
 import com.badlogic.gdx.graphics.Color
-import com.badlogic.gdx.math.Matrix4
 import se.gigurra.glasciia.conf.{CameraConf, GlConf, ScaleType, WindowConf}
-import se.gigurra.glasciia.impl.LwjglImplementation
+import se.gigurra.glasciia.impl.{ApplicationEventListener, LwjglImplementation, ResourceManager}
 import se.gigurra.math.Vec2
 
 /**
@@ -35,16 +34,29 @@ object OpenWindowTest {
       backgroundFpsCap = Some(30)
     )
 
-    val window = new Window(initialWindowConf, initialCameraConf, initialGlConf) with LwjglImplementation
+    val app =
+      new App(
+        initialWindowConf = initialWindowConf,
+        initialCameraConf = initialCameraConf,
+        initialGlConf = initialGlConf
+      ) with ApplicationEventListener
+        with ResourceManager
+        with LwjglImplementation
 
-    implicit lazy val canvas = Canvas() // Needs to be lazy because of libgdx sillyness (cannot create resources before Init event is fired)
+    app.storeResource[Font]("font:monospace-default", Font.fromTtfFile("pt-mono/PTM55FT.ttf"), _.close())
 
-    window.handleEvents {
-      case Render =>
+    app.handleEvents {
+      case Render(canvas) =>
+
+        val font = app.resource[Font]("font:monospace-default")
+
+        canvas.setOrtho(yDown = false, width = canvas.width, height = canvas.height)
         canvas.drawFrame(background = Color.GRAY) {
+
+
         }
       case event => // mouse, kb, resize, ..
-        println(event)
+         println(event)
     }
 
   }

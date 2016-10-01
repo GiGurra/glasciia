@@ -6,7 +6,7 @@ import com.badlogic.gdx.math.{Matrix4, Vector3}
 
 import scala.language.implicitConversions
 
-case class Matrix4Stack(depth: Int, uploader: Matrix4 => Unit) {
+case class Matrix4Stack(depth: Int) {
   private val stack = (0 until depth).map(_ => new Matrix4).toArray
   private var i = 0
 
@@ -23,15 +23,15 @@ case class Matrix4Stack(depth: Int, uploader: Matrix4 => Unit) {
   def pop() = {
     require(i > 0)
     i -= 1
-    upload()
   }
 
-  def pushPop(f: => Unit): Unit = {
+  def pushPop(content: => Unit, after: => Unit = ()): Unit = {
     push()
     try {
-      f
+      content
     } finally {
       pop()
+      after
     }
   }
 
@@ -54,8 +54,7 @@ case class Matrix4Stack(depth: Int, uploader: Matrix4 => Unit) {
     this
   }
 
-  def upload(): this.type = { uploader(current); this }
-  def transform(f: Matrix4 => Unit): this.type = { f(current); upload() }
+  def transform(f: Matrix4 => Unit): this.type = { f(current); this }
   def translate(t: Vector3): this.type = transform(_.translate(t))
   def translate(x: Float = 0.0f, y: Float = 0.0f, z: Float = 0.0f): this.type = transform(_.translate(x, y, z))
   def scale(t: Vector3): this.type = transform(_.scale(t.x, t.y, t.z))

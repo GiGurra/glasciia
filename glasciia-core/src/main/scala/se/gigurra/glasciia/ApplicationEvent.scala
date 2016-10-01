@@ -8,8 +8,7 @@ import se.gigurra.math.Vec2
 sealed trait ApplicationEvent
 object ApplicationEvent {
   sealed trait WindowEvent extends ApplicationEvent
-  case object Init extends WindowEvent
-  case object Render extends WindowEvent
+  case class Render(canvas: Canvas) extends WindowEvent
   case object Pause extends WindowEvent
   case object Resume extends WindowEvent
   case object Exit extends WindowEvent
