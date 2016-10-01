@@ -53,12 +53,30 @@ object OpenWindowTest {
         canvas.setOrtho(yDown = false, width = canvas.width, height = canvas.height)
         canvas.drawFrame(background = Color.GRAY) {
 
-          canvas.drawChar(
-            char = 'C',
+          canvas.drawString(
+            char = "A",
             font = monospaceFont,
             color = Color.GREEN,
             at = Vec2(140, 140),
             rotate = 45,
+            scale = 50
+          )
+
+          canvas.drawString(
+            char = "B",
+            font = monospaceFont,
+            color = Color.GREEN,
+            at = Vec2(240, 240),
+            rotate = -45,
+            scale = 50
+          )
+
+          canvas.drawString(
+            char = "CDEFG",
+            font = monospaceFont,
+            color = Color.GREEN,
+            at = Vec2(400, 400),
+            rotate = 180,
             scale = 50
           )
 

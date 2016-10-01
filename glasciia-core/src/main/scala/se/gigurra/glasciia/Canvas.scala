@@ -34,16 +34,16 @@ case class Canvas(app: App) extends Glasciia {
     }
   }
 
-  def drawChar(char: Char,
-               font: Font,
-               color: Color,
-               at: Vec2[Float] = Zero[Vec2[Float]],
-               scale: Float = 1.0f,
-               rotate: Float = 0.0f,
-               normalizeFontScale: Boolean = true): Unit = {
+  def drawString(char: String,
+                 font: Font,
+                 color: Color,
+                 at: Vec2[Float] = Zero[Vec2[Float]],
+                 scale: Float = 1.0f,
+                 rotate: Float = 0.0f,
+                 normalizeFontScale: Boolean = true): Unit = {
     draw(at, if (normalizeFontScale) scale / font.size else scale, rotate) {
       font.setColor(color)
-      font.draw(batch, "c", 0.0f, 0.0f)
+      font.draw(batch, char, 0.0f, 0.0f)
     }
   }
 
