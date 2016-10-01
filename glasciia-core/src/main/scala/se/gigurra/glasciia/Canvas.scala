@@ -16,18 +16,17 @@ case class Canvas(app: App) extends Glasciia {
   var camera: Camera = orthographicCamera
   private val transform = Matrix4Stack(depth = 32)
 
-  def drawFrame(background: Color)(content: => Unit): Unit = {
+  def drawFrame(background: Color, camPos: Vec2[Float] = camera.position)(content: => Unit): Unit = {
     gl.glClearColor(background.r, background.g, background.b, background.a)
     gl.glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT)
-    drawSubFrame(content)
+    drawSubFrame(content, camPos)
   }
 
-  def drawSubFrame(content: => Unit): Unit = {
+  def drawSubFrame(content: => Unit, camPos: Vec2[Float] = camera.position): Unit = {
+    camera.position.set(camPos)
     camera.update()
-    batch.setProjectionMatrix(camera.projection)
-    batch.setTransformMatrix(camera.view)
+    batch.setProjectionMatrix(camera.combined)
     transform.pushPop {
-      transform.current.mul(camera.view)
       content
       if (batch.isDrawing)
         batch.end()
@@ -86,5 +85,4 @@ case class Canvas(app: App) extends Glasciia {
   def size: Vec2[Int] = app.size
   def width: Int = app.width
   def height: Int = app.height
-
 }

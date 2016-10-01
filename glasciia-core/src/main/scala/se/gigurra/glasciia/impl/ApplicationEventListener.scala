@@ -14,7 +14,7 @@ import se.gigurra.math.Vec2
 trait ApplicationEventListener { self: App =>
 
   private val subject = Subject[ApplicationEvent]().toSerialized
-  subject.subscribe()
+  subject.hasObservers
 
   def events: Observable[ApplicationEvent] = subject
 
@@ -23,6 +23,7 @@ trait ApplicationEventListener { self: App =>
   }
 
   private var canvas: Canvas = _
+  private var initReceived: Boolean = false
 
   protected val inputListener = new InputProcessor {
     override def keyTyped(character: Char): Boolean = consume(CharTyped(character))
@@ -45,20 +46,35 @@ trait ApplicationEventListener { self: App =>
       canvas = Canvas(self)
       flushQueuedOps()
       setCreated()
+      consume(Init(canvas))
     }
   }
   protected def setCreated(): Unit
 
   private def consume(ev: ApplicationEvent): Boolean = {
     flushQueuedOps()
-    subject.onNext(ev)
+    ev match { // Guarantee we always receieve an init event!
+      case init: Init =>
+        if (subject.hasObservers) {
+          initReceived = true
+          subject.onNext(init)
+        } else {
+          queuedOps.add(() => consume(init))
+        }
+      case _ if initReceived => subject.onNext(ev)
+      case _ => // Drop this event. Init must be consumed first
+    }
     true
   }
 
   private val queuedOps = new ConcurrentLinkedQueue[() => Unit]()
 
-  protected def executeOnRenderThread(f: => Unit): Unit = {
-    queuedOps.add(() => f)
+  protected def executeOnRenderThread(op: => Unit): Unit = {
+    if (isOnRenderThread) {
+      op
+    } else {
+      queuedOps.add(() => op)
+    }
   }
 
   private def flushQueuedOps(): Unit = {

@@ -10,8 +10,6 @@ import scala.reflect.ClassTag
   */
 trait ResourceManager { self: App =>
 
-  def isOnRenderThread: Boolean
-
   def storeResource[T](path: String, ctor: => T, closer: T => Unit = (x: T) => ()): Unit = synchronized { // synchronized is needed to not create a resource twice
     if (isOnRenderThread) {
       val resource = ctor

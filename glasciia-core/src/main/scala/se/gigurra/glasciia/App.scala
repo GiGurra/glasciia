@@ -12,9 +12,13 @@ abstract class App(val initialWindowConf: WindowConf,
                    val initialCameraConf: CameraConf,
                    val initialGlConf: GlConf) {
 
+  val tStart = System.nanoTime / 1e9
+
+  def isOnRenderThread: Boolean
   def width: Int
   def height: Int
   def size: Vec2[Int] = Vec2(width, height)
+  def time: Double = System.nanoTime / 1e9 - tStart
 }
 
 object App {
