@@ -28,7 +28,10 @@ trait ResourceManager { self: App with ApplicationEventListener =>
   }
 
   /////////////////////////////////
-  def getResource[T: ClassTag](path: String): Option[T] = doGetResource(path).collect { case resource: T => resource }
+  def getResource[T: ClassTag](path: String): Option[T] = doGetResource(path).map {
+    case resource: T => resource
+    case resource => throw new ClassCastException(s"Resource of incorrect type (exp: ${implicitly[ClassTag[T]].runtimeClass}, actual: ${resource.getClass}")
+  }
   def resource[T : ClassTag](path: String): T = {
     getResource(path) match {
       case Some(resource : T) => resource
