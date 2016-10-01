@@ -33,8 +33,8 @@ trait ResourceManager { self: App with ApplicationEventListener =>
     case resource => throw new ClassCastException(s"Resource of incorrect type (exp: ${implicitly[ClassTag[T]].runtimeClass}, actual: ${resource.getClass}")
   }
   def resource[T : ClassTag](path: String): T = {
-    getResource(path) match {
-      case Some(resource : T) => resource
+    getResource[T](path) match {
+      case Some(resource) => resource
       case None => throw new NoSuchElementException(s"No resource stored on path '$path'")
     }
   }
