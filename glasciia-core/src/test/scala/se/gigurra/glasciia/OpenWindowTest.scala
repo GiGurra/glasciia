@@ -168,12 +168,12 @@ object OpenWindowTest extends Glasciia {
             scale = Vec2(120.0f, 120.0f)
           )
 
-          canvas.drawParticleEffect(
+          canvas.drawEffect(
             effect = effect1,
             at = testEffectPosition(canvas)
           )
 
-          canvas.drawParticleEffect(
+          canvas.drawEffect(
             effect = effect2,
             at = testEffectPosition(canvas)
           )
