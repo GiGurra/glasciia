@@ -4,9 +4,9 @@ import java.io.FileNotFoundException
 import java.time.Duration
 
 import ApplicationEvent._
-import com.badlogic.gdx.Gdx
 import com.badlogic.gdx.graphics.Color
 import com.badlogic.gdx.graphics.g2d.Animation.PlayMode
+import com.badlogic.gdx.graphics.g2d.ParticleEffect
 import com.badlogic.gdx.scenes.scene2d.Stage
 import se.gigurra.glasciia.conf.{GlConf, WindowConf}
 import se.gigurra.glasciia.impl.{ApplicationEventListener, LwjglImplementation, Particles, ResourceManager}
@@ -50,7 +50,7 @@ object OpenWindowTest extends Glasciia {
     app.addResource("animation:capguy-walk:instance-0", app.resource[Animation]("animation:capguy-walk").newInstance())
     app.addResource("image:test-image", StaticImage("images/test-image.png"))
 
-    app.addResource("particle-effect:test-effect", Particles.standardEffect(
+    app.addResource("particle-effect:test-effect:instance-0", Particles.standardEffect(
       effectFile = LoadFile("particle-effects/test-effect.party").getOrElse(throw new FileNotFoundException(s"Could not find test particle effect")),
       imagesDir = LoadFile("").get
     ))
@@ -67,13 +67,24 @@ object OpenWindowTest extends Glasciia {
         println("FRAGMENT SHADER SOURCE")
         println("----------------------")
         println(canvas.batch.getShader.getFragmentShaderSource)
+        val effect1 = app.resource[ParticleEffect]("particle-effect:test-effect:instance-0")
+        effect1.scaleEffect(0.5f)
+        effect1.setPosition(canvas.width / 2.0f, canvas.height / 2.0f)
+        effect1.start()
+        val effect2 = effect1.copy
+        effect2.scaleEffect(0.5f)
+        effect2.flipY()
+        effect2.start()
+        app.addResource("particle-effect:test-effect:instance-1", effect2)
+
 
       case Render(canvas) =>
 
         val monospaceFont = app.resource[Font]("font:monospace-default")
         val walkingDudeAnimation = app.resource[Animation.Instance]("animation:capguy-walk:instance-0")
         val testImage = app.resource[StaticImage]("image:test-image")
-
+        val effect1 = app.resource[ParticleEffect]("particle-effect:test-effect:instance-0")
+        val effect2 = app.resource[ParticleEffect]("particle-effect:test-effect:instance-1")
 
         canvas.setOrtho(
           yDown = false,
@@ -147,15 +158,25 @@ object OpenWindowTest extends Glasciia {
           )
 
           canvas.drawAnimation(
-            walkingDudeAnimation,
+            animation = walkingDudeAnimation,
             at = Vec2(400, 100),
             scale = Vec2(120.0f, 200.0f)
           )
 
           canvas.drawStaticImage(
-            testImage,
+            image = testImage,
             at = Vec2(100, 300),
             scale = Vec2(120.0f, 120.0f)
+          )
+
+          canvas.drawParticleEffect(
+            effect = effect1,
+            at = testEffectPosition(canvas)
+          )
+
+          canvas.drawParticleEffect(
+            effect = effect2,
+            at = testEffectPosition(canvas)
           )
 
         }
@@ -172,5 +193,12 @@ object OpenWindowTest extends Glasciia {
           }
     }
 
+  }
+
+  private def testEffectPosition(canvas: Canvas): Vec2[Float] = {
+    val t = canvas.app.timeSinceStart.toMillis
+    val step = 0.05f
+    val n = 5000
+    Vec2(canvas.width / 2.0f + (t % n) * step, canvas.height / 2.0f)
   }
 }

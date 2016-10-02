@@ -15,7 +15,8 @@ case class Canvas(app: App)
     with FrameDrawer
     with TextDrawer
     with StaticImageDrawer
-    with AnimationDrawer {
+    with AnimationDrawer
+    with ParticleEffectDrawer {
 
   def size: Vec2[Int] = app.size
   def width: Int = app.width
