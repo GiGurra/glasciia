@@ -4,6 +4,7 @@ import java.time.Duration
 
 import ApplicationEvent._
 import com.badlogic.gdx.graphics.Color
+import com.badlogic.gdx.graphics.g2d.Animation.PlayMode
 import com.badlogic.gdx.scenes.scene2d.Stage
 import se.gigurra.glasciia.conf.{GlConf, WindowConf}
 import se.gigurra.glasciia.impl.{ApplicationEventListener, LwjglImplementation, ResourceManager}
@@ -42,7 +43,8 @@ object OpenWindowTest extends Glasciia {
     app.addResource("gui:main-menu", new Stage())
     app.addResource("gui:main-menu:visible", true)
 
-    app.addResource("animation:capguy-walk", Animation("animations/capguy-walk.png", nx = 8, ny = 1, dt = Duration.ofMillis(100)))
+    app.addResource("animation:capguy-walk", Animation("animations/capguy-walk.png", nx = 8, ny = 1, dt = Duration.ofMillis(100), mode = PlayMode.LOOP))
+    app.addResource("animation:capguy-walk:instance-0", app.resource[Animation]("animation:capguy-walk").newInstance())
 
     app.handleEvents {
 
@@ -60,6 +62,7 @@ object OpenWindowTest extends Glasciia {
       case Render(canvas) =>
 
         val monospaceFont = app.resource[Font]("font:monospace-default")
+        val walkingDudeAnimation = app.resource[Animation.Instance]("animation:capguy-walk:instance-0")
 
         canvas.setOrtho(
           yDown = false,
@@ -97,6 +100,12 @@ object OpenWindowTest extends Glasciia {
             color = Color.GREEN,
             at = Vec2(400, 400),
             rotate = 180 + app.timeSinceStart.toMillis * 0.360f,
+            scale = 50
+          )
+
+          canvas.drawAnimation(
+            walkingDudeAnimation,
+            at = Vec2(400, 100),
             scale = 50
           )
 

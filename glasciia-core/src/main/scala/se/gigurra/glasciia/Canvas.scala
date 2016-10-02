@@ -13,7 +13,8 @@ case class Canvas(app: App)
     with Cameras
     with ContentDrawer
     with FrameDrawer
-    with TextDrawer {
+    with TextDrawer
+    with AnimationDrawer {
 
   def size: Vec2[Int] = app.size
   def width: Int = app.width
