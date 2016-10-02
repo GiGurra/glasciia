@@ -12,3 +12,4 @@ trait Glasciia
     with VecImplicits
     with EventFilters
     with File2String
+    with ParticleEffectImplicits
