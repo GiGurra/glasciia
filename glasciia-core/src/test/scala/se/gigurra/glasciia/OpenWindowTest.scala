@@ -1,13 +1,16 @@
 package se.gigurra.glasciia
 
+import java.io.FileNotFoundException
 import java.time.Duration
 
 import ApplicationEvent._
+import com.badlogic.gdx.Gdx
 import com.badlogic.gdx.graphics.Color
 import com.badlogic.gdx.graphics.g2d.Animation.PlayMode
 import com.badlogic.gdx.scenes.scene2d.Stage
 import se.gigurra.glasciia.conf.{GlConf, WindowConf}
-import se.gigurra.glasciia.impl.{ApplicationEventListener, LwjglImplementation, ResourceManager}
+import se.gigurra.glasciia.impl.{ApplicationEventListener, LwjglImplementation, Particles, ResourceManager}
+import se.gigurra.glasciia.util.LoadFile
 import se.gigurra.math.Vec2
 
 import scala.util.Random
@@ -47,6 +50,11 @@ object OpenWindowTest extends Glasciia {
     app.addResource("animation:capguy-walk:instance-0", app.resource[Animation]("animation:capguy-walk").newInstance())
     app.addResource("image:test-image", StaticImage("images/test-image.png"))
 
+    app.addResource("particle-effect:test-effect", Particles.standardEffect(
+      effectFile = LoadFile("particle-effects/test-effect.party").getOrElse(throw new FileNotFoundException(s"Could not find test particle effect")),
+      imagesDir = LoadFile("").get
+    ))
+
     app.handleEvents {
 
       case Init(canvas) =>
@@ -65,6 +73,7 @@ object OpenWindowTest extends Glasciia {
         val monospaceFont = app.resource[Font]("font:monospace-default")
         val walkingDudeAnimation = app.resource[Animation.Instance]("animation:capguy-walk:instance-0")
         val testImage = app.resource[StaticImage]("image:test-image")
+
 
         canvas.setOrtho(
           yDown = false,
