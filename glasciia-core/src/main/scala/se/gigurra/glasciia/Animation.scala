@@ -23,6 +23,10 @@ case class Animation(animation: GdxAnimation,
   def newInstance(t0: Instant = Instant.now): Animation.Instance = {
     new Animation.Instance(this, t0)
   }
+
+  def size: Vec2[Int] = frameSize
+  def width: Int = size.x
+  def height: Int = size.y
 }
 
 object Animation {

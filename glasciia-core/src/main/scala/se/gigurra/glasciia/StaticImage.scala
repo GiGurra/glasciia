@@ -13,7 +13,7 @@ case class StaticImage(region: TextureRegion)  {
     StaticImage(new TextureRegion(region, x, y, width, height))
   }
 
-  def subUV(x: Float, y: Float, width: Float, height: Float): StaticImage = {
+  def subFraction(x: Float, y: Float, width: Float, height: Float): StaticImage = {
     val uAbs = u + x * uuSize
     val vAbs = v + y * vvSize
     StaticImage(new TextureRegion(

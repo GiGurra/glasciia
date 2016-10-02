@@ -45,6 +45,7 @@ object OpenWindowTest extends Glasciia {
 
     app.addResource("animation:capguy-walk", Animation("animations/capguy-walk.png", nx = 8, ny = 1, dt = Duration.ofMillis(100), mode = PlayMode.LOOP))
     app.addResource("animation:capguy-walk:instance-0", app.resource[Animation]("animation:capguy-walk").newInstance())
+    app.addResource("image:test-image", StaticImage("images/test-image.png"))
 
     app.handleEvents {
 
@@ -63,6 +64,7 @@ object OpenWindowTest extends Glasciia {
 
         val monospaceFont = app.resource[Font]("font:monospace-default")
         val walkingDudeAnimation = app.resource[Animation.Instance]("animation:capguy-walk:instance-0")
+        val testImage = app.resource[StaticImage]("image:test-image")
 
         canvas.setOrtho(
           yDown = false,
@@ -103,10 +105,48 @@ object OpenWindowTest extends Glasciia {
             scale = 50
           )
 
+          canvas.drawString(
+            char = "UL",
+            font = monospaceFont,
+            color = Color.RED,
+            at = Vec2(0, canvas.height),
+            scale = 50
+          )
+
+          canvas.drawString(
+            char = "LL",
+            font = monospaceFont,
+            color = Color.GREEN,
+            at = Vec2(0, 50),
+            scale = 50
+          )
+
+          canvas.drawString(
+            char = "UR",
+            font = monospaceFont,
+            color = Color.BLUE,
+            at = Vec2(canvas.width - 50 * 2 * monospaceFont.spaceWidth(), canvas.height),
+            scale = 50
+          )
+
+          canvas.drawString(
+            char = "LR",
+            font = monospaceFont,
+            color = Color.BLACK,
+            at = Vec2(canvas.width - 50 * 2 * monospaceFont.spaceWidth(), 50),
+            scale = 50
+          )
+
           canvas.drawAnimation(
             walkingDudeAnimation,
             at = Vec2(400, 100),
             scale = Vec2(120.0f, 200.0f)
+          )
+
+          canvas.drawStaticImage(
+            testImage,
+            at = Vec2(100, 300),
+            scale = Vec2(120.0f, 120.0f)
           )
 
         }

@@ -30,19 +30,27 @@ case class Font(font: BitmapFont, size: Float) extends Glasciia {
     cached
   }
 
-  def widthOf(lines: Seq[String]): Float = {
-    val longestLine = if (lines.nonEmpty) lines.maxBy(_.length) else ""
-    font.getSpaceWidth * longestLine.length.toFloat
+  def spaceWidth(normalized: Boolean = true): Float = {
+    if (normalized) font.getSpaceWidth / size
+    else font.getSpaceWidth
   }
 
-  def heightOf(lines: Seq[String]): Float = {
+  def widthOf(lines: Seq[String], normalized: Boolean = true): Float = {
+    val longestLine = if (lines.nonEmpty) lines.maxBy(_.length) else ""
+    spaceWidth(normalized) * longestLine.length.toFloat
+  }
+
+  def heightOf(lines: Seq[String], normalized: Boolean = true): Float = {
     val numLines = lines.size
     val heightPerLine = size
-      heightPerLine * numLines
+    val out = heightPerLine * numLines
+    if (normalized) out / size
+    else out
   }
 
-  def lineHeight: Float = {
-    font.getLineHeight
+  def lineHeight(normalized: Boolean = true): Float = {
+    if (normalized) font.getLineHeight / size
+    else font.getLineHeight
   }
 
   def close(): Unit = {
