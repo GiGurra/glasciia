@@ -39,17 +39,12 @@ object OpenWindowTest extends Glasciia {
       with LwjglImplementation
 
     app.addResource("font:monospace-default", Font.fromTtfFile("pt-mono/PTM55FT.ttf"))
-    app.addResource("shader:default", Shader.fromLocation("shaders/default-shader.vert", "shaders/default-shader.frag"))
+    app.addResource("gui:main-menu", new Stage())
+    app.addResource("gui:main-menu:visible", true)
 
     app.handleEvents {
 
       case Init(canvas) =>
-
-        app.addResource("gui:main-menu", new Stage())
-        app.addResource("gui:main-menu:visible", true)
-
-        val otherShader = app.resource[ShaderProgram]("shader:default")
-        canvas.batch.setShader(otherShader)
 
         println()
         println("VERTEX SHADER SOURCE")
@@ -111,12 +106,10 @@ object OpenWindowTest extends Glasciia {
 
         input
           .filterIf(mainMenuVisible, mainMenuGui)
-          .foreach {
+          .filter {
             case event: KeyboardEvent =>
               println(s"Input event propageted to world/Not consumed by gui: $event")
           }
-      case event => // mouse, kb, resize, ..
-      //   println(event)
     }
 
   }

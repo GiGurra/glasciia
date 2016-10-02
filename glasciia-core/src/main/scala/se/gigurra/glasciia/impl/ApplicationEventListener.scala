@@ -15,8 +15,8 @@ trait ApplicationEventListener { self: App =>
 
   def events: Observable[ApplicationEvent] = subject
 
-  def handleEvents(f: ApplicationEvent => Unit, crashHandler: Throwable => Unit = App.defaultCrashHandler): Unit = {
-    events.foreach(f, crashHandler)
+  def handleEvents(f: PartialFunction[ApplicationEvent, Unit], crashHandler: Throwable => Unit = App.defaultCrashHandler): Unit = {
+    events.foreach(f.applyOrElse(_, (_: Any) => ()), crashHandler)
   }
 
 
