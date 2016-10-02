@@ -11,6 +11,7 @@ val glasciia_core = module("core").settings(
   libraryDependencies ++= Seq(
     "io.reactivex"          %%  "rxscala"               % "0.26.2",
     "com.badlogicgames.gdx" %   "gdx"                   % "1.9.4",
+    "com.badlogicgames.gdx" %   "gdx-tools"             % "1.9.4",
     "com.badlogicgames.gdx" %   "gdx-box2d"             % "1.9.4",
     "com.badlogicgames.gdx" %   "gdx-freetype"          % "1.9.4",
     "com.badlogicgames.gdx" %   "gdx-backend-lwjgl"     % "1.9.4",
