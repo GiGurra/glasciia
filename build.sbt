@@ -4,14 +4,12 @@ val commonSettings = Seq(
   scalaVersion := "2.11.8",
   scalacOptions ++= Seq("-feature", "-unchecked", "-deprecation"),
   libraryDependencies ++= Seq(
-    "org.scalatest"        %%   "scalatest"             %   "2.2.4"     %   "test",
-    "org.mockito"           %   "mockito-core"          %   "1.10.19"   %   "test"
   )
 )
 
 val glasciia_core = module("core").settings(
   libraryDependencies ++= Seq(
-    "io.reactivex"          % "rxscala_2.11"            % "0.26.2",
+    "io.reactivex"          %%  "rxscala"               % "0.26.2",
     "com.badlogicgames.gdx" %   "gdx"                   % "1.9.4",
     "com.badlogicgames.gdx" %   "gdx-freetype"          % "1.9.4",
     "com.badlogicgames.gdx" %   "gdx-backend-lwjgl"     % "1.9.4",

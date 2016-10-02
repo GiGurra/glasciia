@@ -1,5 +1,6 @@
 package se.gigurra.glasciia
 
+import se.gigurra.glasciia.impl.Controller
 import se.gigurra.math.Vec2
 
 /**
@@ -15,12 +16,20 @@ object ApplicationEvent {
   case class Exit(canvas: Canvas) extends WindowEvent
   case class Resize(newSize: Vec2[Int], canvas: Canvas) extends WindowEvent
 
-  sealed trait KeyboardEvent extends ApplicationEvent
+  sealed trait InputEvent extends ApplicationEvent
+  case object ConsumedEvent extends InputEvent
+
+  sealed trait KeyboardEvent extends InputEvent
   case class CharTyped(char: Char) extends KeyboardEvent
   case class KeyDown(vKey: Int) extends KeyboardEvent
   case class KeyUp(vKey: Int) extends KeyboardEvent
 
-  sealed trait MouseEvent extends ApplicationEvent
+  sealed trait ControllerEvent extends InputEvent { def controller: Controller }
+  case class AxisMoved(controller: Controller, axis: Int, newValue: Float) extends ControllerEvent
+  case class ButtonDown(controller: Controller, button: Int) extends ControllerEvent
+  case class ButtonUp(controller: Controller, button: Int) extends ControllerEvent
+
+  sealed trait MouseEvent extends InputEvent
   case class MouseMove(pos: Vec2[Int]) extends MouseEvent
   case class MouseScrolled(amount: Int) extends MouseEvent
   case class TouchDown(pos: Vec2[Int], ptr: Int, btn: Int) extends MouseEvent

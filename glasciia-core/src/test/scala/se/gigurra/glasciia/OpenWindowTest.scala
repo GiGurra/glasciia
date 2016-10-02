@@ -3,6 +3,7 @@ package se.gigurra.glasciia
 import ApplicationEvent._
 import com.badlogic.gdx.graphics.Color
 import com.badlogic.gdx.graphics.glutils.ShaderProgram
+import com.badlogic.gdx.scenes.scene2d.Stage
 import se.gigurra.glasciia.conf.{GlConf, WindowConf}
 import se.gigurra.glasciia.impl.{ApplicationEventListener, LwjglImplementation, ResourceManager}
 import se.gigurra.glasciia.util.Shader
@@ -13,7 +14,7 @@ import scala.util.Random
 /**
   * Created by johan on 2016-09-26.
   */
-object OpenWindowTest {
+object OpenWindowTest extends Glasciia {
 
   def main(args: Array[String]): Unit = {
 
@@ -37,12 +38,15 @@ object OpenWindowTest {
       with ResourceManager
       with LwjglImplementation
 
-    app.addResource[Font]("font:monospace-default", Font.fromTtfFile("pt-mono/PTM55FT.ttf"), _.close())
-    app.addResource[ShaderProgram]("shader:default", Shader.fromLocation("shaders/default-shader.vert", "shaders/default-shader.frag"), _.dispose())
+    app.addResource("font:monospace-default", Font.fromTtfFile("pt-mono/PTM55FT.ttf"))
+    app.addResource("shader:default", Shader.fromLocation("shaders/default-shader.vert", "shaders/default-shader.frag"))
 
     app.handleEvents {
 
       case Init(canvas) =>
+
+        app.addResource("gui:main-menu", new Stage())
+        app.addResource("gui:main-menu:visible", true)
 
         val otherShader = app.resource[ShaderProgram]("shader:default")
         canvas.batch.setShader(otherShader)
@@ -100,6 +104,17 @@ object OpenWindowTest {
           )
 
         }
+      case input: InputEvent =>
+
+        val mainMenuGui = app.resource[Stage]("gui:main-menu")
+        val mainMenuVisible = app.resource[Boolean]("gui:main-menu:visible")
+
+        input
+          .filterIf(mainMenuVisible, mainMenuGui)
+          .foreach {
+            case event: KeyboardEvent =>
+              println(s"Input event propageted to world/Not consumed by gui: $event")
+          }
       case event => // mouse, kb, resize, ..
       //   println(event)
     }

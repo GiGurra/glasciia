@@ -1,8 +1,12 @@
 package se.gigurra.glasciia
 
-import se.gigurra.glasciia.impl.{ColorImplicits, GLCStyle, VecImplicits}
+import se.gigurra.glasciia.impl.{ColorImplicits, EventFilters, GLCStyle, VecImplicits}
 
 /**
   * Created by johan on 2016-09-28.
   */
-trait Glasciia extends GLCStyle with ColorImplicits with VecImplicits
+trait Glasciia
+  extends GLCStyle
+    with ColorImplicits
+    with VecImplicits
+    with EventFilters
