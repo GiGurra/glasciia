@@ -106,7 +106,7 @@ object OpenWindowTest extends Glasciia {
           canvas.drawAnimation(
             walkingDudeAnimation,
             at = Vec2(400, 100),
-            scale = 50
+            scale = Vec2(120.0f, 200.0f)
           )
 
         }

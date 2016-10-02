@@ -16,7 +16,7 @@ trait TextDrawer { self: ContentDrawer =>
                  scale: Float = 1.0f,
                  rotate: Float = 0.0f,
                  normalizeFontScale: Boolean = true): Unit = {
-    draw(at, if (normalizeFontScale) scale / font.size else scale, rotate) {
+    draw(at, if (normalizeFontScale) Vec2(scale / font.size, scale / font.size) else Vec2(scale, scale), rotate) {
       font.setColor(color)
       font.draw(batch, char, 0.0f, 0.0f)
     }
