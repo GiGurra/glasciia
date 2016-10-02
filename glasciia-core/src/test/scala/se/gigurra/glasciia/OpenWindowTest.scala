@@ -1,12 +1,12 @@
 package se.gigurra.glasciia
 
+import java.time.Duration
+
 import ApplicationEvent._
 import com.badlogic.gdx.graphics.Color
-import com.badlogic.gdx.graphics.glutils.ShaderProgram
 import com.badlogic.gdx.scenes.scene2d.Stage
 import se.gigurra.glasciia.conf.{GlConf, WindowConf}
 import se.gigurra.glasciia.impl.{ApplicationEventListener, LwjglImplementation, ResourceManager}
-import se.gigurra.glasciia.util.Shader
 import se.gigurra.math.Vec2
 
 import scala.util.Random
@@ -41,6 +41,8 @@ object OpenWindowTest extends Glasciia {
     app.addResource("font:monospace-default", Font.fromTtfFile("pt-mono/PTM55FT.ttf"))
     app.addResource("gui:main-menu", new Stage())
     app.addResource("gui:main-menu:visible", true)
+
+    app.addResource("animation:capguy-walk", Animation("animations/capguy-walk.png", nx = 8, ny = 1, dt = Duration.ofMillis(100)))
 
     app.handleEvents {
 
@@ -94,7 +96,7 @@ object OpenWindowTest extends Glasciia {
             font = monospaceFont,
             color = Color.GREEN,
             at = Vec2(400, 400),
-            rotate = 180 + app.time.toFloat * 360.0f,
+            rotate = 180 + app.timeSinceStart.toMillis * 0.360f,
             scale = 50
           )
 

@@ -1,5 +1,7 @@
 package se.gigurra.glasciia
 
+import java.time.{Duration, Instant}
+
 import se.gigurra.glasciia.conf.{GlConf, WindowConf}
 import se.gigurra.math.Vec2
 
@@ -11,12 +13,12 @@ import scala.util.control.NonFatal
 abstract class App(val initialWindowConf: WindowConf,
                    val initialGlConf: GlConf) {
 
-  val tStart = System.nanoTime / 1e9
+  val tStart = Instant.now()
 
   def width: Int
   def height: Int
   def size: Vec2[Int] = Vec2(width, height)
-  def time: Double = System.nanoTime / 1e9 - tStart
+  def timeSinceStart: Duration = Duration.between(tStart, Instant.now)
 }
 
 object App {
