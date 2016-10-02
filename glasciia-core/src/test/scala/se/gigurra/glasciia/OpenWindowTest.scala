@@ -69,7 +69,6 @@ object OpenWindowTest extends Glasciia {
         println(canvas.batch.getShader.getFragmentShaderSource)
         val effect1 = app.resource[ParticleEffect]("particle-effect:test-effect:instance-0")
         effect1.scaleEffect(0.5f)
-        effect1.setPosition(canvas.width / 2.0f, canvas.height / 2.0f)
         effect1.start()
         val effect2 = effect1.copy
         effect2.scaleEffect(0.5f)
