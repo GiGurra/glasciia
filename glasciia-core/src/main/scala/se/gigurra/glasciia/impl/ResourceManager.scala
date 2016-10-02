@@ -10,7 +10,7 @@ import scala.reflect.ClassTag
   */
 trait ResourceManager { self: App =>
 
-  def storeResource[T](path: String, ctor: => T, closer: T => Unit = (x: T) => ()): Unit = executeOnRenderThread {
+  def addResource[T](path: String, ctor: => T, closer: T => Unit = (x: T) => ()): Unit = executeOnRenderThread {
     val resource = ctor
     resources.put(path, Resource(resource, () => closer(resource))).foreach(_.close())
   }

@@ -37,8 +37,8 @@ object OpenWindowTest {
       with ResourceManager
       with LwjglImplementation
 
-    app.storeResource[Font]("font:monospace-default", Font.fromTtfFile("pt-mono/PTM55FT.ttf"), _.close())
-    app.storeResource[ShaderProgram]("shader:default", Shader.fromLocation("shaders/default-shader.vert", "shaders/default-shader.frag"), _.dispose())
+    app.addResource[Font]("font:monospace-default", Font.fromTtfFile("pt-mono/PTM55FT.ttf"), _.close())
+    app.addResource[ShaderProgram]("shader:default", Shader.fromLocation("shaders/default-shader.vert", "shaders/default-shader.frag"), _.dispose())
 
     app.handleEvents {
 
