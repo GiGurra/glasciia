@@ -14,6 +14,7 @@ case class Canvas(app: App)
     with ContentDrawer
     with FrameDrawer
     with TextDrawer
+    with StaticImageDrawer
     with AnimationDrawer {
 
   def size: Vec2[Int] = app.size
