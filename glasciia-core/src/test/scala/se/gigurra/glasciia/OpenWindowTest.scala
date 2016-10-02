@@ -91,7 +91,7 @@ object OpenWindowTest extends Glasciia {
           height = canvas.height
         )
         canvas.drawFrame(
-          background = Color.GRAY,
+          background = Color.DARK_GRAY,
           camPos = Vec2(
             x = canvas.width / 2.0f + Random.nextFloat() * 5.0f,
             y = canvas.height / 2.0f + Random.nextFloat() * 5.0f
