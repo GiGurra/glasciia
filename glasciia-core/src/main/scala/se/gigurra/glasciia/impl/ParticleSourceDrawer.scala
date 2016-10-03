@@ -1,7 +1,6 @@
 package se.gigurra.glasciia.impl
 
 import com.badlogic.gdx.Gdx
-import com.badlogic.gdx.graphics.g2d.ParticleEffect
 import se.gigurra.math.Vec2
 
 /**
@@ -9,11 +8,11 @@ import se.gigurra.math.Vec2
   */
 trait ParticleSourceDrawer { self: ContentDrawer =>
 
-  def drawEffect(effect: ParticleSource, at: Vec2[Float]): Unit = {
-
+  def drawParticles(effect: ParticleSource,
+                    at: Vec2[Float],
+                    rotate: Option[Float] = None): Unit = {
     effect.setPosition(at.x, at.y)
-    // TODO: Implement angling - Prob just by changing the angle of all emitters in the effect
-
+    rotate.foreach(effect.setAngle)
     draw() {
       effect.draw(batch, Gdx.graphics.getDeltaTime)
     }

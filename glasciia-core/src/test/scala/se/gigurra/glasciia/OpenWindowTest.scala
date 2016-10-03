@@ -106,8 +106,6 @@ object OpenWindowTest {
         val effect2 = app.resource[ParticleSource]("particle-effect:test-effect:instance-1")
         val effect3 = app.resource[ParticleSource]("particle-effect:test-effect:instance-2")
 
-        effect3.setAngle(0.0f)
-
         val cameraPos = app.resource[Vec2[Float]]("camera-position")
         val mouseWorldPos = canvas.screen2World(canvas.mousePos)
 
@@ -192,19 +190,20 @@ object OpenWindowTest {
             scale = Vec2(120.0f, 120.0f)
           )
 
-          canvas.drawEffect(
+          canvas.drawParticles(
             effect = effect1,
             at = testEffectPosition(app)
           )
 
-          canvas.drawEffect(
+          canvas.drawParticles(
             effect = effect2,
             at = testEffectPosition(app)
           )
 
-          canvas.drawEffect(
+          canvas.drawParticles(
             effect = effect3,
-            at = mouseWorldPos
+            at = mouseWorldPos,
+            rotate = Some(app.timeSinceStart.toMillis.toFloat / 1000.0f * 180.0f)
           )
 
           canvas.drawText(

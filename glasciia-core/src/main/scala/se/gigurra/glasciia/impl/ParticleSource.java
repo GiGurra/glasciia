@@ -22,6 +22,7 @@ public class ParticleSource implements Disposable {
     private final Array<CollidingParticleEmitter> emitters;
     private BoundingBox bounds;
     private boolean ownsTexture;
+    private float prevAngle = 0.1241387893f;
 
     public ParticleSource(ParticleCollider collider) {
         this.collider = collider;
@@ -39,15 +40,22 @@ public class ParticleSource implements Disposable {
         this(effect.collider, effect);
     }
 
-    public void setAngle(float amountInDegrees) {
-        Array<CollidingParticleEmitter> emitters = getEmitters();
-        for (int i = 0; i < emitters.size; i++) {
-            ParticleEmitter.ScaledNumericValue val = emitters.get(i).getAngle();
-            float amplitude = (val.getHighMax() - val.getHighMin()) / 2f;
-            float h1 = amountInDegrees + amplitude;
-            float h2 = amountInDegrees - amplitude;
-            val.setHigh(h1, h2);
-            val.setLow(amountInDegrees);
+    /**
+     * Taken from http://stackoverflow.com/questions/14839648/libgdx-particleeffect-rotation,
+     * answer by Aebsubis
+     */
+    public void setAngle(float angleDegrees) {
+        if (angleDegrees != prevAngle) {
+            prevAngle = angleDegrees;
+            Array<CollidingParticleEmitter> emitters = getEmitters();
+            for (int i = 0; i < emitters.size; i++) {
+                ParticleEmitter.ScaledNumericValue val = emitters.get(i).getAngle();
+                float amplitude = (val.getHighMax() - val.getHighMin()) / 2f;
+                float h1 = angleDegrees + amplitude;
+                float h2 = angleDegrees - amplitude;
+                val.setHigh(h1, h2);
+                val.setLow(angleDegrees);
+            }
         }
     }
 
