@@ -70,19 +70,9 @@ object OpenWindowTest {
         println("FRAGMENT SHADER SOURCE")
         println("----------------------")
         println(canvas.batch.getShader.getFragmentShaderSource)
-        val effect1 = app.resource[ParticleSource]("particle-effect:test-effect:instance-0")
-        effect1.scaleEffect(0.5f)
-        effect1.start()
-        val effect2 = effect1.copy
-        effect2.scaleEffect(0.5f)
-        effect2.flipY()
-        effect2.start()
-        app.addResource("particle-effect:test-effect:instance-1", effect2)
-        val effect3 = effect2.copy
-        effect3.scaleEffect(0.5f)
-        effect3.flipY()
-        effect3.start()
-        app.addResource("particle-effect:test-effect:instance-2", effect3)
+        val effect1 = app.resource[ParticleSource]("particle-effect:test-effect:instance-0").scaleEffect(0.5f)
+        app.addResource("particle-effect:test-effect:instance-1", effect1.copy.scaleEffect(0.5f).flipY())
+        app.addResource("particle-effect:test-effect:instance-2", effect1.copy.scaleEffect(0.25f))
         app.addResource[Vec2[Float]]("camera-position", Vec2(
           x = canvas.width / 2 + Random.nextFloat() * 5.0f,
           y = canvas.height / 2 + Random.nextFloat() * 5.0f
@@ -203,7 +193,7 @@ object OpenWindowTest {
           canvas.drawParticles(
             effect = effect3,
             at = mouseWorldPos,
-            rotate = Some(app.timeSinceStart.toMillis.toFloat / 1000.0f * 180.0f)
+            angle = Some(app.timeSinceStart.toMillis.toFloat / 1000.0f * 180.0f)
           )
 
           canvas.drawText(

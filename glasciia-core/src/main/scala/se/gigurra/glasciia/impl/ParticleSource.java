@@ -16,13 +16,14 @@ import java.util.HashMap;
  * Created by johan on 2016-10-02.
  * Source copied straight out of ParticleEffect.Java in libgdx.
  * Necessary evil because of libgdx's poor constructor design
+ *
+ * Angle code taken from http://stackoverflow.com/questions/14839648/libgdx-particleeffect-rotation, answer by Aebsubis
  */
 public class ParticleSource implements Disposable {
     private final ParticleCollider collider;
     private final Array<CollidingParticleEmitter> emitters;
     private BoundingBox bounds;
     private boolean ownsTexture;
-    private float prevAngle = 0.1241387893f;
 
     public ParticleSource(ParticleCollider collider) {
         this.collider = collider;
@@ -40,22 +41,28 @@ public class ParticleSource implements Disposable {
         this(effect.collider, effect);
     }
 
-    /**
-     * Taken from http://stackoverflow.com/questions/14839648/libgdx-particleeffect-rotation,
-     * answer by Aebsubis
-     */
-    public void setAngle(float angleDegrees) {
-        if (angleDegrees != prevAngle) {
-            prevAngle = angleDegrees;
-            Array<CollidingParticleEmitter> emitters = getEmitters();
-            for (int i = 0; i < emitters.size; i++) {
-                ParticleEmitter.ScaledNumericValue val = emitters.get(i).getAngle();
-                float amplitude = (val.getHighMax() - val.getHighMin()) / 2f;
-                float h1 = angleDegrees + amplitude;
-                float h2 = angleDegrees - amplitude;
-                val.setHigh(h1, h2);
-                val.setLow(angleDegrees);
-            }
+    public ParticleSource setAngle(float angleDegrees) {
+        if (angleDegrees != getAngle()) {
+            offsetAngle(angleDegrees - getAngle());
+        }
+        return this;
+    }
+
+    public ParticleSource offsetAngle(float deltaDegrees) {
+        Array<CollidingParticleEmitter> emitters = getEmitters();
+        for (int i = 0; i < emitters.size; i++) {
+            ParticleEmitter.ScaledNumericValue val = emitters.get(i).getAngle();
+            val.setHigh(val.getHighMin() + deltaDegrees, val.getHighMax() + deltaDegrees);
+            val.setLow(val.getLowMin() + deltaDegrees, val.getLowMax() + deltaDegrees);
+        }
+        return this;
+    }
+
+    public float getAngle() {
+        if (emitters.size == 0) {
+            return 0.0f;
+        } else {
+            return emitters.get(0).getAngle().getLowMin();
         }
     }
 
@@ -97,28 +104,32 @@ public class ParticleSource implements Disposable {
         return true;
     }
 
-    public void setDuration (int duration) {
+    public ParticleSource setDuration (int duration) {
         for (int i = 0, n = emitters.size; i < n; i++) {
             ParticleEmitter emitter = emitters.get(i);
             emitter.setContinuous(false);
             emitter.duration = duration;
             emitter.durationTimer = 0;
         }
+        return this;
     }
 
-    public void setPosition (float x, float y) {
+    public ParticleSource setPosition (float x, float y) {
         for (int i = 0, n = emitters.size; i < n; i++)
             emitters.get(i).setPosition(x, y);
+        return this;
     }
 
-    public void setFlip (boolean flipX, boolean flipY) {
+    public ParticleSource setFlip (boolean flipX, boolean flipY) {
         for (int i = 0, n = emitters.size; i < n; i++)
             emitters.get(i).setFlip(flipX, flipY);
+        return this;
     }
 
-    public void flipY () {
+    public ParticleSource flipY () {
         for (int i = 0, n = emitters.size; i < n; i++)
             emitters.get(i).flipY();
+        return this;
     }
 
     public Array<CollidingParticleEmitter> getEmitters () {
@@ -236,7 +247,7 @@ public class ParticleSource implements Disposable {
         return bounds;
     }
 
-    public void scaleEffect (float scaleFactor) {
+    public ParticleSource scaleEffect (float scaleFactor) {
         for (ParticleEmitter particleEmitter : emitters) {
             particleEmitter.getScale().setHigh(particleEmitter.getScale().getHighMin() * scaleFactor,
                     particleEmitter.getScale().getHighMax() * scaleFactor);
@@ -274,6 +285,7 @@ public class ParticleSource implements Disposable {
             particleEmitter.getYOffsetValue().setLow(particleEmitter.getYOffsetValue().getLowMin() * scaleFactor,
                     particleEmitter.getYOffsetValue().getLowMax() * scaleFactor);
         }
+        return this;
     }
 
     /** Sets the {@link com.badlogic.gdx.graphics.g2d.ParticleEmitter#setCleansUpBlendFunction(boolean) cleansUpBlendFunction}
@@ -282,10 +294,11 @@ public class ParticleSource implements Disposable {
      * IMPORTANT: If set to false and if the next object to use this Batch expects alpha blending, you are responsible for setting
      * the Batch's blend function to (GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA) before that next object is drawn.
      * @param cleanUpBlendFunction */
-    public void setEmittersCleanUpBlendFunction (boolean cleanUpBlendFunction) {
+    public ParticleSource setEmittersCleanUpBlendFunction (boolean cleanUpBlendFunction) {
         for (int i = 0, n = emitters.size; i < n; i++) {
             emitters.get(i).setCleansUpBlendFunction(cleanUpBlendFunction);
         }
+        return this;
     }
 
 }
