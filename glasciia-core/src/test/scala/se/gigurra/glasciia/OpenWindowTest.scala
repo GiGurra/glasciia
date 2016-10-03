@@ -5,7 +5,7 @@ import java.time.Duration
 
 import ApplicationEvent._
 import com.badlogic.gdx.Gdx
-import com.badlogic.gdx.graphics.Color
+import com.badlogic.gdx.graphics.{Color, Cursor}
 import com.badlogic.gdx.graphics.g2d.Animation.PlayMode
 import com.badlogic.gdx.graphics.g2d.ParticleEffect
 import com.badlogic.gdx.scenes.scene2d.Stage
@@ -88,6 +88,10 @@ object OpenWindowTest {
           y = canvas.height / 2 + Random.nextFloat() * 5.0f
         ))
 
+        app.addResource("cool-cursor", canvas.createCursor(LoadFile("cursors/c2.png").getOrElse(throw new FileNotFoundException(s"Cursor file missing: cursors/c2.png"))))
+
+        canvas.setCursor(app.resource[Cursor]("cool-cursor"))
+
       case Render(canvas) =>
 
         val speed = 100.0f
@@ -103,6 +107,7 @@ object OpenWindowTest {
         val effect3 = app.resource[ParticleEffect]("particle-effect:test-effect:instance-2")
         val cameraPos = app.resource[Vec2[Float]]("camera-position")
         val mouseWorldPos = canvas.screen2World(canvas.mousePos)
+
 
         canvas.setOrtho(
           yDown = false,

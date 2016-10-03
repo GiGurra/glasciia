@@ -10,10 +10,10 @@ import scala.util.Try
   */
 object LoadFile {
   def apply(location: String): Option[FileHandle] = {
-    Try(Gdx.files.internal(location))
-      .orElse(Try(Gdx.files.external(location)))
-      .orElse(Try(Gdx.files.local(location)))
-      .orElse(Try(Gdx.files.absolute(location)))
+    Try(Gdx.files.internal(location)).filter(_.exists())
+      .orElse(Try(Gdx.files.external(location)).filter(_.exists()))
+      .orElse(Try(Gdx.files.local(location)).filter(_.exists()))
+      .orElse(Try(Gdx.files.absolute(location)).filter(_.exists()))
       .toOption
   }
 }
