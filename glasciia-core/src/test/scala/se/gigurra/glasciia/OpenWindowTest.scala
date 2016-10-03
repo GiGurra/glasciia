@@ -102,8 +102,7 @@ object OpenWindowTest {
         val effect2 = app.resource[ParticleEffect]("particle-effect:test-effect:instance-1")
         val effect3 = app.resource[ParticleEffect]("particle-effect:test-effect:instance-2")
         val cameraPos = app.resource[Vec2[Float]]("camera-position")
-        val mouseScreenPos = Vec2(Gdx.input.getX, Gdx.input.getY)
-        val mouseWorldPos = canvas.screen2World(mouseScreenPos)
+        val mouseWorldPos = canvas.screen2World(canvas.mousePos)
 
         canvas.setOrtho(
           yDown = false,
