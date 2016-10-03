@@ -5,7 +5,6 @@ import java.time.Duration
 
 import ApplicationEvent._
 import com.badlogic.gdx.Gdx
-import com.badlogic.gdx.Input.Keys
 import com.badlogic.gdx.graphics.Color
 import com.badlogic.gdx.graphics.g2d.Animation.PlayMode
 import com.badlogic.gdx.graphics.g2d.ParticleEffect
@@ -18,7 +17,6 @@ import se.gigurra.math.Vec2
 
 import scala.util.Random
 import Glasciia._
-import com.badlogic.gdx.math.Vector3
 
 /**
   * Created by johan on 2016-09-26.
