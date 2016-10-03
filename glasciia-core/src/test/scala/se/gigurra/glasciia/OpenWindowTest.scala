@@ -78,6 +78,11 @@ object OpenWindowTest {
         effect2.flipY()
         effect2.start()
         app.addResource("particle-effect:test-effect:instance-1", effect2)
+        val effect3 = effect2.copy
+        effect3.scaleEffect(0.5f)
+        effect3.flipY()
+        effect3.start()
+        app.addResource("particle-effect:test-effect:instance-2", effect3)
         app.addResource[Vec2[Float]]("camera-position", Vec2(
           x = canvas.width / 2 + Random.nextFloat() * 5.0f,
           y = canvas.height / 2 + Random.nextFloat() * 5.0f
@@ -95,7 +100,10 @@ object OpenWindowTest {
         val testImage = app.resource[StaticImage]("image:test-image")
         val effect1 = app.resource[ParticleEffect]("particle-effect:test-effect:instance-0")
         val effect2 = app.resource[ParticleEffect]("particle-effect:test-effect:instance-1")
+        val effect3 = app.resource[ParticleEffect]("particle-effect:test-effect:instance-2")
         val cameraPos = app.resource[Vec2[Float]]("camera-position")
+        val mouseScreenPos = Vec2(Gdx.input.getX, Gdx.input.getY)
+        val mouseWorldPos = canvas.screen2World(mouseScreenPos)
 
         canvas.setOrtho(
           yDown = false,
@@ -185,6 +193,11 @@ object OpenWindowTest {
           canvas.drawEffect(
             effect = effect2,
             at = testEffectPosition(canvas)
+          )
+
+          canvas.drawEffect(
+            effect = effect3,
+            at = mouseWorldPos
           )
 
           canvas.drawText(
