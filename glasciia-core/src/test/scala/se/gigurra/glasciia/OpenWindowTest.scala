@@ -49,9 +49,9 @@ object OpenWindowTest {
     app.addResource("gui:main-menu", new Stage())
     app.addResource("gui:main-menu:visible", true)
 
-    app.addResource("animation:capguy-walk", Animation("animations/capguy-walk.png", nx = 8, ny = 1, dt = Duration.ofMillis(100), mode = PlayMode.LOOP))
+    app.addResource("animation:capguy-walk", Animation(LoadFile("animations/capguy-walk.png").get, nx = 8, ny = 1, dt = Duration.ofMillis(100), mode = PlayMode.LOOP))
     app.addResource("animation:capguy-walk:instance-0", app.resource[Animation]("animation:capguy-walk").newInstance())
-    app.addResource("image:test-image", StaticImage("images/test-image.png"))
+    app.addResource("image:test-image", StaticImage(LoadFile("images/test-image.png").get))
 
     app.addResource("particle-effect:test-effect:instance-0", Particles.standardEffect(
       effectFile = LoadFile("particle-effects/test-effect.party").getOrElse(throw new FileNotFoundException(s"Could not find test particle effect")),

@@ -2,6 +2,7 @@ package se.gigurra.glasciia
 
 import java.io.FileNotFoundException
 
+import com.badlogic.gdx.files.FileHandle
 import com.badlogic.gdx.graphics.Texture
 import com.badlogic.gdx.graphics.g2d.TextureRegion
 import se.gigurra.glasciia.util.LoadFile
@@ -39,9 +40,13 @@ case class StaticImage(region: TextureRegion)  {
 
 object StaticImage {
 
-  def apply(location: String, useMipMaps: Boolean = true): StaticImage = {
-    val fileHandle = LoadFile(location).getOrElse(throw new FileNotFoundException(s"Could not find image file '$location'"))
-    new StaticImage(new TextureRegion(new Texture(fileHandle, useMipMaps)))
+  def apply(fileHandle: FileHandle,
+            useMipMaps: Boolean = true,
+            minFilter: Texture.TextureFilter = Texture.TextureFilter.MipMapLinearLinear,
+            magFilter: Texture.TextureFilter = Texture.TextureFilter.MipMapLinearLinear): StaticImage = {
+    val texture = new Texture(fileHandle, useMipMaps)
+    texture.setFilter(minFilter, magFilter)
+    new StaticImage(new TextureRegion(texture))
   }
 
   import scala.language.implicitConversions

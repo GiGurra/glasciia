@@ -33,16 +33,18 @@ object Animation {
   import scala.language.implicitConversions
   implicit def animToGdxAnim(animation: Animation): GdxAnimation = animation.animation
 
-  def apply(source: String, nx: Int, ny: Int, dt: Duration): Animation = apply(source, nx, ny, dt, PlayMode.NORMAL)
-  def apply(source: String, nx: Int, ny: Int, dt: Duration, mode: PlayMode): Animation = {
-    apply(LoadFile(source).getOrElse(throw new FileNotFoundException(s"Could not find file '$source'")), nx = nx, ny = ny, dt = dt, mode = mode)
-  }
-
-  def apply(source: FileHandle, nx: Int, ny: Int, dt: Duration): Animation = apply(source, nx, ny, dt, PlayMode.NORMAL)
-  def apply(source: FileHandle, nx: Int, ny: Int, dt: Duration, mode: PlayMode ): Animation = {
+  def apply(source: FileHandle,
+            nx: Int,
+            ny: Int,
+            dt: Duration,
+            mode: PlayMode = PlayMode.NORMAL,
+            useMipMaps: Boolean = true,
+            minFilter: Texture.TextureFilter = Texture.TextureFilter.MipMapLinearLinear,
+            magFilter: Texture.TextureFilter = Texture.TextureFilter.MipMapLinearLinear): Animation = {
     require(nx >= 0, s"Animation.apply: nx must be at least 1")
     require(nx >= 0, s"Animation.apply: ny must be at least 1")
-    val texture = new Texture(source)
+    val texture = new Texture(source, useMipMaps)
+    texture.setFilter(minFilter, magFilter)
     val tmp = TextureRegion.split(texture, texture.getWidth/nx, texture.getHeight/ny);              // #10
     val frames = new GdxArray[TextureRegion](nx * ny)
     for (iy <- 0 until ny) {
