@@ -40,7 +40,7 @@ object Animation {
             mode: PlayMode = PlayMode.NORMAL,
             useMipMaps: Boolean = true,
             minFilter: Texture.TextureFilter = Texture.TextureFilter.MipMapLinearLinear,
-            magFilter: Texture.TextureFilter = Texture.TextureFilter.MipMapLinearLinear): Animation = {
+            magFilter: Texture.TextureFilter = Texture.TextureFilter.Linear): Animation = {
     require(nx >= 0, s"Animation.apply: nx must be at least 1")
     require(nx >= 0, s"Animation.apply: ny must be at least 1")
     val texture = new Texture(source, useMipMaps)

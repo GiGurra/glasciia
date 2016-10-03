@@ -43,7 +43,7 @@ object StaticImage {
   def apply(fileHandle: FileHandle,
             useMipMaps: Boolean = true,
             minFilter: Texture.TextureFilter = Texture.TextureFilter.MipMapLinearLinear,
-            magFilter: Texture.TextureFilter = Texture.TextureFilter.MipMapLinearLinear): StaticImage = {
+            magFilter: Texture.TextureFilter = Texture.TextureFilter.Linear): StaticImage = {
     val texture = new Texture(fileHandle, useMipMaps)
     texture.setFilter(minFilter, magFilter)
     new StaticImage(new TextureRegion(texture))
