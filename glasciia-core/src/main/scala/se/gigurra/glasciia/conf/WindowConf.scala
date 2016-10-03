@@ -9,4 +9,5 @@ case class WindowConf(position: Vec2[Int],
                       size: Vec2[Int],
                       resizable: Boolean,
                       maximized: Boolean,
+                      fullscreen: Boolean,
                       title: String)

@@ -55,6 +55,7 @@ trait LwjglImplementation { self: App =>
     vSyncEnabled = vsync
     samples = msaa
     resizable = initialWindowConf.resizable
+    fullscreen = initialWindowConf.fullscreen
   }
   private val startup = Promise[Unit]()
   private val lwjglApplication = new LwjglApplication(new ApplicationListener {

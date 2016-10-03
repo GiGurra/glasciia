@@ -28,8 +28,9 @@ object OpenWindowTest {
     val initialWindowConf = WindowConf(
       position = Vec2(100, 100),
       size = Vec2(640, 480),
-      resizable = false,
+      resizable = true,
       maximized = false,
+      fullscreen = false,
       title = "Test Window"
     )
 
@@ -149,7 +150,7 @@ object OpenWindowTest {
             text = "UL",
             font = monospaceFont,
             color = Color.RED,
-            at = Vec2(0, canvas.height),
+            at = Vec2(0, 480),
             scale = 50
           )
 
@@ -165,7 +166,7 @@ object OpenWindowTest {
             text = "UR",
             font = monospaceFont,
             color = Color.BLUE,
-            at = Vec2(canvas.width - 50 * 2 * monospaceFont.spaceWidth(), canvas.height),
+            at = Vec2(640 - 50 * 2 * monospaceFont.spaceWidth(), 480),
             scale = 50
           )
 
@@ -173,7 +174,7 @@ object OpenWindowTest {
             text = "LR",
             font = monospaceFont,
             color = Color.BLACK,
-            at = Vec2(canvas.width - 50 * 2 * monospaceFont.spaceWidth(), 50),
+            at = Vec2(640 - 50 * 2 * monospaceFont.spaceWidth(), 50),
             scale = 50
           )
 
@@ -191,12 +192,12 @@ object OpenWindowTest {
 
           canvas.drawEffect(
             effect = effect1,
-            at = testEffectPosition(canvas)
+            at = testEffectPosition(app)
           )
 
           canvas.drawEffect(
             effect = effect2,
-            at = testEffectPosition(canvas)
+            at = testEffectPosition(app)
           )
 
           canvas.drawEffect(
@@ -229,10 +230,10 @@ object OpenWindowTest {
 
   }
 
-  private def testEffectPosition(canvas: Canvas): Vec2[Float] = {
-    val t = canvas.app.timeSinceStart.toMillis
+  private def testEffectPosition(app: App): Vec2[Float] = {
+    val t = app.timeSinceStart.toMillis
     val step = 0.05f
     val n = 5000
-    Vec2(canvas.width / 2.0f + (t % n) * step, canvas.height / 2.0f)
+    Vec2(320 + (t % n) * step, 240 / 2.0f)
   }
 }
