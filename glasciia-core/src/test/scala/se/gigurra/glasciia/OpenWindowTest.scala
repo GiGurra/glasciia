@@ -7,7 +7,6 @@ import ApplicationEvent._
 import com.badlogic.gdx.Gdx
 import com.badlogic.gdx.graphics.{Color, Cursor}
 import com.badlogic.gdx.graphics.g2d.Animation.PlayMode
-import com.badlogic.gdx.graphics.g2d.ParticleEffect
 import com.badlogic.gdx.scenes.scene2d.Stage
 import se.gigurra.glasciia.conf.{GlConf, WindowConf}
 import se.gigurra.glasciia.impl.TextDrawer.Anchor
@@ -54,7 +53,7 @@ object OpenWindowTest {
     app.addResource("animation:capguy-walk:instance-0", app.resource[Animation]("animation:capguy-walk").newInstance())
     app.addResource("image:test-image", StaticImage(LoadFile("images/test-image.png").get))
 
-    app.addResource("particle-effect:test-effect:instance-0", Particles.standardEffect(
+    app.addResource("particle-effect:test-effect:instance-0", Particles.standardSource(
       effectFile = LoadFile("particle-effects/test-effect.party").getOrElse(throw new FileNotFoundException(s"Could not find test particle effect")),
       imagesDir = LoadFile("").get
     ))
@@ -71,7 +70,7 @@ object OpenWindowTest {
         println("FRAGMENT SHADER SOURCE")
         println("----------------------")
         println(canvas.batch.getShader.getFragmentShaderSource)
-        val effect1 = app.resource[ParticleEffect]("particle-effect:test-effect:instance-0")
+        val effect1 = app.resource[ParticleSource]("particle-effect:test-effect:instance-0")
         effect1.scaleEffect(0.5f)
         effect1.start()
         val effect2 = effect1.copy
@@ -103,9 +102,12 @@ object OpenWindowTest {
         val monospaceFont = app.resource[Font]("font:monospace-default")
         val walkingDudeAnimation = app.resource[Animation.Instance]("animation:capguy-walk:instance-0")
         val testImage = app.resource[StaticImage]("image:test-image")
-        val effect1 = app.resource[ParticleEffect]("particle-effect:test-effect:instance-0")
-        val effect2 = app.resource[ParticleEffect]("particle-effect:test-effect:instance-1")
-        val effect3 = app.resource[ParticleEffect]("particle-effect:test-effect:instance-2")
+        val effect1 = app.resource[ParticleSource]("particle-effect:test-effect:instance-0")
+        val effect2 = app.resource[ParticleSource]("particle-effect:test-effect:instance-1")
+        val effect3 = app.resource[ParticleSource]("particle-effect:test-effect:instance-2")
+
+        effect3.setAngle(0.0f)
+
         val cameraPos = app.resource[Vec2[Float]]("camera-position")
         val mouseWorldPos = canvas.screen2World(canvas.mousePos)
 

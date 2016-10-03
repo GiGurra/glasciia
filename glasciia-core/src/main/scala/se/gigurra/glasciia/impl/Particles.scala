@@ -15,13 +15,13 @@ object Particles {
     }
   }
 
-  def collidingEffect(collider: ParticleCollider): CollidingParticleEffect = new CollidingParticleEffect(collider)
-  def collidingEffect(collider: ParticleCollider, effectFile: FileHandle, imagesDir: FileHandle): CollidingParticleEffect = collidingEffect(collider).mutate(_.load(effectFile, imagesDir))
-  def collidingEffect(collider: ParticleCollider, effectFile: FileHandle, atlas: TextureAtlas): CollidingParticleEffect = collidingEffect(collider).mutate(_.load(effectFile, atlas))
-  def collidingEffect(collider: ParticleCollider, effectFile: FileHandle, atlas: TextureAtlas, atlasPrefix: String): CollidingParticleEffect = collidingEffect(collider).mutate(_.load(effectFile, atlas, atlasPrefix))
+  def collidingSource(collider: ParticleCollider): ParticleSource = new ParticleSource(collider)
+  def collidingSource(collider: ParticleCollider, effectFile: FileHandle, imagesDir: FileHandle): ParticleSource = collidingSource(collider).mutate(_.load(effectFile, imagesDir))
+  def collidingSource(collider: ParticleCollider, effectFile: FileHandle, atlas: TextureAtlas): ParticleSource = collidingSource(collider).mutate(_.load(effectFile, atlas))
+  def collidingSource(collider: ParticleCollider, effectFile: FileHandle, atlas: TextureAtlas, atlasPrefix: String): ParticleSource = collidingSource(collider).mutate(_.load(effectFile, atlas, atlasPrefix))
 
-  def standardEffect(): ParticleEffect = new ParticleEffect()
-  def standardEffect(effectFile: FileHandle, imagesDir: FileHandle): ParticleEffect = standardEffect().mutate(_.load(effectFile, imagesDir))
-  def standardEffect(effectFile: FileHandle, atlas: TextureAtlas): ParticleEffect = standardEffect().mutate(_.load(effectFile, atlas))
-  def standardEffect(effectFile: FileHandle, atlas: TextureAtlas, atlasPrefix: String): ParticleEffect = standardEffect().mutate(_.load(effectFile, atlas, atlasPrefix))
+  def standardSource(): ParticleSource = collidingSource(ParticleCollider.NO_COLLISIONS)
+  def standardSource(effectFile: FileHandle, imagesDir: FileHandle): ParticleSource = standardSource().mutate(_.load(effectFile, imagesDir))
+  def standardSource(effectFile: FileHandle, atlas: TextureAtlas): ParticleSource = standardSource().mutate(_.load(effectFile, atlas))
+  def standardSource(effectFile: FileHandle, atlas: TextureAtlas, atlasPrefix: String): ParticleSource = standardSource().mutate(_.load(effectFile, atlas, atlasPrefix))
 }

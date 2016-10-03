@@ -17,26 +17,38 @@ import java.util.HashMap;
  * Source copied straight out of ParticleEffect.Java in libgdx.
  * Necessary evil because of libgdx's poor constructor design
  */
-public class CollidingParticleEffect implements Disposable {
+public class ParticleSource implements Disposable {
     private final ParticleCollider collider;
     private final Array<CollidingParticleEmitter> emitters;
     private BoundingBox bounds;
     private boolean ownsTexture;
 
-    public CollidingParticleEffect (ParticleCollider collider) {
+    public ParticleSource(ParticleCollider collider) {
         this.collider = collider;
         emitters = new Array<>(8);
     }
 
-    public CollidingParticleEffect (ParticleCollider collider, CollidingParticleEffect effect) {
+    public ParticleSource(ParticleCollider collider, ParticleSource effect) {
         this.collider = collider;
         emitters = new Array<>(true, effect.emitters.size);
         for (int i = 0, n = effect.emitters.size; i < n; i++)
             emitters.add(new CollidingParticleEmitter(collider, effect.emitters.get(i)));
     }
 
-    public CollidingParticleEffect (CollidingParticleEffect effect) {
+    public ParticleSource(ParticleSource effect) {
         this(effect.collider, effect);
+    }
+
+    public void setAngle(float amountInDegrees) {
+        Array<CollidingParticleEmitter> emitters = getEmitters();
+        for (int i = 0; i < emitters.size; i++) {
+            ParticleEmitter.ScaledNumericValue val = emitters.get(i).getAngle();
+            float amplitude = (val.getHighMax() - val.getHighMin()) / 2f;
+            float h1 = amountInDegrees + amplitude;
+            float h2 = amountInDegrees - amplitude;
+            val.setHigh(h1, h2);
+            val.setLow(amountInDegrees);
+        }
     }
 
     public void start () {

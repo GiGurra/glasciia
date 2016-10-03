@@ -14,7 +14,7 @@ object Glasciia
     with VecImplicits
     with EventFilters
     with File2String
-    with ParticleEffectImplicits
+    with ParticleSourceImplicits
     with ImageResizing {
 
 }
