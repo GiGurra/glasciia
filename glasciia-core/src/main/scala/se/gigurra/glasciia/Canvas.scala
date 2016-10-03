@@ -7,8 +7,7 @@ import se.gigurra.math.Vec2
   * Created by johan on 2016-09-29.
   */
 case class Canvas(app: App)
-  extends Glasciia
-    with DefaultShader
+    extends DefaultShader
     with Batcher
     with Cameras
     with ContentDrawer

@@ -4,11 +4,12 @@ import java.io.FileNotFoundException
 
 import com.badlogic.gdx.graphics.glutils.ShaderProgram
 import se.gigurra.glasciia.Glasciia
+import Glasciia._
 
 /**
   * Created by johan on 2016-10-01.
   */
-object Shader extends Glasciia {
+object Shader {
 
   def fromLocation(vertexShader: String, fragmentShader: String): ShaderProgram = {
     fromSourceCode(

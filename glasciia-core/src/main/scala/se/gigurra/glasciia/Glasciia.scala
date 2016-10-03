@@ -5,7 +5,7 @@ import se.gigurra.glasciia.impl._
 /**
   * Created by johan on 2016-09-28.
   */
-trait Glasciia
+object Glasciia
   extends GLCStyle
     with ColorImplicits
     with se.gigurra.math.VecImplicits

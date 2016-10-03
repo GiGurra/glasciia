@@ -9,8 +9,9 @@ import com.badlogic.gdx.graphics.g2d.{BitmapFont, BitmapFontCache, GlyphLayout, 
 import com.badlogic.gdx.utils.Align
 import se.gigurra.glasciia.util.LoadFile
 import se.gigurra.math.Vec2
+import Glasciia._
 
-case class Font(font: BitmapFont, size: Float) extends Glasciia {
+case class Font(font: BitmapFont, size: Float) {
 
   def preload(str: CharSequence,
               at: Vec2[Float] = Vec2[Float](),
@@ -33,11 +34,6 @@ case class Font(font: BitmapFont, size: Float) extends Glasciia {
   def spaceWidth(normalized: Boolean = true): Float = {
     if (normalized) font.getSpaceWidth / size
     else font.getSpaceWidth
-  }
-
-  def widthOf(lines: Seq[String], normalized: Boolean = true): Float = {
-    val longestLine = if (lines.nonEmpty) lines.maxBy(_.length) else ""
-    spaceWidth(normalized) * longestLine.length.toFloat
   }
 
   def heightOf(lines: Seq[String], normalized: Boolean = true): Float = {

@@ -4,21 +4,26 @@ import java.io.FileNotFoundException
 import java.time.Duration
 
 import ApplicationEvent._
+import com.badlogic.gdx.Gdx
+import com.badlogic.gdx.Input.Keys
 import com.badlogic.gdx.graphics.Color
 import com.badlogic.gdx.graphics.g2d.Animation.PlayMode
 import com.badlogic.gdx.graphics.g2d.ParticleEffect
 import com.badlogic.gdx.scenes.scene2d.Stage
 import se.gigurra.glasciia.conf.{GlConf, WindowConf}
-import se.gigurra.glasciia.impl.{ApplicationEventListener, LwjglImplementation, Particles, ResourceManager}
+import se.gigurra.glasciia.impl.TextDrawer.Anchor
+import se.gigurra.glasciia.impl._
 import se.gigurra.glasciia.util.LoadFile
 import se.gigurra.math.Vec2
 
 import scala.util.Random
+import Glasciia._
+import com.badlogic.gdx.math.Vector3
 
 /**
   * Created by johan on 2016-09-26.
   */
-object OpenWindowTest extends Glasciia {
+object OpenWindowTest {
 
   def main(args: Array[String]): Unit = {
 
@@ -75,15 +80,24 @@ object OpenWindowTest extends Glasciia {
         effect2.flipY()
         effect2.start()
         app.addResource("particle-effect:test-effect:instance-1", effect2)
-
+        app.addResource[Vec2[Float]]("camera-position", Vec2(
+          x = canvas.width / 2 + Random.nextFloat() * 5.0f,
+          y = canvas.height / 2 + Random.nextFloat() * 5.0f
+        ))
 
       case Render(canvas) =>
+
+        val speed = 100.0f
+        val dr = Pov4W().dir.toFloat * Gdx.graphics.getDeltaTime * speed
+        val prevCameraPos = app.resource[Vec2[Float]]("camera-position")
+        app.addResource("camera-position", Vec2[Float](prevCameraPos.x + dr.x, prevCameraPos.y + dr.y))
 
         val monospaceFont = app.resource[Font]("font:monospace-default")
         val walkingDudeAnimation = app.resource[Animation.Instance]("animation:capguy-walk:instance-0")
         val testImage = app.resource[StaticImage]("image:test-image")
         val effect1 = app.resource[ParticleEffect]("particle-effect:test-effect:instance-0")
         val effect2 = app.resource[ParticleEffect]("particle-effect:test-effect:instance-1")
+        val cameraPos = app.resource[Vec2[Float]]("camera-position")
 
         canvas.setOrtho(
           yDown = false,
@@ -92,13 +106,10 @@ object OpenWindowTest extends Glasciia {
         )
         canvas.drawFrame(
           background = Color.DARK_GRAY,
-          camPos = Vec2(
-            x = canvas.width / 2.0f + Random.nextFloat() * 5.0f,
-            y = canvas.height / 2.0f + Random.nextFloat() * 5.0f
-          )) {
+          camPos = cameraPos) {
 
-          canvas.drawString(
-            char = "A",
+          canvas.drawText(
+            text = "A",
             font = monospaceFont,
             color = Color.GREEN,
             at = Vec2(140, 140),
@@ -106,8 +117,8 @@ object OpenWindowTest extends Glasciia {
             scale = 50
           )
 
-          canvas.drawString(
-            char = "B",
+          canvas.drawText(
+            text = "B",
             font = monospaceFont,
             color = Color.GREEN,
             at = Vec2(240, 240),
@@ -115,8 +126,8 @@ object OpenWindowTest extends Glasciia {
             scale = 50
           )
 
-          canvas.drawString(
-            char = "CDEFG",
+          canvas.drawText(
+            text = "CDEFG",
             font = monospaceFont,
             color = Color.GREEN,
             at = Vec2(400, 400),
@@ -124,32 +135,32 @@ object OpenWindowTest extends Glasciia {
             scale = 50
           )
 
-          canvas.drawString(
-            char = "UL",
+          canvas.drawText(
+            text = "UL",
             font = monospaceFont,
             color = Color.RED,
             at = Vec2(0, canvas.height),
             scale = 50
           )
 
-          canvas.drawString(
-            char = "LL",
+          canvas.drawText(
+            text = "LL",
             font = monospaceFont,
             color = Color.GREEN,
             at = Vec2(0, 50),
             scale = 50
           )
 
-          canvas.drawString(
-            char = "UR",
+          canvas.drawText(
+            text = "UR",
             font = monospaceFont,
             color = Color.BLUE,
             at = Vec2(canvas.width - 50 * 2 * monospaceFont.spaceWidth(), canvas.height),
             scale = 50
           )
 
-          canvas.drawString(
-            char = "LR",
+          canvas.drawText(
+            text = "LR",
             font = monospaceFont,
             color = Color.BLACK,
             at = Vec2(canvas.width - 50 * 2 * monospaceFont.spaceWidth(), 50),
@@ -176,6 +187,15 @@ object OpenWindowTest extends Glasciia {
           canvas.drawEffect(
             effect = effect2,
             at = testEffectPosition(canvas)
+          )
+
+          canvas.drawText(
+            text = "CAM",
+            font = monospaceFont,
+            color = Color.WHITE,
+            anchor = Anchor.CC,
+            scale = 25,
+            at = cameraPos
           )
 
         }

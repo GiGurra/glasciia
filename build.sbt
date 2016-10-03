@@ -18,7 +18,7 @@ val glasciia_core = module("core").settings(
     "com.badlogicgames.gdx" %   "gdx-platform"          % "1.9.4" classifier "natives-desktop",
     "com.badlogicgames.gdx" %   "gdx-freetype-platform" % "1.9.4" classifier "natives-desktop"
   )
-).dependsOn(uri("git://github.com/gigurra/scala-libgurra.git#0.1.7"))
+).dependsOn(uri("git://github.com/gigurra/scala-libgurra.git#0.1.9"))
 
 val glasciia = aggregate(glasciia_core)
 

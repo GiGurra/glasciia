@@ -5,11 +5,12 @@ import com.badlogic.gdx.graphics.{Camera, Color}
 import se.gigurra.glasciia.Glasciia
 import se.gigurra.glasciia.math.Matrix4Stack
 import se.gigurra.math.Vec2
+import Glasciia._
 
 /**
   * Created by johan on 2016-10-01.
   */
-trait FrameDrawer extends Glasciia {
+trait FrameDrawer {
 
   def batch: Batch
   def camera: Camera
