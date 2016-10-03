@@ -22,4 +22,10 @@ trait Cameras {
     camera.unproject(out, 0.0f, 0.0f, camera.viewportWidth, camera.viewportHeight)
     Vec2[Float](out.x, out.y)
   }
+
+  def world2Screen(screenPos: Vec2[Float]): Vec2[Int] = {
+    val out = new Vector3(screenPos.x, screenPos.y, 0.0f)
+    camera.project(out, 0.0f, 0.0f, camera.viewportWidth, camera.viewportHeight)
+    Vec2[Int](out.x.toInt, out.y.toInt)
+  }
 }
