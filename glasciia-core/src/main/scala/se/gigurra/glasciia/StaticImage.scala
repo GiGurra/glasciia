@@ -1,11 +1,8 @@
 package se.gigurra.glasciia
 
-import java.io.FileNotFoundException
-
 import com.badlogic.gdx.files.FileHandle
 import com.badlogic.gdx.graphics.Texture
 import com.badlogic.gdx.graphics.g2d.TextureRegion
-import se.gigurra.glasciia.util.LoadFile
 import se.gigurra.math.Vec2
 
 case class StaticImage(region: TextureRegion)  {

@@ -1,15 +1,16 @@
 package se.gigurra.glasciia
 
 import java.io.FileNotFoundException
+
 import com.badlogic.gdx.graphics.Color
 import com.badlogic.gdx.graphics.Texture.TextureFilter
 import com.badlogic.gdx.graphics.g2d.freetype.FreeTypeFontGenerator
 import com.badlogic.gdx.graphics.g2d.freetype.FreeTypeFontGenerator.FreeTypeFontParameter
 import com.badlogic.gdx.graphics.g2d.{BitmapFont, BitmapFontCache, GlyphLayout, PixmapPacker}
 import com.badlogic.gdx.utils.Align
-import se.gigurra.glasciia.util.LoadFile
 import se.gigurra.math.Vec2
 import Glasciia._
+import com.badlogic.gdx.files.FileHandle
 
 case class Font(font: BitmapFont, size: Float)  {
 
@@ -61,7 +62,7 @@ object Font {
    * See https://github.com/libgdx/libgdx/wiki/Gdx-freetype
    * For parameter descriptions
    */
-  def fromTtfFile(filePath: String,
+  def fromTtfFile(source: FileHandle,
                   size: Int = 20,
                   color: Color = Color.WHITE,
                   borderWidth: Float = 0.0f,
@@ -78,7 +79,7 @@ object Font {
                   minFilter: TextureFilter = TextureFilter.Linear,
                   magFilter: TextureFilter = TextureFilter.Linear): Font = {
 
-    val generator = new FreeTypeFontGenerator(LoadFile(filePath).getOrElse(throw new FileNotFoundException(s"Could not find font file '$filePath'")))
+    val generator = new FreeTypeFontGenerator(source)
     val parameter = new FreeTypeFontParameter()
 
     parameter.size = size

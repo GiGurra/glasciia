@@ -1,6 +1,5 @@
 package se.gigurra.glasciia
 
-import java.io.FileNotFoundException
 import java.time.{Duration, Instant}
 
 import com.badlogic.gdx.files.FileHandle
@@ -8,7 +7,6 @@ import com.badlogic.gdx.graphics.Texture
 import com.badlogic.gdx.graphics.g2d.Animation.PlayMode
 import com.badlogic.gdx.graphics.g2d.{TextureRegion, Animation => GdxAnimation}
 import com.badlogic.gdx.utils.{Array => GdxArray}
-import se.gigurra.glasciia.util.LoadFile
 import se.gigurra.math.Vec2
 
 /**
