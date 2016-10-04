@@ -47,11 +47,11 @@ object OpenWindowTest {
     app.addResource("gui:main-menu", new Stage())
     app.addResource("gui:main-menu:visible", true)
 
-    app.addResource("animation:capguy-walk", Animation("animations/capguy-walk.png", nx = 8, ny = 1, dt = Duration.ofMillis(100), mode = PlayMode.LOOP))
+    app.addResource("animation:capguy-walk", Animation.fromFile("animations/capguy-walk.png", nx = 8, ny = 1, dt = Duration.ofMillis(100), mode = PlayMode.LOOP))
     app.addResource("animation:capguy-walk:instance-0", app.resource[Animation]("animation:capguy-walk").newInstance())
-    app.addResource("image:test-image", StaticImage("images/test-image.png"))
+    app.addResource("image:test-image", StaticImage.fromFile("images/test-image.png"))
 
-    app.addResource("particle-effect:test-effect:instance-0", Particles.standardSource("particle-effects/test-effect.party", ""))
+    app.addResource("particle-effect:test-effect:instance-0", Particles.standard("particle-effects/test-effect.party", ""))
 
     app.handleEvents {
 

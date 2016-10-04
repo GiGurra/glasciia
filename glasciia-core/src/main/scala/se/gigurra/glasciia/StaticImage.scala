@@ -37,13 +37,17 @@ case class StaticImage(region: TextureRegion)  {
 
 object StaticImage {
 
-  def apply(fileHandle: FileHandle,
-            useMipMaps: Boolean = true,
-            minFilter: Texture.TextureFilter = Texture.TextureFilter.MipMapLinearLinear,
-            magFilter: Texture.TextureFilter = Texture.TextureFilter.Linear): StaticImage = {
+  def fromFile(fileHandle: FileHandle,
+               useMipMaps: Boolean = true,
+               minFilter: Texture.TextureFilter = Texture.TextureFilter.MipMapLinearLinear,
+               magFilter: Texture.TextureFilter = Texture.TextureFilter.Linear): StaticImage = {
     val texture = new Texture(fileHandle, useMipMaps)
     texture.setFilter(minFilter, magFilter)
-    new StaticImage(new TextureRegion(texture))
+    fromRegion(new TextureRegion(texture))
+  }
+
+  def fromRegion(region: TextureRegion): StaticImage = {
+    new StaticImage(region)
   }
 
   import scala.language.implicitConversions
