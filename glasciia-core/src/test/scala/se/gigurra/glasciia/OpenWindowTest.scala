@@ -1,18 +1,19 @@
 package se.gigurra.glasciia
 
 import java.time.Duration
+
 import AppEvent._
 import com.badlogic.gdx.Gdx
 import com.badlogic.gdx.graphics.{Color, Cursor}
 import com.badlogic.gdx.graphics.g2d.Animation.PlayMode
 import com.badlogic.gdx.scenes.scene2d.Stage
-import se.gigurra.glasciia.conf.GlConf
 import se.gigurra.glasciia.impl.TextDrawer.Anchor
 import se.gigurra.glasciia.impl._
 import se.gigurra.math.Vec2
 
 import scala.util.Random
 import Glasciia._
+import se.gigurra.glasciia.App.{GlConf, WindowConf}
 
 /**
   * Created by johan on 2016-09-26.

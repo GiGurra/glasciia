@@ -3,7 +3,6 @@ package se.gigurra.glasciia
 import java.time.{Duration, Instant}
 
 import se.gigurra.glasciia.App.{GlConf, WindowConf}
-import se.gigurra.glasciia.conf.GlConf
 import se.gigurra.math.Vec2
 
 import scala.util.control.NonFatal
