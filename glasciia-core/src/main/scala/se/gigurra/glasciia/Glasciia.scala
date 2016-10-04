@@ -13,6 +13,7 @@ object Glasciia
     with EventFilters
     with FileReadImplicits
     with ParticleSourceImplicits
-    with ImageResizing {
+    with ImageResizing
+    with TextureAtlasCreation {
 
 }

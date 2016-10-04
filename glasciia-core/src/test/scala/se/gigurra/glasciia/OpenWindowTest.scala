@@ -1,5 +1,6 @@
 package se.gigurra.glasciia
 
+import java.io.File
 import java.time.Duration
 
 import AppEvent._
@@ -13,6 +14,7 @@ import se.gigurra.math.Vec2
 
 import scala.util.Random
 import Glasciia._
+import com.badlogic.gdx.graphics.g2d.TextureAtlas
 import se.gigurra.glasciia.App.{GlConf, WindowConf}
 
 /**
@@ -43,12 +45,23 @@ object OpenWindowTest {
       with ResourceManager
       with LwjglImplementation
 
+    val texturePackSettings = readTexturePackSettings("test-atlast-cfg.json")
+    val inputFolder = new File(getClass.getClassLoader.getResource("test-atlast-cfg.json").getFile).getAbsoluteFile.getParent
+    val outputFolder = LoadFile("target/").get.file().getAbsolutePath
+
+    packFilesIntoTextureAtlas(texturePackSettings, inputDir = inputFolder, outputDir = outputFolder, "test-atlast.atlas")
+
+    println(s"$inputFolder -> $outputFolder")
+
+    app.addResource("texture-atlas", new TextureAtlas(s"$outputFolder/test-atlast.atlas", outputFolder))
+
     app.addResource("font:monospace-default", Font.fromTtfFile("pt-mono/PTM55FT.ttf"))
     app.addResource("gui:main-menu", new Stage())
     app.addResource("gui:main-menu:visible", true)
 
     app.addResource("animation:capguy-walk", Animation.fromFile("animations/capguy-walk.png", nx = 8, ny = 1, dt = Duration.ofMillis(100), mode = PlayMode.LOOP))
-    app.addResource("animation:capguy-walk:instance-0", app.resource[Animation]("animation:capguy-walk").newInstance())
+    app.addResource("animation:capguy-walk-from-atlas", Animation.fromRegion(app.resource[TextureAtlas]("texture-atlas").findRegion("animations/capguy-walk"), nx = 8, ny = 1, dt = Duration.ofMillis(100), mode = PlayMode.LOOP))
+    app.addResource("animation:capguy-walk:instance-0", app.resource[Animation]("animation:capguy-walk-from-atlas").newInstance())
     app.addResource("image:test-image", StaticImage.fromFile("images/test-image.png"))
 
     app.addResource("particle-effect:test-effect:instance-0", Particles.standard("particle-effects/test-effect.party", ""))
