@@ -6,7 +6,7 @@ import com.badlogic.gdx.Gdx
 import com.badlogic.gdx.graphics.{Color, Cursor}
 import com.badlogic.gdx.graphics.g2d.Animation.PlayMode
 import com.badlogic.gdx.scenes.scene2d.Stage
-import se.gigurra.glasciia.conf.{GlConf, WindowConf}
+import se.gigurra.glasciia.conf.GlConf
 import se.gigurra.glasciia.impl.TextDrawer.Anchor
 import se.gigurra.glasciia.impl._
 import se.gigurra.math.Vec2

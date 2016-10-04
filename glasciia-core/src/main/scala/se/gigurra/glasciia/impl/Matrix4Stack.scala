@@ -1,4 +1,4 @@
-package se.gigurra.glasciia.math
+package se.gigurra.glasciia.impl
 
 import com.badlogic.gdx.graphics.Texture
 import com.badlogic.gdx.graphics.g2d.GlyphLayout

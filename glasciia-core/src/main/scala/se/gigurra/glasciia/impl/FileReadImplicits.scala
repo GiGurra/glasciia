@@ -4,7 +4,7 @@ import java.io.FileNotFoundException
 import java.nio.charset.{Charset, StandardCharsets}
 
 import com.badlogic.gdx.files.FileHandle
-import se.gigurra.glasciia.util.LoadFile
+import LoadFile
 
 import scala.io.Codec
 import scala.language.implicitConversions

@@ -1,4 +1,4 @@
-package se.gigurra.glasciia.math
+package se.gigurra.glasciia.impl
 
 object NormalizeDegrees {
 

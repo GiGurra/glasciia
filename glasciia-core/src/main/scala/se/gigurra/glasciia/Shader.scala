@@ -1,10 +1,10 @@
-package se.gigurra.glasciia.util
+package se.gigurra.glasciia
 
 import java.io.FileNotFoundException
 
 import com.badlogic.gdx.graphics.glutils.ShaderProgram
-import se.gigurra.glasciia.Glasciia
-import Glasciia._
+import se.gigurra.glasciia.Glasciia._
+import se.gigurra.glasciia.impl.LoadFile
 
 /**
   * Created by johan on 2016-10-01.

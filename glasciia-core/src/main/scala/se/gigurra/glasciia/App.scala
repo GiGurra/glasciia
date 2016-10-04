@@ -2,7 +2,8 @@ package se.gigurra.glasciia
 
 import java.time.{Duration, Instant}
 
-import se.gigurra.glasciia.conf.{GlConf, WindowConf}
+import se.gigurra.glasciia.App.{GlConf, WindowConf}
+import se.gigurra.glasciia.conf.GlConf
 import se.gigurra.math.Vec2
 
 import scala.util.control.NonFatal
@@ -22,6 +23,7 @@ abstract class App(val initialWindowConf: WindowConf,
 }
 
 object App {
+
   def defaultCrashHandler(err: Throwable): Unit = {
     err match {
       case NonFatal(e) =>
@@ -33,4 +35,18 @@ object App {
         System.exit(2)
     }
   }
+
+  case class GlConf(vsync: Boolean = true,
+                    msaa: Int = 4,
+                    foregroundFpsCap: Option[Int] = None,
+                    backgroundFpsCap: Option[Int] = Some(30)) {
+
+  }
+
+  case class WindowConf(position: Vec2[Int],
+                        size: Vec2[Int],
+                        resizable: Boolean,
+                        maximized: Boolean,
+                        fullscreen: Boolean,
+                        title: String)
 }

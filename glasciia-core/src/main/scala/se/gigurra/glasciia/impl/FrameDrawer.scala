@@ -3,7 +3,7 @@ package se.gigurra.glasciia.impl
 import com.badlogic.gdx.graphics.g2d.Batch
 import com.badlogic.gdx.graphics.{Camera, Color}
 import se.gigurra.glasciia.Glasciia
-import se.gigurra.glasciia.math.Matrix4Stack
+import Matrix4Stack
 import se.gigurra.math.Vec2
 import Glasciia._
 

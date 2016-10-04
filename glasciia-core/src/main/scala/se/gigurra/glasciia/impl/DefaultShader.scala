@@ -1,6 +1,6 @@
 package se.gigurra.glasciia.impl
 
-import se.gigurra.glasciia.util.Shader
+import se.gigurra.glasciia.Shader
 
 /**
   * Created by johan on 2016-10-01.

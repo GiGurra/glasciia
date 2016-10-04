@@ -1,4 +1,4 @@
-package se.gigurra.glasciia.util
+package se.gigurra.glasciia.impl
 
 import com.badlogic.gdx.Gdx
 import com.badlogic.gdx.files.FileHandle

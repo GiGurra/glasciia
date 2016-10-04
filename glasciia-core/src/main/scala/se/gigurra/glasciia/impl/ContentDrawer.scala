@@ -1,7 +1,7 @@
 package se.gigurra.glasciia.impl
 
 import com.badlogic.gdx.graphics.g2d.Batch
-import se.gigurra.glasciia.math.Matrix4Stack
+import Matrix4Stack
 import se.gigurra.math.{One, Vec2, Zero}
 
 /**
