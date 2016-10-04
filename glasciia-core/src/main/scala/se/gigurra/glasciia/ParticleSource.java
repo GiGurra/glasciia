@@ -1,4 +1,4 @@
-package se.gigurra.glasciia.impl;
+package se.gigurra.glasciia;
 
 import com.badlogic.gdx.files.FileHandle;
 import com.badlogic.gdx.graphics.Texture;
@@ -8,6 +8,7 @@ import com.badlogic.gdx.utils.Array;
 import com.badlogic.gdx.utils.Disposable;
 import com.badlogic.gdx.utils.GdxRuntimeException;
 import com.badlogic.gdx.utils.StreamUtils;
+import se.gigurra.glasciia.impl.CollidingParticleEmitter;
 
 import java.io.*;
 import java.util.HashMap;

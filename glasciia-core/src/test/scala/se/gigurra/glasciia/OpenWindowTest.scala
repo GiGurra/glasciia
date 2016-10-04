@@ -1,9 +1,7 @@
 package se.gigurra.glasciia
 
-import java.io.FileNotFoundException
 import java.time.Duration
-
-import ApplicationEvent._
+import AppEvent._
 import com.badlogic.gdx.Gdx
 import com.badlogic.gdx.graphics.{Color, Cursor}
 import com.badlogic.gdx.graphics.g2d.Animation.PlayMode
@@ -11,7 +9,6 @@ import com.badlogic.gdx.scenes.scene2d.Stage
 import se.gigurra.glasciia.conf.{GlConf, WindowConf}
 import se.gigurra.glasciia.impl.TextDrawer.Anchor
 import se.gigurra.glasciia.impl._
-import se.gigurra.glasciia.util.LoadFile
 import se.gigurra.math.Vec2
 
 import scala.util.Random
@@ -49,14 +46,11 @@ object OpenWindowTest {
     app.addResource("gui:main-menu", new Stage())
     app.addResource("gui:main-menu:visible", true)
 
-    app.addResource("animation:capguy-walk", Animation(LoadFile("animations/capguy-walk.png").get, nx = 8, ny = 1, dt = Duration.ofMillis(100), mode = PlayMode.LOOP))
+    app.addResource("animation:capguy-walk", Animation("animations/capguy-walk.png", nx = 8, ny = 1, dt = Duration.ofMillis(100), mode = PlayMode.LOOP))
     app.addResource("animation:capguy-walk:instance-0", app.resource[Animation]("animation:capguy-walk").newInstance())
-    app.addResource("image:test-image", StaticImage(LoadFile("images/test-image.png").get))
+    app.addResource("image:test-image", StaticImage("images/test-image.png"))
 
-    app.addResource("particle-effect:test-effect:instance-0", Particles.standardSource(
-      effectFile = LoadFile("particle-effects/test-effect.party").getOrElse(throw new FileNotFoundException(s"Could not find test particle effect")),
-      imagesDir = LoadFile("").get
-    ))
+    app.addResource("particle-effect:test-effect:instance-0", Particles.standardSource("particle-effects/test-effect.party", ""))
 
     app.handleEvents {
 
@@ -78,9 +72,10 @@ object OpenWindowTest {
           y = canvas.height / 2 + Random.nextFloat() * 5.0f
         ))
 
-        app.addResource("cool-cursor", canvas.createCursor(LoadFile("cursors/c2.png").getOrElse(throw new FileNotFoundException(s"Cursor file missing: cursors/c2.png"))))
+        app.addResource("cool-cursor", canvas.createCursor("cursors/c2.png"))
 
         canvas.setCursor(app.resource[Cursor]("cool-cursor"))
+
 
       case Render(canvas) =>
 

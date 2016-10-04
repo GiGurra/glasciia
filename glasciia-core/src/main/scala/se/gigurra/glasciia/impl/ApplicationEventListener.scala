@@ -4,8 +4,8 @@ import java.util.concurrent.ConcurrentLinkedQueue
 
 import com.badlogic.gdx.{ApplicationListener, InputProcessor}
 import rx.lang.scala.{Observable, Subject}
-import se.gigurra.glasciia.{App, ApplicationEvent, Canvas}
-import se.gigurra.glasciia.ApplicationEvent._
+import se.gigurra.glasciia.{App, AppEvent, Canvas}
+import se.gigurra.glasciia.AppEvent._
 import se.gigurra.math.Vec2
 
 /**
@@ -13,9 +13,9 @@ import se.gigurra.math.Vec2
   */
 trait ApplicationEventListener { self: App =>
 
-  def events: Observable[ApplicationEvent] = subject
+  def events: Observable[AppEvent] = subject
 
-  def handleEvents(f: PartialFunction[ApplicationEvent, Unit], crashHandler: Throwable => Unit = App.defaultCrashHandler): Unit = {
+  def handleEvents(f: PartialFunction[AppEvent, Unit], crashHandler: Throwable => Unit = App.defaultCrashHandler): Unit = {
     events.foreach(f.applyOrElse(_, (_: Any) => ()), crashHandler)
   }
 
@@ -65,7 +65,7 @@ trait ApplicationEventListener { self: App =>
   /////////////////////////////////////////////
   // Private
 
-  private def consume(ev: ApplicationEvent): Boolean = {
+  private def consume(ev: AppEvent): Boolean = {
     flushQueuedOps()
     ev match { // Guarantee we always receieve an init event!
       case init: Init =>
@@ -89,7 +89,7 @@ trait ApplicationEventListener { self: App =>
     }
   }
 
-  private val subject = Subject[ApplicationEvent]().toSerialized
+  private val subject = Subject[AppEvent]().toSerialized
   private var canvas: Canvas = _
   private var initReceived: Boolean = false
 

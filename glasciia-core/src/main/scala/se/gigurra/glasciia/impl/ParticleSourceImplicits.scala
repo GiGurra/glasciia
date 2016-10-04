@@ -1,6 +1,7 @@
 package se.gigurra.glasciia.impl
 
 import com.badlogic.gdx.graphics.g2d.{ParticleEffect => GdxParticleEffect}
+import se.gigurra.glasciia.{ParticleCollider, ParticleSource}
 
 /**
   * Created by johan on 2016-10-02.

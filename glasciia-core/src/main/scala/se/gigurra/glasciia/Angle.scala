@@ -1,4 +1,4 @@
-package se.gigurra.glasciia.impl
+package se.gigurra.glasciia
 
 /**
   * Created by johan on 2016-10-04.

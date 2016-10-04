@@ -1,7 +1,7 @@
-package se.gigurra.glasciia.impl
+package se.gigurra.glasciia
 
 import com.badlogic.gdx.files.FileHandle
-import com.badlogic.gdx.graphics.g2d.{ParticleEffect, TextureAtlas}
+import com.badlogic.gdx.graphics.g2d.TextureAtlas
 
 /**
   * Created by johan on 2016-10-02.

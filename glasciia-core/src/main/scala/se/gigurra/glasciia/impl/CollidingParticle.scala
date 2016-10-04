@@ -2,6 +2,7 @@ package se.gigurra.glasciia.impl
 
 import com.badlogic.gdx.graphics.g2d.ParticleEmitter.Particle
 import com.badlogic.gdx.graphics.g2d.Sprite
+import se.gigurra.glasciia.ParticleCollider
 
 /**
   * Created by johan on 2016-10-02.

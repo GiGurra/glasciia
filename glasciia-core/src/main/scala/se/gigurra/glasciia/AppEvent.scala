@@ -1,14 +1,13 @@
 package se.gigurra.glasciia
 
-import se.gigurra.glasciia.impl.Controller
 import se.gigurra.math.Vec2
 
 /**
   * Created by johan on 2016-09-26.
   */
-sealed trait ApplicationEvent
-object ApplicationEvent {
-  sealed trait WindowEvent extends ApplicationEvent
+sealed trait AppEvent
+object AppEvent {
+  sealed trait WindowEvent extends AppEvent
   case class Init(canvas: Canvas) extends WindowEvent
   case class Render(canvas: Canvas) extends WindowEvent
   case class Pause(canvas: Canvas) extends WindowEvent
@@ -16,7 +15,7 @@ object ApplicationEvent {
   case class Exit(canvas: Canvas) extends WindowEvent
   case class Resize(newSize: Vec2[Int], canvas: Canvas) extends WindowEvent
 
-  sealed trait InputEvent extends ApplicationEvent
+  sealed trait InputEvent extends AppEvent
   case object ConsumedEvent extends InputEvent
 
   sealed trait KeyboardEvent extends InputEvent

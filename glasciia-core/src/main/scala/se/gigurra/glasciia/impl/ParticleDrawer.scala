@@ -1,6 +1,7 @@
 package se.gigurra.glasciia.impl
 
 import com.badlogic.gdx.Gdx
+import se.gigurra.glasciia.ParticleSource
 import se.gigurra.math.Vec2
 
 /**

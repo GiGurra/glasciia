@@ -1,4 +1,4 @@
-package se.gigurra.glasciia.impl
+package se.gigurra.glasciia
 
 import com.badlogic.gdx.Gdx
 import com.badlogic.gdx.Input.Keys

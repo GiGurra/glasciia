@@ -2,6 +2,8 @@ package se.gigurra.glasciia.impl;
 
 import com.badlogic.gdx.graphics.g2d.ParticleEmitter;
 import com.badlogic.gdx.graphics.g2d.Sprite;
+import se.gigurra.glasciia.impl.CollidingParticle;
+import se.gigurra.glasciia.ParticleCollider;
 
 import java.io.BufferedReader;
 import java.io.IOException;
