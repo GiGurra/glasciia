@@ -63,13 +63,25 @@ object OpenWindowTest {
     app.addResource("image:test-image", StaticImage.fromFile("images/test-image.png"))
 
     app.addResource("particle-effect:test-effect:instance-0", Particles.standard("particle-effects/test-effect.party", ""))
+    app.addResource("bg-image", StaticImage.fromFile("backgrounds/bgtest2.jpg"))
 
     app.addResource("background-0",
       BackGround {
         _.layer(translationScale = 0.5f, camZero = Vec2(320.0f, 240.0f)) {
           _.piece(
             bounds = Box2(ll = Vec2(0.0f, 0.0f), size = Vec2(640.0f, 480.0f)),
-            image = StaticImage.fromFile("backgrounds/bgtest2.jpg")
+            image = app.resource[StaticImage]("bg-image")
+          )
+        }.layer(translationScale = 0.75f, camZero = Vec2(320.0f, 240.0f)) {
+          _.piece(
+            bounds = Box2(ll = Vec2(120.0f, 200.0f), size = Vec2(40.0f, 80.0f)),
+            image = app.resource[StaticImage]("bg-image")
+          ).piece(
+            bounds = Box2(ll = Vec2(240.0f, 200.0f), size = Vec2(40.0f, 80.0f)),
+            image = app.resource[StaticImage]("bg-image")
+          ).piece(
+            bounds = Box2(ll = Vec2(360.0f, 200.0f), size = Vec2(40.0f, 80.0f)),
+            image = app.resource[StaticImage]("bg-image")
           )
         }
       }
