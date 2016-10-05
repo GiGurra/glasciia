@@ -9,7 +9,7 @@ import scala.collection.mutable
   *               In draw order, i.e. [Furthest away ... Closest]
   */
 case class BackGround(layers: Seq[BackGroundLayer])
-case class BackGroundLayer(translationScale: Float, zero: Vec2[Float], pieces: Seq[BackGroundPiece])
+case class BackGroundLayer(translationScale: Float, camZero: Vec2[Float], pieces: Seq[BackGroundPiece])
 case class BackGroundPiece(bounds: Box2[Float], image: StaticImage)
 
 object BackGround {
