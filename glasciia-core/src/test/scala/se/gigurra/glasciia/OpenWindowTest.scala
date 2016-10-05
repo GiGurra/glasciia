@@ -117,7 +117,7 @@ object OpenWindowTest {
         val speed = 100.0f
         val dr = Pov4W().dir.toFloat * Gdx.graphics.getDeltaTime * speed
         val prevCameraPos = app.resource[Vec2[Float]]("camera-position")
-        app.addResource("camera-position", Vec2[Float](prevCameraPos.x + dr.x, prevCameraPos.y + dr.y))
+        app.addResource("camera-position", prevCameraPos + dr)
 
         val monospaceFont = app.resource[Font]("font:monospace-default")
         val walkingDudeAnimation = app.resource[Animation.Instance]("animation:capguy-walk:instance-0")
