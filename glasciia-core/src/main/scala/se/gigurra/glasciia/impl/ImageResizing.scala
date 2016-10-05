@@ -7,6 +7,9 @@ import se.gigurra.math.Vec2
   * Created by johan on 2016-10-03.
   */
 trait ImageResizing {
+
+  Pixmap.setFilter(Pixmap.Filter.BiLinear)
+
   def resize(source: Pixmap, size: Vec2[Int], deleteSource: Boolean, newFormat: Option[Pixmap.Format] = None): Pixmap = {
     val pm2 = new Pixmap(size.x, size.y, newFormat.getOrElse(source.getFormat))
     // src: Pixmap,        srcx, srcy,        srcWidth,       srcHeight,  dstx, dsty, dstWidth, dstHeight
