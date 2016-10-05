@@ -1,8 +1,9 @@
 package se.gigurra.glasciia.impl
 
 import se.gigurra.glasciia.App
-import se.gigurra.glasciia.impl.ResourceManager.Resource
+import se.gigurra.glasciia.impl.ResourceManager.{ExplicitTypeRequired, Resource}
 
+import scala.annotation.implicitNotFound
 import scala.reflect.ClassTag
 
 /**
@@ -10,17 +11,17 @@ import scala.reflect.ClassTag
   */
 trait ResourceManager { self: App =>
 
-  def addResource[T](path: String, ctor: => T, closer: T => Unit = (x: T) => ()): Unit = executeOnRenderThread {
+  def addResource[T : ExplicitTypeRequired](path: String, ctor: => T, closer: T => Unit = (x: T) => ())(implicit a: T =:= T): Unit = executeOnRenderThread {
     val resource = ctor
     resources.put(path, Resource(resource, () => closer(resource))).foreach(_.close())
   }
 
-  def getResource[T: ClassTag](path: String): Option[T] = doGetResource(path).map {
+  def getResource[T: ClassTag : ExplicitTypeRequired](path: String): Option[T] = doGetResource(path).map {
     case resource: T => resource
     case resource => throw new ClassCastException(s"Resource of incorrect type (exp: ${implicitly[ClassTag[T]].runtimeClass}, actual: ${resource.getClass}")
   }
 
-  def resource[T : ClassTag](path: String): T = {
+  def resource[T : ClassTag : ExplicitTypeRequired](path: String): T = {
     getResource[T](path) match {
       case Some(resource) => resource
       case None => throw new NoSuchElementException(s"No resource stored on path '$path'")
@@ -47,5 +48,15 @@ trait ResourceManager { self: App =>
 object ResourceManager {
   case class Resource(resource: Any, closer: () => Unit) {
     def close() = closer()
+  }
+
+  @implicitNotFound("Explicit typing required for accessing resources")
+  trait ExplicitTypeRequired[T]
+
+  object ExplicitTypeRequired {
+    private val evidence: ExplicitTypeRequired[Any] = new Object with ExplicitTypeRequired[Any]
+
+    implicit def notNothingEv[T](implicit n: T =:= T): ExplicitTypeRequired[T] =
+      evidence.asInstanceOf[ExplicitTypeRequired[T]]
   }
 }
