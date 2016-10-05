@@ -66,7 +66,7 @@ object OpenWindowTest {
 
     app.addResource("background-0",
       BackGround {
-        _.layer(translationScale = 1.0f, camZero = Vec2(320.0f, 240.0f)) {
+        _.layer(translationScale = 0.5f, camZero = Vec2(320.0f, 240.0f)) {
           _.piece(
             bounds = Box2(ll = Vec2(0.0f, 0.0f), size = Vec2(640.0f, 480.0f)),
             image = StaticImage.fromFile("backgrounds/bgtest2.jpg")
