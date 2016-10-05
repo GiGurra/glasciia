@@ -1,6 +1,5 @@
 package se.gigurra.glasciia
 
-import java.io.File
 import java.time.Duration
 
 import AppEvent._
@@ -10,11 +9,10 @@ import com.badlogic.gdx.graphics.g2d.Animation.PlayMode
 import com.badlogic.gdx.scenes.scene2d.Stage
 import se.gigurra.glasciia.impl.TextDrawer.Anchor
 import se.gigurra.glasciia.impl._
-import se.gigurra.math.Vec2
+import se.gigurra.math.{Box2, Vec2}
 
 import scala.util.Random
 import Glasciia._
-import com.badlogic.gdx.graphics.g2d.TextureAtlas
 import se.gigurra.glasciia.App.{GlConf, WindowConf}
 
 /**
@@ -66,6 +64,17 @@ object OpenWindowTest {
 
     app.addResource("particle-effect:test-effect:instance-0", Particles.standard("particle-effects/test-effect.party", ""))
 
+    app.addResource("background-0",
+      BackGround {
+        _.layer(translationScale = 1.0f, camZero = Vec2(320.0f, 240.0f)) {
+          _.piece(
+            bounds = Box2(ll = Vec2(0.0f, 0.0f), size = Vec2(640.0f, 480.0f)),
+            image = StaticImage.fromFile("backgrounds/bgtest2.jpg")
+          )
+        }
+      }
+    )
+
     app.handleEvents {
 
       case Init(canvas) =>
@@ -108,6 +117,7 @@ object OpenWindowTest {
         val cameraPos = app.resource[Vec2[Float]]("camera-position")
         val mouseWorldPos = canvas.screen2World(canvas.mousePos)
 
+        val background = app.resource[BackGround]("background-0")
 
         canvas.setOrtho(
           yDown = false,
@@ -117,6 +127,8 @@ object OpenWindowTest {
         canvas.drawFrame(
           background = Color.DARK_GRAY,
           camPos = cameraPos) {
+
+          canvas.drawBackGround(background)
 
           canvas.drawText(
             text = "A",
