@@ -58,30 +58,31 @@ object OpenWindowTest {
     app.addResource("gui:main-menu", new Stage())
     app.addResource("gui:main-menu:visible", true)
 
-    app.addResource("animation:capguy-walk", Animation.fromFile("animations/capguy-walk.png", nx = 8, ny = 1, dt = Duration.ofMillis(100), mode = PlayMode.LOOP))
-    app.addResource("animation:capguy-walk:instance-0", app.resource[Animation]("animation:capguy-walk").newInstance())
+    app.addResource("animation:capguy-walk", Animation.fromFile("animations/capguy-walk.png", nx = 8, ny = 1, dt = 0.1, mode = PlayMode.LOOP))
+    app.addResource("animation:capguy-walk:instance-0", app.resource[Animation]("animation:capguy-walk").newInstance(t0 = app.localAppTime))
     app.addResource("image:test-image", StaticImage.fromFile("images/test-image.png"))
 
     app.addResource("particle-effect:test-effect:instance-0", Particles.standard("particle-effects/test-effect.party", ""))
     app.addResource("bg-image", StaticImage.fromFile("backgrounds/bgtest2.jpg"))
 
     app.addResource("background-0",
-      BackGround {
+      MultiLayer[Image]() {
         _.layer(translationScale = 0.5f, camZero = Vec2(320.0f, 240.0f)) {
           _.piece(
             bounds = Box2(ll = Vec2(0.0f, 0.0f), size = Vec2(640.0f, 480.0f)),
-            image = app.resource[StaticImage]("bg-image")
+            image = app.resource[Image]("bg-image")
           )
-        }.layer(translationScale = 0.75f, camZero = Vec2(320.0f, 240.0f)) {
+        }
+        .layer(translationScale = 0.75f, camZero = Vec2(320.0f, 240.0f)) {
           _.piece(
             bounds = Box2(ll = Vec2(120.0f, 200.0f), size = Vec2(40.0f, 80.0f)),
-            image = app.resource[StaticImage]("bg-image")
+            image = app.resource[Image]("bg-image")
           ).piece(
             bounds = Box2(ll = Vec2(240.0f, 200.0f), size = Vec2(40.0f, 80.0f)),
-            image = app.resource[StaticImage]("bg-image")
+            image = app.resource[Image]("bg-image")
           ).piece(
             bounds = Box2(ll = Vec2(360.0f, 200.0f), size = Vec2(40.0f, 80.0f)),
-            image = app.resource[StaticImage]("bg-image")
+            image = app.resource[Image]("bg-image")
           )
         }
       }
@@ -129,7 +130,7 @@ object OpenWindowTest {
         val cameraPos = app.resource[Vec2[Float]]("camera-position")
         val mouseWorldPos = canvas.screen2World(canvas.mousePos)
 
-        val background = app.resource[BackGround]("background-0")
+        val background = app.resource[MultiLayer[Image]]("background-0")
 
         canvas.setOrtho(
           yDown = false,
@@ -165,7 +166,7 @@ object OpenWindowTest {
             font = monospaceFont,
             color = Color.GREEN,
             at = Vec2(400, 400),
-            rotate = 180 + app.timeSinceStart.toMillis * 0.360f,
+            rotate = 180 + canvas.drawTime.toFloat * 360.0f,
             scale = 50
           )
 
@@ -207,7 +208,7 @@ object OpenWindowTest {
             scale = Vec2(120.0f, 200.0f)
           )
 
-          canvas.drawStaticImage(
+          canvas.drawImage(
             image = testImage,
             at = Vec2(100, 300),
             scale = Vec2(120.0f, 120.0f)
@@ -215,18 +216,18 @@ object OpenWindowTest {
 
           canvas.drawParticles(
             effect = effect1,
-            at = testEffectPosition(app)
+            at = testEffectPosition(canvas.drawTime)
           )
 
           canvas.drawParticles(
             effect = effect2,
-            at = testEffectPosition(app)
+            at = testEffectPosition(canvas.drawTime)
           )
 
           canvas.drawParticles(
             effect = effect3,
             at = mouseWorldPos,
-            angle = Some(app.timeSinceStart.toMillis.toFloat / 1000.0f * 180.0f)
+            angle = Some(canvas.drawTime.toFloat * 180.0f)
           )
 
           canvas.drawText(
@@ -254,10 +255,10 @@ object OpenWindowTest {
 
   }
 
-  private def testEffectPosition(app: App): Vec2[Float] = {
-    val t = app.timeSinceStart.toMillis
+  private def testEffectPosition(tSec: Double): Vec2[Float] = {
+    val t = tSec.toFloat * 1000.0f
     val step = 0.05f
     val n = 5000
-    Vec2(320 + (t % n) * step, 240 / 2.0f)
+    Vec2(320 + (t.toInt % n) * step, 240 / 2.0f)
   }
 }

@@ -1,7 +1,5 @@
 package se.gigurra.glasciia
 
-import java.time.{Duration, Instant}
-
 import com.badlogic.gdx.files.FileHandle
 import com.badlogic.gdx.graphics.Texture
 import com.badlogic.gdx.graphics.g2d.Animation.PlayMode
@@ -13,12 +11,10 @@ import se.gigurra.math.Vec2
   * Created by johan on 2016-10-02.
   */
 case class Animation(animation: GdxAnimation,
-                     dt: Duration,
+                     dt: Double,
                      frameSize: Vec2[Int]) {
 
-  val dtSeconds: Float = dt.toMillis.toFloat / 1000.0f
-
-  def newInstance(t0: Instant = Instant.now): Animation.Instance = {
+  def newInstance(t0: Double): Animation.Instance = {
     new Animation.Instance(this, t0)
   }
 
@@ -34,7 +30,7 @@ object Animation {
   def fromFile(source: FileHandle,
                nx: Int,
                ny: Int,
-               dt: Duration,
+               dt: Double,
                mode: PlayMode = PlayMode.NORMAL,
                useMipMaps: Boolean = true,
                minFilter: Texture.TextureFilter = Texture.TextureFilter.MipMapLinearLinear,
@@ -53,7 +49,7 @@ object Animation {
   def fromRegion(region: TextureRegion,
                  nx: Int,
                  ny: Int,
-                 dt: Duration,
+                 dt: Double,
                  mode: PlayMode = PlayMode.NORMAL): Animation = {
     require(nx >= 0, s"Animation.apply: nx must be at least 1")
     require(nx >= 0, s"Animation.apply: ny must be at least 1")
@@ -65,13 +61,19 @@ object Animation {
       }
     }
     val sz = Vec2(frames.get(0).getRegionWidth, frames.get(0).getRegionHeight)
-    new Animation(new GdxAnimation(dt.toMillis.toFloat / 1000.0f, frames, mode), dt, sz)
+    new Animation(new GdxAnimation(dt.toFloat, frames, mode), dt, sz)
   }
 
-  case class Instance(animation: Animation, t0: Instant = Instant.now)  {
-    def currentFrame(now: Instant = Instant.now()): TextureRegion = {
-      val dt = Duration.between(t0, now).toMillis.toFloat / 1000.0f
-      animation.getKeyFrame(dt)
+  case class Instance(animation: Animation, t0: Double) {
+    var lastFrameTime = t0
+    var tAcc = 0.0
+    def currentFrame(now: Double): TextureRegion = {
+      tAcc += math.max(0.0f, now - lastFrameTime)
+      lastFrameTime = now
+      animation.getKeyFrame(tAcc.toFloat)
+    }
+    def asImage(timeFunc: => Double): Image = new Image {
+      override def region: TextureRegion = Instance.this.currentFrame(timeFunc)
     }
   }
 

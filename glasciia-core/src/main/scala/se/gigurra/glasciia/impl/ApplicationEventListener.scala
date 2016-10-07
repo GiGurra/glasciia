@@ -38,7 +38,10 @@ trait ApplicationEventListener { self: App =>
     override def resize(width: Int, height: Int): Unit = consume(Resize(Vec2(width, height), canvas: Canvas))
     override def dispose(): Unit = consume(Exit(canvas: Canvas))
     override def pause(): Unit = consume(Pause(canvas: Canvas))
-    override def render(): Unit = consume(Render(canvas))
+    override def render(): Unit = {
+      canvas.setDrawTime()
+      consume(Render(canvas))
+    }
     override def resume(): Unit = consume(Resume(canvas: Canvas))
     override def create(): Unit = {
       canvas = Canvas(self)

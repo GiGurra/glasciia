@@ -13,7 +13,7 @@ case class Canvas(app: App)
     with ContentDrawer
     with FrameDrawer
     with TextDrawer
-    with StaticImageDrawer
+    with ImageDrawer
     with AnimationDrawer
     with ParticleDrawer
     with MouseFunctions
@@ -22,4 +22,15 @@ case class Canvas(app: App)
   def size: Vec2[Int] = app.size
   def width: Int = app.width
   def height: Int = app.height
+
+  def drawTime: Double = _drawTimeSeconds
+
+  /**
+    * Used by time dependent drawing, e.g. animations
+    */
+  protected[glasciia] def setDrawTime(now: Double = app.localAppTime): Unit = {
+    _drawTimeSeconds = now
+  }
+
+  private var _drawTimeSeconds: Double = app.localAppTime
 }
