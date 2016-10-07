@@ -254,9 +254,6 @@ object OpenWindowTest {
   }
 
   private def testEffectPosition(tSec: Double): Vec2[Float] = {
-    val t = tSec.toFloat * 1000.0f
-    val step = 0.05f
-    val n = 5000
-    Vec2(320 + (t.toInt % n) * step, 240 / 2.0f)
+    Vec2(320 + ((tSec * 1000.0).toLong % 5000L) * 0.05f, 240 / 2.0f)
   }
 }
