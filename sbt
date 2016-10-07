@@ -1,4 +1,6 @@
- more capable sbt runner, coincidentally also called sbt.
+#!/usr/bin/env bash
+#
+# A more capable sbt runner, coincidentally also called sbt.
 # Author: Paul Phillips <paulp@improving.org>
 
 set -o pipefail
