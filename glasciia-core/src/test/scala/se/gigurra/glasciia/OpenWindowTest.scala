@@ -1,7 +1,5 @@
 package se.gigurra.glasciia
 
-import java.time.Duration
-
 import AppEvent._
 import com.badlogic.gdx.Gdx
 import com.badlogic.gdx.graphics.{Color, Cursor}
