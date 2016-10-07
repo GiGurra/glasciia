@@ -65,15 +65,16 @@ object Animation {
   }
 
   case class Instance(animation: Animation, t0: Double) {
-    var lastFrameTime = t0
-    var tAcc = 0.0
-    def currentFrame(now: Double): TextureRegion = {
-      tAcc += math.max(0.0f, now - lastFrameTime)
+    private var lastFrameTime = t0
+    private var tAcc = 0.0
+    def currentFrame(now: Double, active: Boolean): TextureRegion = {
+      if (active)
+        tAcc += math.max(0.0f, now - lastFrameTime)
       lastFrameTime = now
       animation.getKeyFrame(tAcc.toFloat)
     }
     def asImage(timeFunc: => Double): Image = new Image {
-      override def region: TextureRegion = Instance.this.currentFrame(timeFunc)
+      override def region: TextureRegion = Instance.this.currentFrame(timeFunc, active = true)
     }
   }
 
