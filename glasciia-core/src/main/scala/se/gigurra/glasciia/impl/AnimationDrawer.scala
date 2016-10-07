@@ -11,8 +11,8 @@ trait AnimationDrawer { self: ContentDrawer =>
   def drawTime: Double
 
   def drawAnimation(animation: Animation.Instance,
-                    at: Vec2[Float] = Zero[Vec2[Float]],
-                    scale: Vec2[Float] = One[Vec2[Float]],
+                    at: Vec2[Float] = Zero.vec2f,
+                    scale: Vec2[Float] = Zero.vec2f,
                     rotate: Float = 0.0f,
                     normalizeScale: Boolean = true,
                     active: Boolean = true): Unit = {
@@ -20,7 +20,7 @@ trait AnimationDrawer { self: ContentDrawer =>
     val frameSize = animation.frameSize
     val normalizedScale =
       if (normalizeScale)
-        Vec2(scale.x / frameSize.x.toFloat, scale.y / frameSize.y.toFloat)
+        Vec2(scale.x / frameSize.x, scale.y / frameSize.y)
       else
         scale
 

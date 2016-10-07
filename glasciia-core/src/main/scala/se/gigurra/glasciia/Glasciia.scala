@@ -8,7 +8,6 @@ import se.gigurra.glasciia.impl._
 object Glasciia
   extends GLCStyle
     with ColorImplicits
-    with se.gigurra.math.VecImplicits
     with VecImplicits
     with EventFilters
     with FileReadImplicits

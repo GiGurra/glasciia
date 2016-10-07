@@ -14,18 +14,18 @@ trait TextDrawer { self: ContentDrawer =>
   def drawText(text: String,
                font: Font,
                color: Color,
-               at: Vec2[Float] = Zero[Vec2[Float]],
+               at: Vec2[Float] = Zero.vec2f,
                scale: Float = 1.0f,
                rotate: Float = 0.0f,
                normalizeFontScale: Boolean = true,
                anchor: Anchor = Anchor.UL,
-               wrap: Option[Float] = None): Unit = {
+               wrap: Float = 0.0f): Unit = {
 
     val normalizedScale = if (normalizeFontScale) Vec2(scale / font.size, scale / font.size) else Vec2(scale, scale)
 
     draw(at, normalizedScale, rotate) {
       font.setColor(color)
-      font.draw(batch, text, 0.0f, anchor.dy*font.lineHeight(false), wrap.getOrElse(0.0f), anchor.halign, wrap.isDefined)
+      font.draw(batch, text, 0.0f, anchor.dy*font.lineHeight(false), wrap, anchor.halign, wrap != 0.0f)
     }
   }
 }

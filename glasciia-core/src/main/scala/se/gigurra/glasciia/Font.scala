@@ -1,21 +1,19 @@
 package se.gigurra.glasciia
 
-import java.io.FileNotFoundException
-
 import com.badlogic.gdx.graphics.Color
 import com.badlogic.gdx.graphics.Texture.TextureFilter
 import com.badlogic.gdx.graphics.g2d.freetype.FreeTypeFontGenerator
 import com.badlogic.gdx.graphics.g2d.freetype.FreeTypeFontGenerator.FreeTypeFontParameter
 import com.badlogic.gdx.graphics.g2d.{BitmapFont, BitmapFontCache, GlyphLayout, PixmapPacker}
 import com.badlogic.gdx.utils.Align
-import se.gigurra.math.Vec2
+import se.gigurra.math.{Vec2, Zero}
 import Glasciia._
 import com.badlogic.gdx.files.FileHandle
 
 case class Font(font: BitmapFont, size: Float)  {
 
   def preload(str: CharSequence,
-              at: Vec2[Float] = Vec2[Float](),
+              at: Vec2[Float] = Zero.vec2f,
               align: Int = Align.left,
               targetWidth: Float = 0.0f,
               wrap: Boolean = false,

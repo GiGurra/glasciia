@@ -14,7 +14,7 @@ case class Piece[T](bounds: Box2[Float], image: T)
 
 object MultiLayer {
 
-  def apply[T](zero: Vec2[Float] = Zero[Vec2[Float]])(f: _impl.Builder[T] => _impl.Builder[T]): MultiLayer[T] = new _impl.Builder[T](zero)(f: _impl.Builder[T] => _impl.Builder[T]).build()
+  def apply[T](zero: Vec2[Float] = Zero.vec2f)(f: _impl.Builder[T] => _impl.Builder[T]): MultiLayer[T] = new _impl.Builder[T](zero)(f: _impl.Builder[T] => _impl.Builder[T]).build()
 
   object _impl {
 

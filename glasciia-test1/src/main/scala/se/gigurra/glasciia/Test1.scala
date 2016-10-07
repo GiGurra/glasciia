@@ -130,112 +130,113 @@ object Test1 {
 
         val background = app.resource[MultiLayer[Image]]("background-0")
 
-        canvas.setOrtho(
-          yDown = false,
-          width = canvas.width,
-          height = canvas.height
-        )
-        canvas.drawFrame(
-          background = Color.DARK_GRAY,
-          camPos = cameraPos) {
+              canvas.setOrtho(
+                yDown = false,
+                width = canvas.width,
+                height = canvas.height
+              )
 
-          canvas.drawBackGround(background)
+              canvas.drawFrame(
+                background = Color.DARK_GRAY,
+                camPos = cameraPos) {
 
-          canvas.drawText(
-            text = "A",
-            font = monospaceFont,
-            color = Color.GREEN,
-            at = Vec2(140, 140),
-            rotate = 45,
-            scale = 50
-          )
+                canvas.drawBackGround(background)
 
-          canvas.drawText(
-            text = "B",
-            font = monospaceFont,
-            color = Color.GREEN,
-            at = Vec2(240, 240),
-            rotate = -45,
-            scale = 50
-          )
+                canvas.drawText(
+                  text = "A",
+                  font = monospaceFont,
+                  color = Color.GREEN,
+                  at = Vec2(140, 140),
+                  rotate = 45,
+                  scale = 50
+                )
 
-          canvas.drawText(
-            text = "CDEFG",
-            font = monospaceFont,
-            color = Color.GREEN,
-            at = Vec2(400, 400),
-            rotate = 180 + canvas.drawTime.toFloat * 360.0f,
-            scale = 50
-          )
+                canvas.drawText(
+                  text = "B",
+                  font = monospaceFont,
+                  color = Color.GREEN,
+                  at = Vec2(240, 240),
+                  rotate = -45,
+                  scale = 50
+                )
 
-          canvas.drawText(
-            text = "UL",
-            font = monospaceFont,
-            color = Color.RED,
-            at = Vec2(0, 480),
-            scale = 50
-          )
+                canvas.drawText(
+                  text = "CDEFG",
+                  font = monospaceFont,
+                  color = Color.GREEN,
+                  at = Vec2(400, 400),
+                  rotate = 180 + canvas.drawTime.toFloat * 360.0f,
+                  scale = 50
+                )
 
-          canvas.drawText(
-            text = "LL",
-            font = monospaceFont,
-            color = Color.GREEN,
-            at = Vec2(0, 50),
-            scale = 50
-          )
+                canvas.drawText(
+                  text = "UL",
+                  font = monospaceFont,
+                  color = Color.RED,
+                  at = Vec2(0, 480),
+                  scale = 50
+                )
 
-          canvas.drawText(
-            text = "UR",
-            font = monospaceFont,
-            color = Color.BLUE,
-            at = Vec2(640 - 50 * 2 * monospaceFont.spaceWidth(), 480),
-            scale = 50
-          )
+                canvas.drawText(
+                  text = "LL",
+                  font = monospaceFont,
+                  color = Color.GREEN,
+                  at = Vec2(0, 50),
+                  scale = 50
+                )
 
-          canvas.drawText(
-            text = "LR",
-            font = monospaceFont,
-            color = Color.BLACK,
-            at = Vec2(640 - 50 * 2 * monospaceFont.spaceWidth(), 50),
-            scale = 50
-          )
+                canvas.drawText(
+                  text = "UR",
+                  font = monospaceFont,
+                  color = Color.BLUE,
+                  at = Vec2(640 - 50 * 2 * monospaceFont.spaceWidth(), 480),
+                  scale = 50
+                )
 
-          canvas.drawAnimation(
-            animation = walkingDudeAnimation,
-            at = Vec2(400, 100),
-            scale = Vec2(120.0f, 200.0f)
-          )
+                canvas.drawText(
+                  text = "LR",
+                  font = monospaceFont,
+                  color = Color.BLACK,
+                  at = Vec2(640 - 50 * 2 * monospaceFont.spaceWidth(), 50),
+                  scale = 50
+                )
 
-          canvas.drawImage(
-            image = testImage,
-            at = Vec2(100, 300),
-            scale = Vec2(120.0f, 120.0f)
-          )
+                canvas.drawAnimation(
+                  animation = walkingDudeAnimation,
+                  at = Vec2(400, 100),
+                  scale = Vec2(120.0f, 200.0f)
+                )
 
-          canvas.drawParticles(
-            effect = effect1,
-            at = testEffectPosition(canvas.drawTime)
-          )
+                canvas.drawImage(
+                  image = testImage,
+                  at = Vec2(100, 300),
+                  scale = Vec2(120.0f, 120.0f)
+                )
 
-          canvas.drawParticles(
-            effect = effect2,
-            at = testEffectPosition(canvas.drawTime)
-          )
+                canvas.drawParticles(
+                  effect = effect1,
+                  at = testEffectPosition(canvas.drawTime)
+                )
 
-          canvas.drawParticles(
-            effect = effect3,
-            at = mouseWorldPos,
-            angle = Some(canvas.drawTime.toFloat * 180.0f)
-          )
+                canvas.drawParticles(
+                  effect = effect2,
+                  at = testEffectPosition(canvas.drawTime)
+                )
 
-          canvas.drawText(
-            text = "CAM",
-            font = monospaceFont,
-            color = Color.WHITE,
-            anchor = Anchor.CC,
-            scale = 25,
-            at = cameraPos
-          )
+                canvas.drawParticles(
+                  effect = effect3,
+                  at = mouseWorldPos,
+                  angle = canvas.drawTime.toFloat * 180.0f
+                )
+
+                canvas.drawText(
+                  text = "CAM",
+                  font = monospaceFont,
+                  color = Color.WHITE,
+                  anchor = Anchor.CC,
+                  scale = 25,
+                  at = cameraPos
+                )
 
         }
       case input: InputEvent =>
@@ -254,6 +255,6 @@ object Test1 {
   }
 
   private def testEffectPosition(tSec: Double): Vec2[Float] = {
-    Vec2(320 + ((tSec * 1000.0).toLong % 5000L) * 0.05f, 240 / 2.0f)
+    Vec2[Float](320 + ((tSec * 1000.0).toLong % 5000L) * 0.05f, 240 / 2.0f)
   }
 }
