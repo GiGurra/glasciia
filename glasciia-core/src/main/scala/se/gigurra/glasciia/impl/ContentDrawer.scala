@@ -12,8 +12,8 @@ trait ContentDrawer {
 
   val transform = Matrix4Stack(depth = 32)
 
-  def draw(at: Vec2[Float] = Vec2[Float](0.0f, 0.0f),
-           scale: Vec2[Float] = Vec2[Float](1.0f, 1.0f),
+  def draw(at: Vec2[Float] = Zero.vec2f,
+           scale: Vec2[Float] = One.vec2f,
            rotate: Float = 0.0f)(content: => Unit): Unit = {
 
     if (!batch.isDrawing)
