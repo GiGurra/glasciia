@@ -74,7 +74,7 @@ object Animation {
       animation.getKeyFrame(tAcc.toFloat)
     }
     def asImage(timeFunc: => Double): Image = new Image {
-      override def region: TextureRegion = Instance.this.currentFrame(timeFunc, active = true)
+      override def region: TextureRegion = currentFrame(timeFunc, active = true)
     }
   }
 
