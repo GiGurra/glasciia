@@ -20,7 +20,9 @@ val glasciia_core = module("core").settings(
   )
 ).dependsOn(uri("git://github.com/gigurra/scala-libgurra.git#0.1.14"))
 
-val glasciia = aggregate(glasciia_core)
+val glasciia_test1 = module("test1", dependencies = glasciia_core)
+
+val glasciia = aggregate(glasciia_core, glasciia_test1)
 
 def module(name: String, dependencies: ClasspathDep[ProjectReference]*): Project = {
   Project(

@@ -1,22 +1,22 @@
 package se.gigurra.glasciia
 
-import AppEvent._
 import com.badlogic.gdx.Gdx
-import com.badlogic.gdx.graphics.{Color, Cursor}
 import com.badlogic.gdx.graphics.g2d.Animation.PlayMode
+import com.badlogic.gdx.graphics.{Color, Cursor}
 import com.badlogic.gdx.scenes.scene2d.Stage
+import se.gigurra.glasciia.App.{GlConf, WindowConf}
+import se.gigurra.glasciia.AppEvent._
+import se.gigurra.glasciia.Glasciia._
 import se.gigurra.glasciia.impl.TextDrawer.Anchor
 import se.gigurra.glasciia.impl._
 import se.gigurra.math.{Box2, Vec2}
 
 import scala.util.Random
-import Glasciia._
-import se.gigurra.glasciia.App.{GlConf, WindowConf}
 
 /**
   * Created by johan on 2016-09-26.
   */
-object OpenWindowTest {
+object Test1 {
 
   def main(args: Array[String]): Unit = {
 
