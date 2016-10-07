@@ -60,7 +60,7 @@ object Test1 {
     app.addResource("animation:capguy-walk:instance-0", app.resource[Animation]("animation:capguy-walk").newInstance(t0 = app.localAppTime))
     app.addResource("image:test-image", StaticImage.fromFile("images/test-image.png"))
 
-    app.addResource("particle-effect:test-effect:instance-0", Particles.standard("particle-effects/test-effect.party", ""))
+    app.addResource("particle-effect:test-effect:instance-0", Particles.standard("particle-effects/test-effect.party", "particle-effects/"))
     app.addResource("bg-image", StaticImage.fromFile("backgrounds/bgtest2.jpg"))
 
     app.addResource("background-0",
