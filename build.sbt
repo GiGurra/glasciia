@@ -45,3 +45,4 @@ def aggregate(projects: Project*): Project = {
     projects.map(toReference):_*
   )
 }
+
