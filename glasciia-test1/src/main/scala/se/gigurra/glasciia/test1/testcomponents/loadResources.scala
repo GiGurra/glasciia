@@ -83,29 +83,29 @@ object loadResources {
   private def loadGui(app: App, regions: Loader.InMemory[TextureRegion]): Unit = {
     app.addResource("gui:main-menu", RootGui(debug = true))
 
-    val mainMenu = app.resource[RootGui]("gui:main-menu")
+    val menu = app.resource[RootGui]("gui:main-menu").table
 
-    mainMenu
+    menu
       .addStyle("fill", classOf[TextureRegion])(regions("filled-texture"))
       .addStyle("default-font", classOf[BitmapFont])(app.resource[Font]("font:monospace-default"))
       .addStyle("masked-font", classOf[BitmapFont])(app.resource[Font]("font:monospace-default-masked"))
       .addStyle("default", classOf[TextButtonStyle])(new TextButtonStyle {
-        up = mainMenu.newDrawableFromStyle("fill", Color.DARK_GRAY)
-        down = mainMenu.newDrawableFromStyle("fill", Color.DARK_GRAY)
-        checked = mainMenu.newDrawableFromStyle("fill", Color.BLUE)
-        over = mainMenu.newDrawableFromStyle("fill", Color.LIGHT_GRAY)
-        font = mainMenu.getStyle[BitmapFont]("default-font")
+        up = menu.newDrawable(style = "fill", Color.DARK_GRAY)
+        down = menu.newDrawable(style = "fill", Color.DARK_GRAY)
+        checked = menu.newDrawable(style = "fill", Color.BLUE)
+        over = menu.newDrawable(style = "fill", Color.LIGHT_GRAY)
+        font = menu.style[BitmapFont]("default-font")
       })
 
-    mainMenu.row { r =>
+    menu.rw { r =>
       r.cell().height(25)
-    }.row { r =>
-      r.cell(new TextButton("Click me!", mainMenu.skin).fontScale(1.5f)).expandX().left()
+    }.rw { r =>
+      r.cell(new TextButton("Click me!", menu.skin).fontScale(1.5f)).expandX().left()
       r.cell().width(100)
-    }.row { r =>
+    }.rw { r =>
       r.cellImg("fill", Color.TEAL).size(64)
       r.cellImg("fill", Color.TEAL).size(64)
-    }.row { r =>
+    }.rw { r =>
       r.cell().expandY()
     }
   }

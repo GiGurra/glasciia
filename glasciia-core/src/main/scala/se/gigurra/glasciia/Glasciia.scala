@@ -15,6 +15,6 @@ object Glasciia
     with ImageResizing
     with TextureAtlasCreation
     with CursorCreation
-    with Scene2dImplicits {
+    with GuiImplicits {
 
 }
