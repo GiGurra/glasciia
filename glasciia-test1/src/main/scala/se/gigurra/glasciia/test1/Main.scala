@@ -31,8 +31,6 @@ object Main {
         drawGui(canvas, mainMenu, Gdx.graphics.getDeltaTime)
 
       case input: InputEvent =>
-
-
         input
           .filter(mainMenu)
           .filter {
