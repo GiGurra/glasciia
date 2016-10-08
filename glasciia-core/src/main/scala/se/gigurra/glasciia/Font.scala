@@ -60,6 +60,8 @@ case class Font(font: BitmapFont, size: Float)  {
 
 object Font {
 
+  val DEFAULT_MASK_CHAR: Char = 0x2022
+  val DEFAULT_EXTRA_CHARACTERS = Seq(DEFAULT_MASK_CHAR).mkString
 
   /**
    * See https://github.com/libgdx/libgdx/wiki/Gdx-freetype
@@ -80,6 +82,7 @@ object Font {
                   flip: Boolean = false,
                   genMipMaps: Boolean = false,
                   mask: Option[Char] = None,
+                  loadExtraCharacters: String = DEFAULT_EXTRA_CHARACTERS,
                   minFilter: TextureFilter = TextureFilter.Linear,
                   magFilter: TextureFilter = TextureFilter.Linear): Font = {
 
@@ -102,6 +105,7 @@ object Font {
     parameter.genMipMaps = genMipMaps
     parameter.minFilter = minFilter
     parameter.magFilter = magFilter
+    parameter.characters ++= loadExtraCharacters
 
     val bitmapFontUnmasked = generator.generateFont(parameter)
     generator.dispose()
