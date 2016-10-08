@@ -135,7 +135,8 @@ object Test1 {
         canvas.setOrtho(
           yDown = false,
           width = 480 * canvas.aspectRatio,
-          height = 480
+          height = 480,
+          scaling = math.max(1.0f, 0.5f * (1.0f + math.min(canvas.width.toFloat / 480.0f, canvas.height.toFloat / 480.0f)))
         )
 
         canvas.drawFrame(
