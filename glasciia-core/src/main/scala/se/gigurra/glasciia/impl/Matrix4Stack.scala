@@ -15,13 +15,13 @@ case class Matrix4Stack(depth: Int) {
   def next = stack(i + 1)
 
   def push() = {
-    require(i + 1 < depth)
+    require(i + 1 < depth, "Matrix4Stack push overflow!")
     next.set(current)
     i += 1
   }
 
   def pop() = {
-    require(i > 0)
+    require(i > 0, "Matrix4Stack pop underflow!")
     i -= 1
   }
 
