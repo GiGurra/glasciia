@@ -97,10 +97,9 @@ object loadResources {
         font = mainMenu.getStyle[BitmapFont]("default-font")
       })
 
-    mainMenu
-      .row { r =>
-        r.cell().height(25)
-      }.row { r =>
+    mainMenu.row { r =>
+      r.cell().height(25)
+    }.row { r =>
       r.cell(new TextButton("Click me!", mainMenu.skin)).expandX().left()
       r.cell().width(100)
     }.row { r =>
