@@ -1,38 +1,69 @@
 package se.gigurra.glasciia.test1.testcomponents
 
+import java.io.File
+
 import com.badlogic.gdx.graphics.Color
 import com.badlogic.gdx.graphics.g2d.Animation.PlayMode
+import com.badlogic.gdx.graphics.g2d.TextureAtlas
 import com.badlogic.gdx.scenes.scene2d.Stage
 import se.gigurra.glasciia.Glasciia._
 import se.gigurra.glasciia._
+import se.gigurra.glasciia.impl.LoadFile
 import se.gigurra.math.{Box2, Vec2}
 
 /**
   * Created by johan on 2016-10-08.
   */
 object loadResources {
+
   def apply(app: App): Unit = app.executeOnRenderThread {
-
     // UNCOMMENT TO TEST TEXTURE ATLASING
-    // testAtlases(app)
+    // loadTextureAtlases(app)
+    loadFonts(app)
+    loadGui(app)
+    loadImages(app)
+    loadParticleEffects(app)
+    loadBackground(app)
+  }
 
+  private def loadTextureAtlases(app: App): Unit = {
+    val texturePackSettings = readTexturePackSettings("test-atlast-cfg.json")
+    val inputFolder = new File(getClass.getClassLoader.getResource("test-atlast-cfg.json").getFile).getAbsoluteFile.getParent
+    val outputFolder = LoadFile("target/").get.file().getAbsolutePath
+    packFilesIntoTextureAtlas(texturePackSettings, inputDir = inputFolder, outputDir = outputFolder, "test-atlast.atlas")
+    println(s"$inputFolder -> $outputFolder")
+    app.addResource("texture-atlas", new TextureAtlas(s"$outputFolder/test-atlast.atlas", outputFolder))
+  }
+
+  private def loadFonts(app: App): Unit = {
     app.addResource("font:monospace-default", Font.fromTtfFile("pt-mono/PTM55FT.ttf"))
     app.addResource("font:monospace-default-masked", app.resource[Font]("font:monospace-default").createMaskedInstance(maskChar = Font.DEFAULT_MASK_CHAR, deleteSource = false))
+  }
+
+  private def loadGui(app: App): Unit = {
     app.addResource("gui:main-menu", new Stage())
     app.addResource("gui:main-menu:visible", true)
+  }
 
+
+  private def loadImages(app: App): Unit = {
     app.addResource("animation:capguy-walk", Animation.fromFile("animations/capguy-walk.png", nx = 8, ny = 1, dt = 0.1, mode = PlayMode.LOOP))
     app.addResource("animation:capguy-walk:instance-0", app.resource[Animation]("animation:capguy-walk").newInstance(t0 = app.localAppTime))
     app.addResource("image:test-image", StaticImage.fromFile("images/test-image.png"))
+  }
 
+
+  private def loadParticleEffects(app: App): Unit = {
     app.addResource("particle-effect:test-effect:instance-0", Particles.standard("particle-effects/test-effect.party", "particle-effects/").scaleEffect(0.5f))
-    app.addResource("bg-image", StaticImage.fromFile("backgrounds/bgtest2.jpg"))
     def effect0 = app.resource[ParticleSource]("particle-effect:test-effect:instance-0")
     app.addResource("particle-effect:test-effect:instance-1", effect0.copy.scaleEffect(0.5f).flipY().setTint(Color.TEAL))
     app.addResource("particle-effect:test-effect:instance-2", effect0.copy.scaleEffect(0.25f))
     app.addResource("camera-position", Vec2(x = 320.0f, y = 240.0f))
     app.addResource("cool-cursor", createCursor("cursors/c2.png"))
+  }
 
+  private def loadBackground(app: App): Unit = {
+    app.addResource("bg-image", StaticImage.fromFile("backgrounds/bgtest2.jpg"))
     app.addResource("background-0",
       MultiLayer[Image]() {
         _.layer(translationScale = 0.5f, camZero = Vec2(320.0f, 240.0f)) {
@@ -55,6 +86,6 @@ object loadResources {
           }
       }
     )
-
   }
+
 }
