@@ -7,6 +7,7 @@ import com.badlogic.gdx.graphics.g2d.Animation.PlayMode
 import com.badlogic.gdx.graphics.g2d.TextureAtlas
 import com.badlogic.gdx.scenes.scene2d.Stage
 import com.badlogic.gdx.scenes.scene2d.ui.Skin
+import com.badlogic.gdx.scenes.scene2d.ui.TextButton.TextButtonStyle
 import se.gigurra.glasciia.Glasciia._
 import se.gigurra.glasciia._
 import se.gigurra.glasciia.impl.LoadFile
@@ -94,7 +95,18 @@ object loadResources {
     val fillPixMap = new Pixmap(1, 1, Pixmap.Format.RGBA8888)
     fillPixMap.setColor(Color.WHITE)
     fillPixMap.fill()
-    mainMenuSkin.add("fill", fillPixMap)
+    mainMenuSkin.add("fill", new Texture(fillPixMap))
+    mainMenuSkin.add("default-font", app.resource[Font]("gui:main-menu:font").font)
+    mainMenuSkin.add("masked-font", app.resource[Font]("gui:main-menu:font-masked").font)
+
+    val mainMenuButtonStyle = new TextButtonStyle
+    mainMenuButtonStyle.up = mainMenuSkin.newDrawable("fill", Color.DARK_GRAY)
+    mainMenuButtonStyle.down = mainMenuSkin.newDrawable("fill", Color.DARK_GRAY)
+    mainMenuButtonStyle.checked = mainMenuSkin.newDrawable("fill", Color.BLUE)
+    mainMenuButtonStyle.over = mainMenuSkin.newDrawable("fill", Color.LIGHT_GRAY)
+    mainMenuButtonStyle.font = mainMenuSkin.getFont("default-font")
+
+    mainMenuSkin.add("main-menu:button-style", mainMenuButtonStyle)
 
   }
 
