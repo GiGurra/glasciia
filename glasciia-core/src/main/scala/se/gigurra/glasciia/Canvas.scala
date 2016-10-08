@@ -17,7 +17,8 @@ case class Canvas(app: App)
     with AnimationDrawer
     with ParticleDrawer
     with MouseFunctions
-    with BackgroundDrawer {
+    with BackgroundDrawer
+    with GuiDrawer {
 
   def size: Vec2[Int] = app.size
   def screenBounds: Box2[Int] = Box2[Int](0,0,width,height)

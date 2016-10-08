@@ -14,19 +14,6 @@ class RootGui(fillParent: Boolean,
 
   stage.addActor(table)
 
-  def draw(canvas: Canvas, dt: Float = 0.0f): RootGui = {
-    if (!hidden) {
-      stage.getViewport.setScreenSize(canvas.width, canvas.height)
-      stage.getViewport.setWorldSize(canvas.width, canvas.height)
-      stage.getViewport.update(canvas.width, canvas.height, true)
-      table.layout()
-      if (dt != 0.0f)
-        stage.act(dt)
-      stage.draw()
-    }
-    this
-  }
-
   def hide(): Unit = hidden = true
   def show(): Unit = hidden = false
 }

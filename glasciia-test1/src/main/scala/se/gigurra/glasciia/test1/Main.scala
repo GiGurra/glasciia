@@ -27,11 +27,11 @@ object Main {
       case Render(canvas) =>
         updateCameraPos(canvas)
         drawWorld(canvas)
-        drawGui(canvas, mainMenu)
+        drawMenu(canvas)
 
       case input: InputEvent =>
         input
-          .filter(mainMenu)
+          .filter(app.resource[RootGui]("gui:main-menu"))
           .filter {
             case event: MouseEvent =>
               //println(s"MouseEvent propagated to world/Not consumed by gui: $event")
@@ -39,9 +39,6 @@ object Main {
               println(s"KeyboardEvent propagated to world/Not consumed by gui: $event")
           }
     }
-
-
-    def mainMenu: RootGui = app.resource[RootGui]("gui:main-menu")
 
   }
 }
