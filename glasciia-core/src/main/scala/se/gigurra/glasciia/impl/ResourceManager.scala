@@ -32,7 +32,7 @@ trait ResourceManager { self: App =>
   /////////////////////////////////////////////
   // Expectations
 
-  protected def executeOnRenderThread(f: => Unit): Unit
+  def executeOnRenderThread(f: => Unit): Unit
 
 
   /////////////////////////////////////////////

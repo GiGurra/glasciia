@@ -50,7 +50,7 @@ trait ApplicationEventListener { self: App =>
     }
   }
 
-  protected def executeOnRenderThread(op: => Unit): Unit = {
+  def executeOnRenderThread(op: => Unit): Unit = {
     if (isOnRenderThread) {
       op
     } else {
@@ -62,7 +62,7 @@ trait ApplicationEventListener { self: App =>
   /////////////////////////////////////////////
   // Expectations
 
-  protected def isOnRenderThread: Boolean
+  def isOnRenderThread: Boolean
 
 
   /////////////////////////////////////////////

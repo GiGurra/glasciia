@@ -35,7 +35,7 @@ trait LwjglImplementation { self: App =>
   /////////////////////////////////////////////
   // Implemented expectations
 
-  protected def isOnRenderThread: Boolean = Display.isCurrent
+  def isOnRenderThread: Boolean = Display.isCurrent
 
 
   /////////////////////////////////////////////

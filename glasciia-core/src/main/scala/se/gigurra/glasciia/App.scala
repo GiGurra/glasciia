@@ -1,14 +1,16 @@
 package se.gigurra.glasciia
 
 import se.gigurra.glasciia.App.{GlConf, WindowConf}
+import se.gigurra.glasciia.impl.{ApplicationEventListener, ResourceManager}
 import se.gigurra.math.Vec2
+
 import scala.util.control.NonFatal
 
 /**
   * Created by johan on 2016-09-19.
   */
 abstract class App(val initialWindowConf: WindowConf,
-                   val initialGlConf: GlConf) {
+                   val initialGlConf: GlConf) extends ApplicationEventListener with ResourceManager {
 
   private val t0 = System.nanoTime / 1e9
 

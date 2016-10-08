@@ -1,6 +1,5 @@
 package se.gigurra.glasciia
 
-import com.badlogic.gdx.math.Vector3
 import se.gigurra.glasciia.impl._
 import se.gigurra.math.{Box2, Vec2, Zero}
 
