@@ -1,12 +1,12 @@
 package se.gigurra.glasciia.test1
 
+import com.badlogic.gdx.Gdx
 import com.badlogic.gdx.graphics.Cursor
-import com.badlogic.gdx.scenes.scene2d.Stage
 import se.gigurra.glasciia.AppEvent._
 import se.gigurra.glasciia.Glasciia._
 import se.gigurra.glasciia._
 import se.gigurra.glasciia.impl._
-import se.gigurra.glasciia.test1.testcomponents.{drawWorld, loadResources, printShaders, updateCameraPos}
+import se.gigurra.glasciia.test1.testcomponents._
 
 /**
   * Created by johan on 2016-09-26.
@@ -28,19 +28,21 @@ object Main {
       case Render(canvas) =>
         updateCameraPos(canvas)
         drawWorld(canvas)
+        drawGui(canvas, mainMenu, Gdx.graphics.getDeltaTime)
 
       case input: InputEvent =>
 
-        val mainMenuGui = app.resource[Stage]("gui:main-menu")
-        val mainMenuVisible = app.resource[Boolean]("gui:main-menu:visible")
 
         input
-          .filterIf(mainMenuVisible, mainMenuGui)
+          .filter(mainMenu)
           .filter {
             case event: KeyboardEvent =>
               println(s"Input event propageted to world/Not consumed by gui: $event")
           }
     }
+
+
+    def mainMenu: Gui = app.resource[Gui]("gui:main-menu")
 
   }
 }

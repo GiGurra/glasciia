@@ -2,6 +2,8 @@ package se.gigurra.glasciia.impl
 
 import com.badlogic.gdx.InputProcessor
 import se.gigurra.glasciia.AppEvent._
+import se.gigurra.glasciia.Gui
+
 import scala.language.implicitConversions
 
 /**
@@ -40,6 +42,14 @@ trait EventFilters {
       } else {
         event
       }
+    }
+  }
+
+  implicit def gui2Filter(gui: Gui): PartialFunction[InputEvent, Unit] = {
+    if (gui.hidden) {
+      PartialFunction.empty
+    } else {
+      inputProcessor2Filter(gui.stage)
     }
   }
 

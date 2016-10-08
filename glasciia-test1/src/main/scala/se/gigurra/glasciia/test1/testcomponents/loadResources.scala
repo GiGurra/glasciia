@@ -5,8 +5,8 @@ import java.io.File
 import com.badlogic.gdx.graphics.{Color, Pixmap, Texture}
 import com.badlogic.gdx.graphics.g2d.Animation.PlayMode
 import com.badlogic.gdx.graphics.g2d.TextureAtlas
-import com.badlogic.gdx.scenes.scene2d.Stage
-import com.badlogic.gdx.scenes.scene2d.ui.Skin
+import com.badlogic.gdx.scenes.scene2d.ui.{Image => Scene2dImage}
+import com.badlogic.gdx.scenes.scene2d.ui.{Skin, Table, TextButton}
 import com.badlogic.gdx.scenes.scene2d.ui.TextButton.TextButtonStyle
 import se.gigurra.glasciia.Glasciia._
 import se.gigurra.glasciia._
@@ -84,12 +84,11 @@ object loadResources {
   }
 
   private def loadGui(app: App): Unit = {
-    app.addResource("gui:main-menu", new Stage())
-    app.addResource("gui:main-menu:visible", true)
+    app.addResource("gui:main-menu", Gui())
     app.addResource("gui:main-menu:font", app.resource[Font]("font:monospace-default"))
     app.addResource("gui:main-menu:font-masked", app.resource[Font]("font:monospace-default-masked"))
 
-    val mainMenuStage = app.resource[Stage]("gui:main-menu")
+    val mainMenuGui = app.resource[Gui]("gui:main-menu")
     val mainMenuSkin = new Skin()
 
     val fillPixMap = new Pixmap(1, 1, Pixmap.Format.RGBA8888)
@@ -108,6 +107,19 @@ object loadResources {
 
     mainMenuSkin.add("main-menu:button-style", mainMenuButtonStyle)
 
+    // Create a table that fills the screen. Everything else will go inside this table.
+    val mainMenuGuiTable = new Table()
+    mainMenuGuiTable.setFillParent(true)
+
+    // Create a button. A 3rd parameter can be used to specify a name other than "default".
+    val button = new TextButton("Click me!", mainMenuSkin, "main-menu:button-style")
+    mainMenuGuiTable.add(button)
+
+    mainMenuGuiTable.add(new Scene2dImage(mainMenuSkin.newDrawable("fill", Color.RED))).size(64)
+
+
+    // Add everything to the stage
+    mainMenuGui.addActor(mainMenuGuiTable)
   }
 
 
