@@ -9,7 +9,7 @@ import com.badlogic.gdx.utils.Align
 import se.gigurra.math.{Vec2, Zero}
 import Glasciia._
 import com.badlogic.gdx.files.FileHandle
-import com.badlogic.gdx.graphics.g2d.BitmapFont.{BitmapFontData, Glyph}
+import com.badlogic.gdx.graphics.g2d.BitmapFont.BitmapFontData
 
 case class Font(font: BitmapFont, size: Float)  {
 
@@ -53,8 +53,8 @@ case class Font(font: BitmapFont, size: Float)  {
     font.dispose()
   }
 
-  def createMaskedInstance(maskChar: Char, deleteSource: Boolean = false): Font = {
-    new Font(Font.createMaskedFont(font, maskChar, deleteSource = deleteSource), size)
+  def createMaskedInstance(maskChar: Char, deleteSource: Boolean): Font = {
+    new Font(Font.createMaskedFont(font, maskChar, ownsTexture = deleteSource), size)
   }
 }
 
@@ -108,48 +108,32 @@ object Font {
 
     val bitmapFont = mask match {
       case None => bitmapFontUnmasked
-      case Some(maskChar) => createMaskedFont(bitmapFontUnmasked, maskChar, deleteSource = true)
+      case Some(maskChar) => createMaskedFont(bitmapFontUnmasked, maskChar, ownsTexture = true)
     }
 
     bitmapFont.setUseIntegerPositions(false)
     new Font(bitmapFont, size.toFloat)
   }
 
-  def createMaskedFont(source: BitmapFont, maskChar: Char, deleteSource: Boolean): BitmapFont = {
+  def createMaskedFont(source: BitmapFont, maskChar: Char, ownsTexture: Boolean): BitmapFont = {
 
     val out = new BitmapFont(
-      copyFontdata(source.getData),
+      createMaskedFontData(source.getData, maskChar),
       source.getRegions,
       source.usesIntegerPositions
     )
 
-    if (deleteSource) {
+    if (ownsTexture) {
       source.dispose()
       out.setOwnsTexture(true)
     }
 
-    maskFontData(out.getData, maskChar)
-
     out
   }
 
-  def maskFontData(data: BitmapFontData, maskChar: Char): Unit = {
-    require(data.hasGlyph(maskChar), s"Cannot mask font $data with character '$maskChar', since that character doesn't exist in the font!")
-    val maskGlyph = data.getGlyph(maskChar)
-    for {
-      glyphPage <- data.glyphs if glyphPage != null
-      glyph <- glyphPage if glyph != null
-    } {
-      data.setGlyph(glyph.id, maskGlyph)
-    }
-    Option(data.missingGlyph).foreach(mg => data.setGlyph(mg.id, maskGlyph))
-  }
+  def createMaskedFontData(source: BitmapFontData, maskChar: Char): BitmapFontData = {
+    require(source.hasGlyph(maskChar), s"Cannot mask font $source with character '$maskChar', since that character doesn't exist in the font!")
 
-  def copyFontdata(source: BitmapFontData): BitmapFontData = {
-    /**
-      *
-		public final Glyph[][] glyphs = new Glyph[PAGES][];
-      */
     val out = new BitmapFontData
     out.imagePaths = source.imagePaths
     out.fontFile = source.fontFile
@@ -172,20 +156,13 @@ object Font {
 
     out.markupEnabled = source.markupEnabled
     out.cursorX = source.cursorX
-    out.missingGlyph = source.missingGlyph
+    out.missingGlyph = source.getGlyph(maskChar)
 
     out.spaceWidth = source.spaceWidth
     out.xHeight = source.xHeight
     out.breakChars = source.breakChars
     out.xChars = source.xChars
     out.capChars = source.capChars
-
-    for {
-      glyphPage <- source.glyphs if glyphPage != null
-      glyph <- glyphPage if glyph != null
-    } {
-      out.setGlyph(glyph.id, glyph)
-    }
 
     out
   }
