@@ -1,6 +1,7 @@
 package se.gigurra.glasciia;
 
 import com.badlogic.gdx.files.FileHandle;
+import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.*;
 import com.badlogic.gdx.math.collision.BoundingBox;
@@ -246,6 +247,20 @@ public class ParticleSource implements Disposable {
         for (ParticleEmitter emitter : this.emitters)
             bounds.ext(emitter.getBoundingBox());
         return bounds;
+    }
+
+    public ParticleSource setTint(Color color) {
+        for (int iEm = 0, n = emitters.size; iEm < n; iEm++) {
+            ParticleEmitter emitter = emitters.get(iEm);
+
+            final float[] colors = emitter.getTint().getColors();
+            for (int i = 0; i < colors.length; i += 3) {
+                colors[i + 0] = color.r;
+                colors[i + 1] = color.g;
+                colors[i + 2] = color.b;
+            }
+        }
+        return this;
     }
 
     public ParticleSource scaleEffect (float scaleFactor) {

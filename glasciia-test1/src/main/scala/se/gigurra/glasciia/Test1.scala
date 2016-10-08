@@ -100,7 +100,7 @@ object Test1 {
         println("----------------------")
         println(canvas.batch.getShader.getFragmentShaderSource)
         val effect1 = app.resource[ParticleSource]("particle-effect:test-effect:instance-0").scaleEffect(0.5f)
-        app.addResource("particle-effect:test-effect:instance-1", effect1.copy.scaleEffect(0.5f).flipY())
+        app.addResource("particle-effect:test-effect:instance-1", effect1.copy.scaleEffect(0.5f).flipY().setTint(Color.TEAL))
         app.addResource("particle-effect:test-effect:instance-2", effect1.copy.scaleEffect(0.25f))
         app.addResource[Vec2[Float]]("camera-position", Vec2(
           x = canvas.width / 2 + Random.nextFloat() * 5.0f,
