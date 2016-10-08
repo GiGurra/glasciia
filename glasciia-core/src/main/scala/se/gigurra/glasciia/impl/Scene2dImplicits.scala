@@ -15,7 +15,7 @@ trait Scene2dImplicits {
   implicit class TableOpsImplicits(val table: Table) {
     def cell[T <: Actor](actor: T): Cell[T] = table.add[T](actor)
     def cell(): Cell[_] = table.add()
-    def cell(template: String, color: Color): Cell[Scene2dImage] = cell(new Scene2dImage(table.getSkin.newDrawable(template, color)))
+    def cellImg(template: String, color: Color): Cell[Scene2dImage] = cell(new Scene2dImage(table.getSkin.newDrawable(template, color)))
   }
 }
 

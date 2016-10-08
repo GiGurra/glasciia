@@ -2,11 +2,9 @@ package se.gigurra.glasciia.test1.testcomponents
 
 import com.badlogic.gdx.graphics.{Color, Pixmap}
 import com.badlogic.gdx.graphics.g2d.Animation.PlayMode
-import com.badlogic.gdx.graphics.g2d.TextureRegion
-import com.badlogic.gdx.scenes.scene2d.Actor
+import com.badlogic.gdx.graphics.g2d.{BitmapFont, TextureRegion}
 import com.badlogic.gdx.scenes.scene2d.ui.TextButton
 import com.badlogic.gdx.scenes.scene2d.ui.TextButton.TextButtonStyle
-import com.badlogic.gdx.scenes.scene2d.ui.{Image => Scene2dImage}
 import se.gigurra.glasciia.Glasciia._
 import se.gigurra.glasciia._
 import se.gigurra.math.{Box2, Vec2}
@@ -83,23 +81,23 @@ object loadResources {
   }
 
   private def loadGui(app: App, regions: Loader.InMemory[TextureRegion]): Unit = {
-    app.addResource("gui:main-menu", Gui())
+    app.addResource("gui:main-menu", Gui(debug = true))
     app.addResource("gui:main-menu:font", app.resource[Font]("font:monospace-default"))
     app.addResource("gui:main-menu:font-masked", app.resource[Font]("font:monospace-default-masked"))
 
     val mainMenu = app.resource[Gui]("gui:main-menu")
 
-    mainMenu.skin.add("fill", regions("filled-texture"))
-    mainMenu.skin.add("default-font", app.resource[Font]("gui:main-menu:font").font)
-    mainMenu.skin.add("masked-font", app.resource[Font]("gui:main-menu:font-masked").font)
+    mainMenu.addStyle("fill", classOf[TextureRegion], regions("filled-texture"))
+    mainMenu.addStyle("default-font", classOf[BitmapFont], app.resource[Font]("gui:main-menu:font").bitmapFont)
+    mainMenu.addStyle("masked-font", classOf[BitmapFont], app.resource[Font]("gui:main-menu:font-masked").bitmapFont)
 
-    val mainMenuButtonStyle = new TextButtonStyle
-    mainMenuButtonStyle.up = mainMenu.skin.newDrawable("fill", Color.DARK_GRAY)
-    mainMenuButtonStyle.down = mainMenu.skin.newDrawable("fill", Color.DARK_GRAY)
-    mainMenuButtonStyle.checked = mainMenu.skin.newDrawable("fill", Color.BLUE)
-    mainMenuButtonStyle.over = mainMenu.skin.newDrawable("fill", Color.LIGHT_GRAY)
-    mainMenuButtonStyle.font = mainMenu.skin.getFont("default-font")
-    mainMenu.skin.add("default", mainMenuButtonStyle)
+    mainMenu.addStyle("default", classOf[TextButtonStyle], new TextButtonStyle {
+      up = mainMenu.newDrawableFromStyle("fill", Color.DARK_GRAY)
+      down = mainMenu.newDrawableFromStyle("fill", Color.DARK_GRAY)
+      checked = mainMenu.newDrawableFromStyle("fill", Color.BLUE)
+      over = mainMenu.newDrawableFromStyle("fill", Color.LIGHT_GRAY)
+      font = mainMenu.getStyle[BitmapFont]("default-font")
+    })
 
     mainMenu.row { r =>
       r.cell().height(25)
@@ -111,15 +109,13 @@ object loadResources {
     }
 
     mainMenu.row { r =>
-      r.cell("fill", Color.TEAL).size(64)
-      r.cell("fill", Color.TEAL).size(64)
+      r.cellImg("fill", Color.TEAL).size(64)
+      r.cellImg("fill", Color.TEAL).size(64)
     }
 
     mainMenu.row { r =>
       r.cell().expandY()
     }
-
-    mainMenu.debug()
   }
 
   /*

@@ -1,20 +1,37 @@
 package se.gigurra.glasciia
 
+import com.badlogic.gdx.graphics.Color
 import com.badlogic.gdx.scenes.scene2d.Stage
 import com.badlogic.gdx.scenes.scene2d.ui.{Skin, Table}
+import com.badlogic.gdx.scenes.scene2d.utils.Drawable
 
 import scala.language.implicitConversions
+import scala.reflect.ClassTag
 
 /**
   * Created by johan on 2016-10-08.
   */
 case class Gui(skin: Skin = new Skin(),
                stage: Stage = new Stage(),
-               var hidden: Boolean = false) {
+               var hidden: Boolean = false,
+               debug: Boolean = false) {
 
   val table = new Table(skin)
   table.setFillParent(true)
   stage.addActor(table)
+  table.setDebug(debug)
+
+  def addStyle[T](name: String, styleClass: Class[T], style: T): Unit = {
+    skin.add(name, style, styleClass)
+  }
+
+  def newDrawableFromStyle(name: String, color: Color): Drawable = {
+    skin.newDrawable(name, color)
+  }
+
+  def getStyle[T: ClassTag](name: String): T = {
+    skin.get(name, implicitly[ClassTag[T]].runtimeClass.asInstanceOf[Class[T]])
+  }
 
   def row[A](f: Table => A): Unit = {
     f(table)

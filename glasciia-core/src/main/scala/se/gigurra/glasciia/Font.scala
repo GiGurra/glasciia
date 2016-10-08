@@ -11,7 +11,7 @@ import Glasciia._
 import com.badlogic.gdx.files.FileHandle
 import com.badlogic.gdx.graphics.g2d.BitmapFont.BitmapFontData
 
-case class Font(font: BitmapFont, size: Float)  {
+case class Font(bitmapFont: BitmapFont, size: Float)  {
 
   def preload(str: CharSequence,
               at: Vec2[Float] = Zero.vec2f,
@@ -20,11 +20,11 @@ case class Font(font: BitmapFont, size: Float)  {
               wrap: Boolean = false,
               color: Color = null,
               alphaScale: Float = 1.0f): BitmapFontCache = {
-    val cached = font.newFontCache()
+    val cached = bitmapFont.newFontCache()
     cached.addText(new GlyphLayout(
-      font,
+      bitmapFont,
       str,
-      Option(color).getOrElse(font.getColor).scaleAlpha(alphaScale),
+      Option(color).getOrElse(bitmapFont.getColor).scaleAlpha(alphaScale),
       targetWidth,
       align,
       wrap), at.x, at.y)
@@ -32,8 +32,8 @@ case class Font(font: BitmapFont, size: Float)  {
   }
 
   def spaceWidth(normalized: Boolean = true): Float = {
-    if (normalized) font.getSpaceWidth / size
-    else font.getSpaceWidth
+    if (normalized) bitmapFont.getSpaceWidth / size
+    else bitmapFont.getSpaceWidth
   }
 
   def heightOf(lines: Seq[String], normalized: Boolean = true): Float = {
@@ -45,16 +45,16 @@ case class Font(font: BitmapFont, size: Float)  {
   }
 
   def lineHeight(normalized: Boolean = true): Float = {
-    if (normalized) font.getLineHeight / size
-    else font.getLineHeight
+    if (normalized) bitmapFont.getLineHeight / size
+    else bitmapFont.getLineHeight
   }
 
   def close(): Unit = {
-    font.dispose()
+    bitmapFont.dispose()
   }
 
   def createMaskedInstance(maskChar: Char, deleteSource: Boolean): Font = {
-    new Font(Font.createMaskedFont(font, maskChar, ownsTexture = deleteSource), size)
+    new Font(Font.createMaskedFont(bitmapFont, maskChar, ownsTexture = deleteSource), size)
   }
 }
 
@@ -172,5 +172,5 @@ object Font {
   }
 
   import scala.language.implicitConversions
-  implicit def toFont(font: Font): BitmapFont = font.font
+  implicit def toFont(font: Font): BitmapFont = font.bitmapFont
 }
