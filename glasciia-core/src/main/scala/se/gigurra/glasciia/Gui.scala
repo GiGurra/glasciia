@@ -2,6 +2,7 @@ package se.gigurra.glasciia
 
 import com.badlogic.gdx.scenes.scene2d.Stage
 import com.badlogic.gdx.scenes.scene2d.ui.{Skin, Table}
+import com.badlogic.gdx.utils.viewport.FillViewport
 
 import scala.language.implicitConversions
 
@@ -16,9 +17,14 @@ case class Gui(skin: Skin = new Skin(),
   table.setFillParent(true)
   stage.addActor(table)
 
+  stage.setViewport(new FillViewport(640, 480))
+
   def draw(canvas: Canvas, dt: Float = 0.0f): Unit = {
     if (!hidden) {
+      stage.getViewport.setScreenSize(canvas.width, canvas.height)
+      stage.getViewport.setWorldSize(canvas.width*canvas.aspectRatio, canvas.height)
       stage.getViewport.update(canvas.width, canvas.height, true)
+      table.layout()
       if (dt != 0.0f)
         stage.act(dt)
       stage.draw()

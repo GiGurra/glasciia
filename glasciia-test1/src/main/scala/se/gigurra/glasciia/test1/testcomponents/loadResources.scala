@@ -101,7 +101,10 @@ object loadResources {
     mainMenu.skin.add("main-menu:button-style", mainMenuButtonStyle)
 
     mainMenu.table.add(new TextButton("Click me!", mainMenu.skin, "main-menu:button-style"))
-    mainMenu.table.add(new Scene2dImage(mainMenu.skin.newDrawable("fill", Color.RED))).size(64)
+    mainMenu.table.row()
+    mainMenu.table.add(new Scene2dImage(mainMenu.skin.newDrawable("fill", Color.GREEN))).size(64)
+    mainMenu.table.add(new Scene2dImage(mainMenu.skin.newDrawable("fill", Color.GREEN))).size(64)
+    mainMenu.table.debug()
   }
 
   /*

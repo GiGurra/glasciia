@@ -20,6 +20,7 @@ case class Canvas(app: App)
     with BackgroundDrawer {
 
   def size: Vec2[Int] = app.size
+  def screenBounds: Box2[Int] = Box2[Int](0,0,width,height)
   def width: Int = app.width
   def height: Int = app.height
   def aspectRatio: Float = width.toFloat / height.toFloat
