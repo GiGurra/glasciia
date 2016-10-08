@@ -53,6 +53,7 @@ object Test1 {
    // app.addResource("texture-atlas", new TextureAtlas(s"$outputFolder/test-atlast.atlas", outputFolder))
 
     app.addResource("font:monospace-default", Font.fromTtfFile("pt-mono/PTM55FT.ttf"))
+    app.addResource("font:monospace-default-masked", app.resource[Font]("font:monospace-default").createMaskedInstance(maskChar = '*'))
     app.addResource("gui:main-menu", new Stage())
     app.addResource("gui:main-menu:visible", true)
 
@@ -119,6 +120,7 @@ object Test1 {
         app.addResource("camera-position", prevCameraPos + dr)
 
         val monospaceFont = app.resource[Font]("font:monospace-default")
+        val monospaceFontMasked = app.resource[Font]("font:monospace-default-masked")
         val walkingDudeAnimation = app.resource[Animation.Instance]("animation:capguy-walk:instance-0")
         val testImage = app.resource[StaticImage]("image:test-image")
         val effect1 = app.resource[ParticleSource]("particle-effect:test-effect:instance-0")
@@ -236,6 +238,15 @@ object Test1 {
                   anchor = Anchor.CC,
                   scale = 25,
                   at = cameraPos
+                )
+
+                canvas.drawText(
+                  text = "CAM",
+                  font = monospaceFontMasked,
+                  color = Color.WHITE,
+                  anchor = Anchor.CC,
+                  scale = 25,
+                  at = cameraPos - Vec2(0.0f, 50.0f)
                 )
 
         }
