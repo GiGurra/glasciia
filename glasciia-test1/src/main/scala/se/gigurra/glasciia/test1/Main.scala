@@ -28,7 +28,7 @@ object Main {
       case Render(canvas) =>
         updateCameraPos(canvas)
         drawWorld(canvas)
-        drawGui(canvas, mainMenu, Gdx.graphics.getDeltaTime)
+        drawGui(canvas, mainMenu)
 
       case input: InputEvent =>
         input
