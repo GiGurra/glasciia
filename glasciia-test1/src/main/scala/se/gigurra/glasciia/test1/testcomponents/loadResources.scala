@@ -4,7 +4,7 @@ import com.badlogic.gdx.graphics.{Color, Pixmap, Texture}
 import com.badlogic.gdx.graphics.g2d.Animation.PlayMode
 import com.badlogic.gdx.graphics.g2d.TextureRegion
 import com.badlogic.gdx.scenes.scene2d.ui.{Image => Scene2dImage}
-import com.badlogic.gdx.scenes.scene2d.ui.{Skin, Table, TextButton}
+import com.badlogic.gdx.scenes.scene2d.ui.{Table, TextButton}
 import com.badlogic.gdx.scenes.scene2d.ui.TextButton.TextButtonStyle
 import se.gigurra.glasciia.Glasciia._
 import se.gigurra.glasciia._
@@ -18,10 +18,8 @@ object loadResources {
   def apply(app: App): Unit = app.executeOnRenderThread {
 
     app.addResource("texture-loader", TextureRegionLoader.createNew())
-    val regionLoader = app.resource[Loader[TextureRegion]]("texture-loader")
+    val regionLoader = app.resource[Loader.InMemory[TextureRegion]]("texture-loader")
 
-    // UNCOMMENT TO TEST TEXTURE ATLASING
-    // loadTextureAtlases(app)
     loadFonts(app, regionLoader)
     loadImages(app, regionLoader)
     loadParticleEffects(app, regionLoader)
@@ -75,43 +73,33 @@ object loadResources {
     )
   }
 
-  private def loadGui(app: App, regionLoader: Loader[TextureRegion]): Unit = {
+  private def loadGui(app: App, regionLoader: Loader.InMemory[TextureRegion]): Unit = {
     app.addResource("gui:main-menu", Gui())
     app.addResource("gui:main-menu:font", app.resource[Font]("font:monospace-default"))
     app.addResource("gui:main-menu:font-masked", app.resource[Font]("font:monospace-default-masked"))
 
-    val mainMenuGui = app.resource[Gui]("gui:main-menu")
-    val mainMenuSkin = new Skin()
+    val mainMenu = app.resource[Gui]("gui:main-menu")
+    regionLoader.add("fill-texture", {
+      val fillPixMap = new Pixmap(1, 1, Pixmap.Format.RGBA8888)
+      fillPixMap.setColor(Color.WHITE)
+      fillPixMap.fill()
+      StaticImage.fromPixMap(fillPixMap)
+    })
 
-    val fillPixMap = new Pixmap(1, 1, Pixmap.Format.RGBA8888)
-    fillPixMap.setColor(Color.WHITE)
-    fillPixMap.fill()
-    mainMenuSkin.add("fill", new Texture(fillPixMap))
-    mainMenuSkin.add("default-font", app.resource[Font]("gui:main-menu:font").font)
-    mainMenuSkin.add("masked-font", app.resource[Font]("gui:main-menu:font-masked").font)
+    mainMenu.skin.add("fill", regionLoader("fill-texture"))
+    mainMenu.skin.add("default-font", app.resource[Font]("gui:main-menu:font").font)
+    mainMenu.skin.add("masked-font", app.resource[Font]("gui:main-menu:font-masked").font)
 
     val mainMenuButtonStyle = new TextButtonStyle
-    mainMenuButtonStyle.up = mainMenuSkin.newDrawable("fill", Color.DARK_GRAY)
-    mainMenuButtonStyle.down = mainMenuSkin.newDrawable("fill", Color.DARK_GRAY)
-    mainMenuButtonStyle.checked = mainMenuSkin.newDrawable("fill", Color.BLUE)
-    mainMenuButtonStyle.over = mainMenuSkin.newDrawable("fill", Color.LIGHT_GRAY)
-    mainMenuButtonStyle.font = mainMenuSkin.getFont("default-font")
+    mainMenuButtonStyle.up = mainMenu.skin.newDrawable("fill", Color.DARK_GRAY)
+    mainMenuButtonStyle.down = mainMenu.skin.newDrawable("fill", Color.DARK_GRAY)
+    mainMenuButtonStyle.checked = mainMenu.skin.newDrawable("fill", Color.BLUE)
+    mainMenuButtonStyle.over = mainMenu.skin.newDrawable("fill", Color.LIGHT_GRAY)
+    mainMenuButtonStyle.font = mainMenu.skin.getFont("default-font")
+    mainMenu.skin.add("main-menu:button-style", mainMenuButtonStyle)
 
-    mainMenuSkin.add("main-menu:button-style", mainMenuButtonStyle)
-
-    // Create a table that fills the screen. Everything else will go inside this table.
-    val mainMenuGuiTable = new Table()
-    mainMenuGuiTable.setFillParent(true)
-
-    // Create a button. A 3rd parameter can be used to specify a name other than "default".
-    val button = new TextButton("Click me!", mainMenuSkin, "main-menu:button-style")
-    mainMenuGuiTable.add(button)
-
-    mainMenuGuiTable.add(new Scene2dImage(mainMenuSkin.newDrawable("fill", Color.RED))).size(64)
-
-
-    // Add everything to the stage
-    mainMenuGui.addActor(mainMenuGuiTable)
+    mainMenu.table.add(new TextButton("Click me!", mainMenu.skin, "main-menu:button-style"))
+    mainMenu.table.add(new Scene2dImage(mainMenu.skin.newDrawable("fill", Color.RED))).size(64)
   }
 
 
