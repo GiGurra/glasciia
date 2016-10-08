@@ -2,8 +2,7 @@ package se.gigurra.glasciia.impl
 
 import com.badlogic.gdx.graphics.Color
 import com.badlogic.gdx.scenes.scene2d.Actor
-import com.badlogic.gdx.scenes.scene2d.ui.{Cell, Table}
-import com.badlogic.gdx.scenes.scene2d.ui.{Image => Scene2dImage}
+import com.badlogic.gdx.scenes.scene2d.ui.{Cell, Table, TextButton, Image => Scene2dImage}
 
 import scala.language.implicitConversions
 
@@ -16,6 +15,13 @@ trait Scene2dImplicits {
     def cell[T <: Actor](actor: T): Cell[T] = table.add[T](actor)
     def cell(): Cell[_] = table.add()
     def cellImg(template: String, color: Color): Cell[Scene2dImage] = cell(new Scene2dImage(table.getSkin.newDrawable(template, color)))
+  }
+
+  implicit class TextButtonOpsImplicits(val button: TextButton) {
+    def fontScale(value: Float): TextButton = {
+      button.getLabel.setFontScale(value)
+      button
+    }
   }
 }
 

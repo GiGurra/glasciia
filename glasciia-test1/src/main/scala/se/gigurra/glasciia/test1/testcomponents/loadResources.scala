@@ -100,7 +100,7 @@ object loadResources {
     mainMenu.row { r =>
       r.cell().height(25)
     }.row { r =>
-      r.cell(new TextButton("Click me!", mainMenu.skin)).expandX().left()
+      r.cell(new TextButton("Click me!", mainMenu.getStyle[TextButtonStyle]("default")).fontScale(1.5f)).expandX().left()
       r.cell().width(100)
     }.row { r =>
       r.cellImg("fill", Color.TEAL).size(64)
