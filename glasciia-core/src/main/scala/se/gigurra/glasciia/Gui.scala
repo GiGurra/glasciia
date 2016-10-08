@@ -19,7 +19,7 @@ case class Gui[T_Table <: Table](table: T_Table,
 
   def skin = table.getSkin
 
-  def addStyle[T](name: String, styleClass: Class[T], style: T): Gui[T_Table] = {
+  def addStyle[T](name: String, styleClass: Class[T])(style: T): Gui[T_Table] = {
     skin.add(name, style, styleClass)
     this
   }

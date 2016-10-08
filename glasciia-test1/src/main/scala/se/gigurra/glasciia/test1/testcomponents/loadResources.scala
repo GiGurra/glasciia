@@ -86,10 +86,10 @@ object loadResources {
     val mainMenu = app.resource[RootGui]("gui:main-menu")
 
     mainMenu
-      .addStyle("fill", classOf[TextureRegion], regions("filled-texture"))
-      .addStyle("default-font", classOf[BitmapFont], app.resource[Font]("font:monospace-default").bitmapFont)
-      .addStyle("masked-font", classOf[BitmapFont], app.resource[Font]("font:monospace-default-masked").bitmapFont)
-      .addStyle("default", classOf[TextButtonStyle], new TextButtonStyle {
+      .addStyle("fill", classOf[TextureRegion])(regions("filled-texture"))
+      .addStyle("default-font", classOf[BitmapFont])(app.resource[Font]("font:monospace-default"))
+      .addStyle("masked-font", classOf[BitmapFont])(app.resource[Font]("font:monospace-default-masked"))
+      .addStyle("default", classOf[TextButtonStyle])(new TextButtonStyle {
         up = mainMenu.newDrawableFromStyle("fill", Color.DARK_GRAY)
         down = mainMenu.newDrawableFromStyle("fill", Color.DARK_GRAY)
         checked = mainMenu.newDrawableFromStyle("fill", Color.BLUE)
