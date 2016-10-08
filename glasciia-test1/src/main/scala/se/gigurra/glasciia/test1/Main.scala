@@ -1,6 +1,5 @@
 package se.gigurra.glasciia.test1
 
-import com.badlogic.gdx.Gdx
 import com.badlogic.gdx.graphics.Cursor
 import se.gigurra.glasciia.AppEvent._
 import se.gigurra.glasciia.Glasciia._
@@ -35,7 +34,7 @@ object Main {
           .filter(mainMenu)
           .filter {
             case event: MouseEvent =>
-              println(s"MouseEvent propagated to world/Not consumed by gui: $event")
+              //println(s"MouseEvent propagated to world/Not consumed by gui: $event")
             case event: KeyboardEvent =>
               println(s"KeyboardEvent propagated to world/Not consumed by gui: $event")
           }

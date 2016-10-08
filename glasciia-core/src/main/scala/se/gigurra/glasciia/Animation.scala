@@ -37,7 +37,7 @@ object Animation {
                magFilter: Texture.TextureFilter = Texture.TextureFilter.Linear): Animation = {
     val texture = new Texture(source, useMipMaps)
     texture.setFilter(minFilter, magFilter)
-    fromRegion(
+    apply(
       region = new TextureRegion(texture),
       nx = nx,
       ny = ny,
@@ -46,11 +46,11 @@ object Animation {
     )
   }
 
-  def fromRegion(region: TextureRegion,
-                 nx: Int,
-                 ny: Int,
-                 dt: Double,
-                 mode: PlayMode = PlayMode.NORMAL): Animation = {
+  def apply(region: TextureRegion,
+            nx: Int,
+            ny: Int,
+            dt: Double,
+            mode: PlayMode = PlayMode.NORMAL): Animation = {
     require(nx >= 0, s"Animation.apply: nx must be at least 1")
     require(nx >= 0, s"Animation.apply: ny must be at least 1")
     val tmp = region.split(region.getRegionWidth / nx, region.getRegionHeight / ny)

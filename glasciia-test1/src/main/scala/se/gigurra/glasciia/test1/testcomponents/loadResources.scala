@@ -1,16 +1,13 @@
 package se.gigurra.glasciia.test1.testcomponents
 
-import java.io.File
-
 import com.badlogic.gdx.graphics.{Color, Pixmap, Texture}
 import com.badlogic.gdx.graphics.g2d.Animation.PlayMode
-import com.badlogic.gdx.graphics.g2d.TextureAtlas
+import com.badlogic.gdx.graphics.g2d.TextureRegion
 import com.badlogic.gdx.scenes.scene2d.ui.{Image => Scene2dImage}
 import com.badlogic.gdx.scenes.scene2d.ui.{Skin, Table, TextButton}
 import com.badlogic.gdx.scenes.scene2d.ui.TextButton.TextButtonStyle
 import se.gigurra.glasciia.Glasciia._
 import se.gigurra.glasciia._
-import se.gigurra.glasciia.impl.LoadFile
 import se.gigurra.math.{Box2, Vec2}
 
 /**
@@ -19,36 +16,31 @@ import se.gigurra.math.{Box2, Vec2}
 object loadResources {
 
   def apply(app: App): Unit = app.executeOnRenderThread {
+
+    app.addResource("texture-loader", TextureRegionLoader.createNew())
+    val regionLoader = app.resource[Loader[TextureRegion]]("texture-loader")
+
     // UNCOMMENT TO TEST TEXTURE ATLASING
     // loadTextureAtlases(app)
-    loadFonts(app)
-    loadImages(app)
-    loadParticleEffects(app)
-    loadBackground(app)
-    loadGui(app)
+    loadFonts(app, regionLoader)
+    loadImages(app, regionLoader)
+    loadParticleEffects(app, regionLoader)
+    loadBackground(app, regionLoader)
+    loadGui(app, regionLoader)
   }
 
-  private def loadTextureAtlases(app: App): Unit = {
-    val texturePackSettings = readTexturePackSettings("test-atlast-cfg.json")
-    val inputFolder = new File(getClass.getClassLoader.getResource("test-atlast-cfg.json").getFile).getAbsoluteFile.getParent
-    val outputFolder = LoadFile("target/").get.file().getAbsolutePath
-    packFilesIntoTextureAtlas(texturePackSettings, inputDir = inputFolder, outputDir = outputFolder, "test-atlast.atlas")
-    println(s"$inputFolder -> $outputFolder")
-    app.addResource("texture-atlas", new TextureAtlas(s"$outputFolder/test-atlast.atlas", outputFolder))
-  }
-
-  private def loadFonts(app: App): Unit = {
+  private def loadFonts(app: App, regionLoader: Loader[TextureRegion]): Unit = {
     app.addResource("font:monospace-default", Font.fromTtfFile("pt-mono/PTM55FT.ttf"))
     app.addResource("font:monospace-default-masked", app.resource[Font]("font:monospace-default").createMaskedInstance(maskChar = Font.DEFAULT_MASK_CHAR, deleteSource = false))
   }
 
-  private def loadImages(app: App): Unit = {
-    app.addResource("animation:capguy-walk", Animation.fromFile("animations/capguy-walk.png", nx = 8, ny = 1, dt = 0.1, mode = PlayMode.LOOP))
+  private def loadImages(app: App, regionLoader: Loader[TextureRegion]): Unit = {
+    app.addResource("animation:capguy-walk", Animation(regionLoader("animations/capguy-walk.png"), nx = 8, ny = 1, dt = 0.1, mode = PlayMode.LOOP))
     app.addResource("animation:capguy-walk:instance-0", app.resource[Animation]("animation:capguy-walk").newInstance(t0 = app.localAppTime))
-    app.addResource("image:test-image", StaticImage.fromFile("images/test-image.png"))
+    app.addResource("image:test-image", StaticImage(regionLoader("images/test-image.png")))
   }
 
-  private def loadParticleEffects(app: App): Unit = {
+  private def loadParticleEffects(app: App, regionLoader: Loader[TextureRegion]): Unit = {
     app.addResource("particle-effect:test-effect:instance-0", Particles.standard("particle-effects/test-effect.party", "particle-effects/").scaleEffect(0.5f))
     def effect0 = app.resource[ParticleSource]("particle-effect:test-effect:instance-0")
     app.addResource("particle-effect:test-effect:instance-1", effect0.copy.scaleEffect(0.5f).flipY().setTint(Color.TEAL))
@@ -57,8 +49,8 @@ object loadResources {
     app.addResource("cool-cursor", createCursor("cursors/c2.png"))
   }
 
-  private def loadBackground(app: App): Unit = {
-    app.addResource("bg-image", StaticImage.fromFile("backgrounds/bgtest2.jpg"))
+  private def loadBackground(app: App, regionLoader: Loader[TextureRegion]): Unit = {
+    app.addResource("bg-image", StaticImage(regionLoader("backgrounds/bgtest2.jpg")))
     app.addResource("background-0",
       MultiLayer[Image]() {
         _.layer(translationScale = 0.5f, camZero = Vec2(320.0f, 240.0f)) {
@@ -83,7 +75,7 @@ object loadResources {
     )
   }
 
-  private def loadGui(app: App): Unit = {
+  private def loadGui(app: App, regionLoader: Loader[TextureRegion]): Unit = {
     app.addResource("gui:main-menu", Gui())
     app.addResource("gui:main-menu:font", app.resource[Font]("font:monospace-default"))
     app.addResource("gui:main-menu:font-masked", app.resource[Font]("font:monospace-default-masked"))
@@ -122,5 +114,16 @@ object loadResources {
     mainMenuGui.addActor(mainMenuGuiTable)
   }
 
+
+  /*
+  private def loadTextureAtlases(app: App): Unit = {
+    val texturePackSettings = readTexturePackSettings("test-atlast-cfg.json")
+    val inputFolder = new File(getClass.getClassLoader.getResource("test-atlast-cfg.json").getFile).getAbsoluteFile.getParent
+    val outputFolder = LoadFile("target/").get.file().getAbsolutePath
+    packFilesIntoTextureAtlas(texturePackSettings, inputDir = inputFolder, outputDir = outputFolder, "test-atlast.atlas")
+    println(s"$inputFolder -> $outputFolder")
+    app.addResource("texture-atlas", new TextureAtlas(s"$outputFolder/test-atlast.atlas", outputFolder))
+  }
+  */
 
 }

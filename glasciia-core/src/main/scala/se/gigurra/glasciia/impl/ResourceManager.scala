@@ -4,7 +4,7 @@ import se.gigurra.glasciia.App
 import se.gigurra.glasciia.impl.ResourceManager.{ExplicitTypeRequired, Resource}
 
 import scala.annotation.implicitNotFound
-import scala.reflect.ClassTag
+import scala.reflect.Manifest
 
 /**
   * Created by johan on 2016-10-01.
@@ -16,12 +16,12 @@ trait ResourceManager { self: App =>
     resources.put(path, Resource(resource, () => closer(resource))).foreach(_.close())
   }
 
-  def getResource[T: ClassTag : ExplicitTypeRequired](path: String): Option[T] = doGetResource(path).map {
+  def getResource[T: Manifest : ExplicitTypeRequired](path: String): Option[T] = doGetResource(path).map {
     case resource: T => resource
-    case resource => throw new ClassCastException(s"Resource of incorrect type (exp: ${implicitly[ClassTag[T]].runtimeClass}, actual: ${resource.getClass}")
+    case resource => throw new ClassCastException(s"Resource of incorrect type (exp: ${implicitly[Manifest[T]]}, actual: ${resource.getClass}")
   }
 
-  def resource[T : ClassTag : ExplicitTypeRequired](path: String): T = {
+  def resource[T : Manifest : ExplicitTypeRequired](path: String): T = {
     getResource[T](path) match {
       case Some(resource) => resource
       case None => throw new NoSuchElementException(s"No resource stored on path '$path'")
