@@ -14,5 +14,7 @@ object Glasciia
     with ParticleSourceImplicits
     with ImageResizing
     with TextureAtlasCreation
-    with CursorCreation {
+    with CursorCreation
+    with Scene2dImplicits {
+
 }

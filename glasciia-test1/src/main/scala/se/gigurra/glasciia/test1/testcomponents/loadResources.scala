@@ -3,9 +3,10 @@ package se.gigurra.glasciia.test1.testcomponents
 import com.badlogic.gdx.graphics.{Color, Pixmap}
 import com.badlogic.gdx.graphics.g2d.Animation.PlayMode
 import com.badlogic.gdx.graphics.g2d.TextureRegion
-import com.badlogic.gdx.scenes.scene2d.ui.{Image => Scene2dImage}
+import com.badlogic.gdx.scenes.scene2d.Actor
 import com.badlogic.gdx.scenes.scene2d.ui.TextButton
 import com.badlogic.gdx.scenes.scene2d.ui.TextButton.TextButtonStyle
+import com.badlogic.gdx.scenes.scene2d.ui.{Image => Scene2dImage}
 import se.gigurra.glasciia.Glasciia._
 import se.gigurra.glasciia._
 import se.gigurra.math.{Box2, Vec2}
@@ -100,14 +101,24 @@ object loadResources {
     mainMenuButtonStyle.font = mainMenu.skin.getFont("default-font")
     mainMenu.skin.add("default", mainMenuButtonStyle)
 
-    mainMenu.add(new TextButton("Click me!", mainMenu.skin)).expandX().left()
-    mainMenu.add().width(100)
-    mainMenu.row()
-    mainMenu.add(new Scene2dImage(mainMenu.skin.newDrawable("fill", Color.TEAL))).size(64)
-    mainMenu.add(new Scene2dImage(mainMenu.skin.newDrawable("fill", Color.TEAL))).size(64)
-    mainMenu.row()
-    mainMenu.add()
-    mainMenu.add().expandY()
+    mainMenu.row { r =>
+      r.cell().height(25)
+    }
+
+    mainMenu.row { r =>
+      r.cell(new TextButton("Click me!", mainMenu.skin)).expandX().left()
+      r.cell().width(100)
+    }
+
+    mainMenu.row { r =>
+      r.cell("fill", Color.TEAL).size(64)
+      r.cell("fill", Color.TEAL).size(64)
+    }
+
+    mainMenu.row { r =>
+      r.cell().expandY()
+    }
+
     mainMenu.debug()
   }
 

@@ -16,6 +16,11 @@ case class Gui(skin: Skin = new Skin(),
   table.setFillParent(true)
   stage.addActor(table)
 
+  def row[A](f: Table => A): Unit = {
+    f(table)
+    table.row()
+  }
+
   def draw(canvas: Canvas, dt: Float = 0.0f): Unit = {
     if (!hidden) {
       stage.getViewport.setScreenSize(canvas.width, canvas.height)
