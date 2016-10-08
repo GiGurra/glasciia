@@ -13,23 +13,24 @@ import com.badlogic.gdx.graphics.glutils.HdpiUtils
 trait FrameDrawer {
 
   def batch: Batch
+  def screenBounds: Box2[Int]
   def camera: Camera
   def transform: Matrix4Stack
 
-  def drawFrame(screenBounds: Box2[Int], background: Color = Color.BLACK, camPos: Vec2[Float] = camera.position)(content: => Unit): Unit = {
+  def drawFrame(drawBounds: Box2[Int] = screenBounds, background: Color = Color.BLACK, camPos: Vec2[Float] = camera.position)(content: => Unit): Unit = {
     gl.glClearColor(background.r, background.g, background.b, background.a)
     gl.glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT)
-    drawSubFrame(screenBounds, camPos)(content)
+    drawSubFrame(drawBounds, camPos)(content)
   }
 
-  def drawSubFrame(screenBounds: Box2[Int], camPos: Vec2[Float] = camera.position)(content: => Unit): Unit = {
+  def drawSubFrame(drawBounds: Box2[Int], camPos: Vec2[Float] = camera.position)(content: => Unit): Unit = {
     camera.position.set(camPos)
     camera.update()
     HdpiUtils.glViewport(
-      screenBounds.ll.x,
-      screenBounds.ll.y,
-      screenBounds.width,
-      screenBounds.height
+      drawBounds.ll.x,
+      drawBounds.ll.y,
+      drawBounds.width,
+      drawBounds.height
     )
     batch.setProjectionMatrix(camera.combined)
     transform.pushPop {

@@ -98,13 +98,17 @@ object loadResources {
     mainMenuButtonStyle.checked = mainMenu.skin.newDrawable("fill", Color.BLUE)
     mainMenuButtonStyle.over = mainMenu.skin.newDrawable("fill", Color.LIGHT_GRAY)
     mainMenuButtonStyle.font = mainMenu.skin.getFont("default-font")
-    mainMenu.skin.add("main-menu:button-style", mainMenuButtonStyle)
+    mainMenu.skin.add("default", mainMenuButtonStyle)
 
-    mainMenu.table.add(new TextButton("Click me!", mainMenu.skin, "main-menu:button-style"))
-    mainMenu.table.row()
-    mainMenu.table.add(new Scene2dImage(mainMenu.skin.newDrawable("fill", Color.GREEN))).size(64)
-    mainMenu.table.add(new Scene2dImage(mainMenu.skin.newDrawable("fill", Color.GREEN))).size(64)
-    mainMenu.table.debug()
+    mainMenu.add(new TextButton("Click me!", mainMenu.skin)).expandX().left()
+    mainMenu.add().width(100)
+    mainMenu.row()
+    mainMenu.add(new Scene2dImage(mainMenu.skin.newDrawable("fill", Color.TEAL))).size(64)
+    mainMenu.add(new Scene2dImage(mainMenu.skin.newDrawable("fill", Color.TEAL))).size(64)
+    mainMenu.row()
+    mainMenu.add()
+    mainMenu.add().expandY()
+    mainMenu.debug()
   }
 
   /*

@@ -34,7 +34,7 @@ object drawWorld {
     )
 
     canvas.drawFrame(
-      screenBounds = canvas.screenBounds,
+      drawBounds = canvas.screenBounds,
       background = Color.DARK_GRAY,
       camPos = cameraPos
     ) {
