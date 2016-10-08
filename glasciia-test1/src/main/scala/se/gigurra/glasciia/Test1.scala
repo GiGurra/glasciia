@@ -4,7 +4,6 @@ import com.badlogic.gdx.Gdx
 import com.badlogic.gdx.graphics.g2d.Animation.PlayMode
 import com.badlogic.gdx.graphics.{Color, Cursor}
 import com.badlogic.gdx.scenes.scene2d.Stage
-import com.badlogic.gdx.utils.viewport.FillViewport
 import se.gigurra.glasciia.App.{GlConf, WindowConf}
 import se.gigurra.glasciia.AppEvent._
 import se.gigurra.glasciia.Glasciia._
@@ -135,8 +134,8 @@ object Test1 {
 
         canvas.setOrtho(
           yDown = false,
-          width = canvas.width,
-          height = canvas.height
+          width = 480 * canvas.aspectRatio,
+          height = 480
         )
 
         canvas.drawFrame(

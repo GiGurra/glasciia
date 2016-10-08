@@ -22,6 +22,7 @@ case class Canvas(app: App)
   def size: Vec2[Int] = app.size
   def width: Int = app.width
   def height: Int = app.height
+  def aspectRatio: Float = width.toFloat / height.toFloat
 
   def drawTime: Double = _drawTimeSeconds
 
