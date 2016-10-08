@@ -21,8 +21,9 @@ case class Gui(skin: Skin = new Skin(),
   stage.addActor(table)
   table.setDebug(debug)
 
-  def addStyle[T](name: String, styleClass: Class[T], style: T): Unit = {
+  def addStyle[T](name: String, styleClass: Class[T], style: T): Gui = {
     skin.add(name, style, styleClass)
+    this
   }
 
   def newDrawableFromStyle(name: String, color: Color): Drawable = {
@@ -33,12 +34,13 @@ case class Gui(skin: Skin = new Skin(),
     skin.get(name, implicitly[ClassTag[T]].runtimeClass.asInstanceOf[Class[T]])
   }
 
-  def row[A](f: Table => A): Unit = {
+  def row[A](f: Table => A): Gui = {
     f(table)
     table.row()
+    this
   }
 
-  def draw(canvas: Canvas, dt: Float = 0.0f): Unit = {
+  def draw(canvas: Canvas, dt: Float = 0.0f): Gui = {
     if (!hidden) {
       stage.getViewport.setScreenSize(canvas.width, canvas.height)
       stage.getViewport.setWorldSize(canvas.width, canvas.height)
@@ -48,6 +50,7 @@ case class Gui(skin: Skin = new Skin(),
         stage.act(dt)
       stage.draw()
     }
+    this
   }
   def hide(): Unit = hidden = true
   def show(): Unit = hidden = false

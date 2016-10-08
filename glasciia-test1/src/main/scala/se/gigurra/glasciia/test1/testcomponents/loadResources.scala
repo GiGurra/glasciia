@@ -82,38 +82,31 @@ object loadResources {
 
   private def loadGui(app: App, regions: Loader.InMemory[TextureRegion]): Unit = {
     app.addResource("gui:main-menu", Gui(debug = true))
-    app.addResource("gui:main-menu:font", app.resource[Font]("font:monospace-default"))
-    app.addResource("gui:main-menu:font-masked", app.resource[Font]("font:monospace-default-masked"))
 
     val mainMenu = app.resource[Gui]("gui:main-menu")
 
-    mainMenu.addStyle("fill", classOf[TextureRegion], regions("filled-texture"))
-    mainMenu.addStyle("default-font", classOf[BitmapFont], app.resource[Font]("gui:main-menu:font").bitmapFont)
-    mainMenu.addStyle("masked-font", classOf[BitmapFont], app.resource[Font]("gui:main-menu:font-masked").bitmapFont)
+    mainMenu
+      .addStyle("fill", classOf[TextureRegion], regions("filled-texture"))
+      .addStyle("default-font", classOf[BitmapFont], app.resource[Font]("font:monospace-default").bitmapFont)
+      .addStyle("masked-font", classOf[BitmapFont], app.resource[Font]("font:monospace-default-masked").bitmapFont)
+      .addStyle("default", classOf[TextButtonStyle], new TextButtonStyle {
+        up = mainMenu.newDrawableFromStyle("fill", Color.DARK_GRAY)
+        down = mainMenu.newDrawableFromStyle("fill", Color.DARK_GRAY)
+        checked = mainMenu.newDrawableFromStyle("fill", Color.BLUE)
+        over = mainMenu.newDrawableFromStyle("fill", Color.LIGHT_GRAY)
+        font = mainMenu.getStyle[BitmapFont]("default-font")
+      })
 
-    mainMenu.addStyle("default", classOf[TextButtonStyle], new TextButtonStyle {
-      up = mainMenu.newDrawableFromStyle("fill", Color.DARK_GRAY)
-      down = mainMenu.newDrawableFromStyle("fill", Color.DARK_GRAY)
-      checked = mainMenu.newDrawableFromStyle("fill", Color.BLUE)
-      over = mainMenu.newDrawableFromStyle("fill", Color.LIGHT_GRAY)
-      font = mainMenu.getStyle[BitmapFont]("default-font")
-    })
-
-    mainMenu.row { r =>
-      r.cell().height(25)
-    }
-
-    mainMenu.row { r =>
+    mainMenu
+      .row { r =>
+        r.cell().height(25)
+      }.row { r =>
       r.cell(new TextButton("Click me!", mainMenu.skin)).expandX().left()
       r.cell().width(100)
-    }
-
-    mainMenu.row { r =>
+    }.row { r =>
       r.cellImg("fill", Color.TEAL).size(64)
       r.cellImg("fill", Color.TEAL).size(64)
-    }
-
-    mainMenu.row { r =>
+    }.row { r =>
       r.cell().expandY()
     }
   }
