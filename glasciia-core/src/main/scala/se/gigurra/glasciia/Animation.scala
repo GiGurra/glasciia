@@ -67,14 +67,22 @@ object Animation {
   case class Instance(animation: Animation, t0: Double) {
     private var lastFrameTime = t0
     private var tAcc = 0.0
-    def currentFrame(now: Double, active: Boolean): TextureRegion = {
+    private var active = true
+    def currentFrame(now: Double): TextureRegion = {
       if (active)
         tAcc += math.max(0.0f, now - lastFrameTime)
       lastFrameTime = now
       animation.getKeyFrame(tAcc.toFloat)
     }
-    def asImage(timeFunc: => Double, active: Boolean = true): Image = new Image {
-      override def region: TextureRegion = currentFrame(timeFunc, active)
+    def currentFrame(now: Double, active: Boolean): TextureRegion = {
+      this.active = active
+      currentFrame(now)
+    }
+    def stop(): Unit = active = false
+    def continue(): Unit = active = true
+    def restart(): Unit = { tAcc = 0.0; active = true }
+    def asImage(timeFunc: => Double): Image = new Image {
+      override def region: TextureRegion = currentFrame(timeFunc)
     }
   }
 

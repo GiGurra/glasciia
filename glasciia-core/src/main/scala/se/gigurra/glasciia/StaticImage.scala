@@ -5,7 +5,25 @@ import com.badlogic.gdx.graphics.Texture
 import com.badlogic.gdx.graphics.g2d.TextureRegion
 import se.gigurra.math.Vec2
 
-case class StaticImage(region: TextureRegion) extends Image
+case class StaticImage(region: TextureRegion) extends Image {
+
+  def subPixels(x: Int, y: Int, width: Int, height: Int): StaticImage = {
+    StaticImage(new TextureRegion(region, x, y, width, height))
+  }
+
+  def subFraction(x: Float, y: Float, width: Float, height: Float): StaticImage = {
+    val uAbs = u + x * uuSize
+    val vAbs = v + y * vvSize
+    StaticImage(new TextureRegion(
+      region.getTexture,
+      uAbs,
+      vAbs,
+      uAbs + width * uuSize,
+      vAbs + height * vvSize
+    ))
+  }
+
+}
 
 object StaticImage {
 
@@ -21,5 +39,4 @@ object StaticImage {
   def fromRegion(region: TextureRegion): StaticImage = {
     new StaticImage(region)
   }
-
 }

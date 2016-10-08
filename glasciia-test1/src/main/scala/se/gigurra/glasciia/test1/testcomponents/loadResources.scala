@@ -2,10 +2,11 @@ package se.gigurra.glasciia.test1.testcomponents
 
 import java.io.File
 
-import com.badlogic.gdx.graphics.Color
+import com.badlogic.gdx.graphics.{Color, Pixmap, Texture}
 import com.badlogic.gdx.graphics.g2d.Animation.PlayMode
 import com.badlogic.gdx.graphics.g2d.TextureAtlas
 import com.badlogic.gdx.scenes.scene2d.Stage
+import com.badlogic.gdx.scenes.scene2d.ui.Skin
 import se.gigurra.glasciia.Glasciia._
 import se.gigurra.glasciia._
 import se.gigurra.glasciia.impl.LoadFile
@@ -20,10 +21,10 @@ object loadResources {
     // UNCOMMENT TO TEST TEXTURE ATLASING
     // loadTextureAtlases(app)
     loadFonts(app)
-    loadGui(app)
     loadImages(app)
     loadParticleEffects(app)
     loadBackground(app)
+    loadGui(app)
   }
 
   private def loadTextureAtlases(app: App): Unit = {
@@ -40,18 +41,11 @@ object loadResources {
     app.addResource("font:monospace-default-masked", app.resource[Font]("font:monospace-default").createMaskedInstance(maskChar = Font.DEFAULT_MASK_CHAR, deleteSource = false))
   }
 
-  private def loadGui(app: App): Unit = {
-    app.addResource("gui:main-menu", new Stage())
-    app.addResource("gui:main-menu:visible", true)
-  }
-
-
   private def loadImages(app: App): Unit = {
     app.addResource("animation:capguy-walk", Animation.fromFile("animations/capguy-walk.png", nx = 8, ny = 1, dt = 0.1, mode = PlayMode.LOOP))
     app.addResource("animation:capguy-walk:instance-0", app.resource[Animation]("animation:capguy-walk").newInstance(t0 = app.localAppTime))
     app.addResource("image:test-image", StaticImage.fromFile("images/test-image.png"))
   }
-
 
   private def loadParticleEffects(app: App): Unit = {
     app.addResource("particle-effect:test-effect:instance-0", Particles.standard("particle-effects/test-effect.party", "particle-effects/").scaleEffect(0.5f))
@@ -87,5 +81,22 @@ object loadResources {
       }
     )
   }
+
+  private def loadGui(app: App): Unit = {
+    app.addResource("gui:main-menu", new Stage())
+    app.addResource("gui:main-menu:visible", true)
+    app.addResource("gui:main-menu:font", app.resource[Font]("font:monospace-default"))
+    app.addResource("gui:main-menu:font-masked", app.resource[Font]("font:monospace-default-masked"))
+
+    val mainMenuStage = app.resource[Stage]("gui:main-menu")
+    val mainMenuSkin = new Skin()
+
+    val fillPixMap = new Pixmap(1, 1, Pixmap.Format.RGBA8888)
+    fillPixMap.setColor(Color.WHITE)
+    fillPixMap.fill()
+    mainMenuSkin.add("fill", fillPixMap)
+
+  }
+
 
 }

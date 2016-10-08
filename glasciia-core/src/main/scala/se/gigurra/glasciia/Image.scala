@@ -1,29 +1,22 @@
 package se.gigurra.glasciia
 
-import com.badlogic.gdx.graphics.g2d.TextureRegion
+import com.badlogic.gdx.graphics.g2d.{Batch, TextureRegion}
+import com.badlogic.gdx.scenes.scene2d.utils.{BaseDrawable, Drawable => GdxScene2dDrawable}
 import se.gigurra.math.Vec2
 
 /**
   * Created by johan on 2016-10-07.
   */
-trait Image {
+trait Image extends GdxScene2dDrawable {
+
+  private lazy val baseDrawable: GdxScene2dDrawable = {
+    val out = new BaseDrawable()
+    out.setMinWidth(width)
+    out.setMinHeight(height)
+    out
+  }
+
   def region: TextureRegion
-
-  def subPixels(x: Int, y: Int, width: Int, height: Int): StaticImage = {
-    StaticImage(new TextureRegion(region, x, y, width, height))
-  }
-
-  def subFraction(x: Float, y: Float, width: Float, height: Float): StaticImage = {
-    val uAbs = u + x * uuSize
-    val vAbs = v + y * vvSize
-    StaticImage(new TextureRegion(
-      region.getTexture,
-      uAbs,
-      vAbs,
-      uAbs + width * uuSize,
-      vAbs + height * vvSize
-    ))
-  }
 
   def width: Int = region.getRegionWidth
   def height: Int = region.getRegionHeight
@@ -35,4 +28,18 @@ trait Image {
   def v2: Float = region.getV2
   def uuSize: Float = u2 - u
   def vvSize: Float = v2 - v
+
+  override def setTopHeight(topHeight: Float): Unit = baseDrawable.setTopHeight(topHeight)
+  override def getMinHeight: Float = baseDrawable.getMinHeight
+  override def setLeftWidth(leftWidth: Float): Unit = baseDrawable.setLeftWidth(leftWidth)
+  override def getRightWidth: Float = baseDrawable.getRightWidth
+  override def draw(batch: Batch, x: Float, y: Float, width: Float, height: Float): Unit = batch.draw(region, x, y, width, height)
+  override def getMinWidth: Float = baseDrawable.getMinWidth
+  override def setMinWidth(minWidth: Float): Unit = baseDrawable.setMinWidth(minWidth)
+  override def setMinHeight(minHeight: Float): Unit = baseDrawable.setMinHeight(minHeight)
+  override def setRightWidth(rightWidth: Float): Unit = baseDrawable.setRightWidth(rightWidth)
+  override def setBottomHeight(bottomHeight: Float): Unit = baseDrawable.setBottomHeight(bottomHeight)
+  override def getTopHeight: Float = baseDrawable.getTopHeight
+  override def getLeftWidth: Float = baseDrawable.getLeftWidth
+  override def getBottomHeight: Float = baseDrawable.getBottomHeight
 }
