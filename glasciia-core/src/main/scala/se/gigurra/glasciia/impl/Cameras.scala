@@ -18,7 +18,7 @@ trait Cameras {
   }
 
   def setOrtho(yDown: Boolean, width: Float, height: Float, scaling: Float): Unit = {
-    orthographicCamera.setToOrtho(yDown, width * scaling, height * scaling)
+    orthographicCamera.setToOrtho(yDown, width / scaling, height / scaling)
     camera = orthographicCamera
   }
 

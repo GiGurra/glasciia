@@ -103,7 +103,7 @@ object loadResources {
       })
 
     val menuItemPad = 40
-    val itemScale = 1.55f
+    val itemScale = 1.35f
 
     menu
       .rw(_.cell().height(120))
