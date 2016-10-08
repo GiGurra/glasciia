@@ -1,7 +1,8 @@
 package se.gigurra.glasciia
 
+import com.badlogic.gdx.math.Vector3
 import se.gigurra.glasciia.impl._
-import se.gigurra.math.Vec2
+import se.gigurra.math.{Box2, Vec2, Zero}
 
 /**
   * Created by johan on 2016-09-29.
@@ -25,6 +26,11 @@ case class Canvas(app: App)
   def aspectRatio: Float = width.toFloat / height.toFloat
 
   def drawTime: Double = _drawTimeSeconds
+
+  def screen2World(screenPos: Vec2[Int]): Vec2[Float] = screen2World(screenPos, wholeCanvasProjectionArea)
+  def world2Screen(screenPos: Vec2[Float]): Vec2[Int] = world2Screen(screenPos, wholeCanvasProjectionArea)
+
+  def wholeCanvasProjectionArea: Box2[Float] = Box2[Float](ll = Zero.vec2f, size = Vec2[Float](width, height))
 
   /**
     * Used by time dependent drawing, e.g. animations
