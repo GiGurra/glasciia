@@ -36,8 +36,10 @@ object Main {
         input
           .filter(mainMenu)
           .filter {
+            case event: MouseEvent =>
+              println(s"MouseEvent propagated to world/Not consumed by gui: $event")
             case event: KeyboardEvent =>
-              println(s"Input event propageted to world/Not consumed by gui: $event")
+              println(s"KeyboardEvent propagated to world/Not consumed by gui: $event")
           }
     }
 
