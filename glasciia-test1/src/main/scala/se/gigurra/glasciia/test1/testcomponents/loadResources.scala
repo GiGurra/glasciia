@@ -3,7 +3,8 @@ package se.gigurra.glasciia.test1.testcomponents
 import com.badlogic.gdx.graphics.{Color, Pixmap}
 import com.badlogic.gdx.graphics.g2d.Animation.PlayMode
 import com.badlogic.gdx.graphics.g2d.{BitmapFont, TextureRegion}
-import com.badlogic.gdx.scenes.scene2d.ui.TextButton
+import com.badlogic.gdx.scenes.scene2d.ui.Label.LabelStyle
+import com.badlogic.gdx.scenes.scene2d.ui.{Label, TextButton}
 import com.badlogic.gdx.scenes.scene2d.ui.TextButton.TextButtonStyle
 import se.gigurra.glasciia.Glasciia._
 import se.gigurra.glasciia._
@@ -87,27 +88,36 @@ object loadResources {
 
     menu
       .addStyle("fill", classOf[TextureRegion])(regions("filled-texture"))
-      .addStyle("default-font", classOf[BitmapFont])(app.resource[Font]("font:monospace-default"))
+      .addStyle(classOf[BitmapFont])(app.resource[Font]("font:monospace-default"))
       .addStyle("masked-font", classOf[BitmapFont])(app.resource[Font]("font:monospace-default-masked"))
-      .addStyle("default", classOf[TextButtonStyle])(new TextButtonStyle {
+      .addStyle(classOf[TextButtonStyle])(new TextButtonStyle {
         up = menu.newDrawable(style = "fill", Color.DARK_GRAY)
         down = menu.newDrawable(style = "fill", Color.DARK_GRAY)
         checked = menu.newDrawable(style = "fill", Color.BLUE)
         over = menu.newDrawable(style = "fill", Color.LIGHT_GRAY)
-        font = menu.style[BitmapFont]("default-font")
+        font = menu.style[BitmapFont]
+      })
+      .addStyle(classOf[LabelStyle])(new LabelStyle() {
+        font = menu.style[BitmapFont]
+        fontColor = Color.CHARTREUSE
       })
 
-    menu.rw { r =>
-      r.cell().height(25)
-    }.rw { r =>
-      r.cell(new TextButton("Click me!", menu.skin).fontScale(1.5f)).expandX().left()
-      r.cell().width(100)
-    }.rw { r =>
-      r.cellImg("fill", Color.TEAL).size(64)
-      r.cellImg("fill", Color.TEAL).size(64)
-    }.rw { r =>
-      r.cell().expandY()
-    }
+    val menuItemPad = 40
+    val itemScale = 1.55f
+
+    menu
+      .rw(_.cell().height(120))
+      .rw(_.cell(new Label("THE COOLEST GAME", menu.skin).fontScale(2.5f * itemScale)).center())
+      .rw(_.cell().height(menuItemPad * 2))
+      .rw(_.cell(new TextButton("button1", menu.skin).fontScale(1.5f * itemScale)).center())
+      .rw(_.cell().height(menuItemPad))
+      .rw(_.cell(new TextButton("button2", menu.skin).fontScale(1.5f * itemScale)).center())
+      .rw(_.cell().height(menuItemPad))
+      .rw(_.cell(new TextButton("button3", menu.skin).fontScale(1.5f * itemScale)).center())
+      .rw(_.cell().height(menuItemPad))
+      .rw(_.cell().expandY())
+      .rw(_.cell(new Label("Copyright (c) Idiot ltd", menu.skin).fontScale(0.5f * itemScale)).center())
+      .rw(_.cell().height(menuItemPad * 0.5f))
   }
 
   /*

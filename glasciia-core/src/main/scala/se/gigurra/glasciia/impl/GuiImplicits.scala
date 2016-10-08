@@ -2,7 +2,7 @@ package se.gigurra.glasciia.impl
 
 import com.badlogic.gdx.graphics.Color
 import com.badlogic.gdx.scenes.scene2d.Actor
-import com.badlogic.gdx.scenes.scene2d.ui.{Cell, Table, TextButton, Image => Scene2dImage}
+import com.badlogic.gdx.scenes.scene2d.ui.{Cell, Label, Table, TextButton, Image => Scene2dImage}
 import com.badlogic.gdx.scenes.scene2d.utils.Drawable
 
 import scala.language.implicitConversions
@@ -25,12 +25,20 @@ trait GuiImplicits {
       table
     }
 
+    def addStyle[T](styleClass: Class[T])(style: T): T_Table = {
+      addStyle("default", styleClass)(style)
+    }
+
     def newDrawable(style: String, color: Color): Drawable = {
       skin.newDrawable(style, color)
     }
 
     def style[T: ClassTag](name: String): T = {
       skin.get(name, implicitly[ClassTag[T]].runtimeClass.asInstanceOf[Class[T]])
+    }
+
+    def style[T: ClassTag]: T = {
+      style[T]("default")
     }
 
     def rw[A](f: Table => A): T_Table = {
@@ -40,10 +48,17 @@ trait GuiImplicits {
     }
   }
 
-  implicit class TextButtonOpsImplicits(val button: TextButton) {
+  implicit class TextButtonOpsImplicits(button: TextButton) {
     def fontScale(value: Float): TextButton = {
       button.getLabel.setFontScale(value)
       button
+    }
+  }
+
+  implicit class LabelImplicits(label: Label) {
+    def fontScale(value: Float): Label = {
+      label.setFontScale(value)
+      label
     }
   }
 }
