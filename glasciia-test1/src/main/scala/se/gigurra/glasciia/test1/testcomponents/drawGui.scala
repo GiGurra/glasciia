@@ -7,7 +7,7 @@ import se.gigurra.glasciia._
   * Created by johan on 2016-10-08.
   */
 object drawGui {
-  def apply(canvas: Canvas, gui: Gui, dt: Float = Gdx.graphics.getDeltaTime): Unit = {
+  def apply(canvas: Canvas, gui: RootGui, dt: Float = Gdx.graphics.getDeltaTime): Unit = {
     gui.draw(canvas, dt)
   }
 }

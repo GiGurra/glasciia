@@ -81,9 +81,9 @@ object loadResources {
   }
 
   private def loadGui(app: App, regions: Loader.InMemory[TextureRegion]): Unit = {
-    app.addResource("gui:main-menu", Gui(debug = true))
+    app.addResource("gui:main-menu", RootGui(debug = true))
 
-    val mainMenu = app.resource[Gui]("gui:main-menu")
+    val mainMenu = app.resource[RootGui]("gui:main-menu")
 
     mainMenu
       .addStyle("fill", classOf[TextureRegion], regions("filled-texture"))

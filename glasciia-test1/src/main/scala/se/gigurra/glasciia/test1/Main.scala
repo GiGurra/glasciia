@@ -41,7 +41,7 @@ object Main {
     }
 
 
-    def mainMenu: Gui = app.resource[Gui]("gui:main-menu")
+    def mainMenu: RootGui = app.resource[RootGui]("gui:main-menu")
 
   }
 }
