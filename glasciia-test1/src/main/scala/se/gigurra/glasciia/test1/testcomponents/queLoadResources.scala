@@ -4,7 +4,6 @@ import com.badlogic.gdx.Input.Keys
 import com.badlogic.gdx.graphics.{Color, Pixmap}
 import com.badlogic.gdx.graphics.g2d.Animation.PlayMode
 import com.badlogic.gdx.graphics.g2d.{BitmapFont, TextureRegion}
-import com.badlogic.gdx.scenes.scene2d.{Event, InputListener}
 import com.badlogic.gdx.scenes.scene2d.ui.Label.LabelStyle
 import com.badlogic.gdx.scenes.scene2d.ui.{Label, TextButton}
 import com.badlogic.gdx.scenes.scene2d.ui.TextButton.TextButtonStyle
@@ -124,35 +123,25 @@ object queLoadResources {
     val startBtn = new TextButton("start", table.skin).fontScale(1.5f * itemScale)
     val optionsBtn = new TextButton("options", table.skin).fontScale(1.5f * itemScale)
     val exitBtn = new TextButton("exit", table.skin).fontScale(1.5f * itemScale)
-
-    startBtn.onKeyDown{ case KeyDown(Keys.ENTER) => menu.hide() }
-    startBtn.onClicked(menu.hide())
-    exitBtn.onKeyDown{ case KeyDown(Keys.ENTER) => app.close() }
-    exitBtn.onClicked(app.close())
-
-    optionsBtn.onKeyDown{ case KeyDown(Keys.ENTER) => app.addResource("controls-inverted", !app.getResource[Boolean]("controls-inverted").getOrElse(false)) }
-
-    app.addResource("gui:main-menu:table", table)
-    app.addResource("gui:main-menu:btn1", startBtn)
-    app.addResource("gui:main-menu:btn2", optionsBtn)
-    app.addResource("gui:main-menu:btn3", exitBtn)
-
     val menuButtons = Seq(startBtn, optionsBtn, exitBtn)
+
+    startBtn.onClick(menu.hide())
+    exitBtn.onClick(app.close())
+    optionsBtn.onClick(app.addResource("controls-inverted", !app.getResource[Boolean]("controls-inverted").getOrElse(false)))
+
     for ((btn, i) <- menuButtons.zipWithIndex) {
-      def go(di: Int) = stage.setKeyboardFocus(menuButtons((menuButtons.size + i + di) % menuButtons.size))
-      btn.onKeyDown {
+      def go(di: Int) = menuButtons((menuButtons.size + i + di) % menuButtons.size).setKeyFocus()
+      btn.on {
         case KeyDown(Keys.DOWN) => go(+1)
         case KeyDown(Keys.UP)   => go(-1)
       }
       btn.onKeyFocusGained(_.setStyle(menu.style[TextButtonStyle]("default:keyboard-focus")))
       btn.onKeyFocusLost(_.setStyle(menu.style[TextButtonStyle]))
+      btn.mapKeyDownToClick(Keys.ENTER)
+      btn.onClick(btn.setKeyFocus())
     }
 
-    menu.stage.setKeyboardFocus(startBtn)
-    menu.stage.blockInputEventPropagation()
-
     val btnWidth = 200.0f
-
     table
       .rw(_.cell().height(120))
       .rw(_.cell(new Label("THE COOLEST GAME", table.skin).fontScale(2.5f * itemScale)).center())
@@ -167,7 +156,8 @@ object queLoadResources {
       .rw(_.cell(new Label("Copyright (c) Idiot ltd", table.skin).fontScale(0.5f * itemScale)).center())
       .rw(_.cell().height(menuItemPad * 0.5f))
 
-
+    startBtn.setKeyFocus()
+    stage.blockInputEventPropagation()
   }
 
   /*
