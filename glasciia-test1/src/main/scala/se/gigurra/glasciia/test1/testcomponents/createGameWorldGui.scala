@@ -61,7 +61,7 @@ object createGameWorldGui {
 
     bottom.table.rw { r =>
       r.cellImg("fill", Color.YELLOW).prefWidth(640.0f * 0.33f).growY()
-      r.cellImg("fill",  Color.GREEN).prefWidth(640.0f * 0.6f).grow().bottom()
+      r.cellImg("fill",  Color.GREEN).prefWidth(640.0f * 0.6f).prefHeight(0.20f * 480).growX().bottom()
       r.cellImg("fill", Color.YELLOW).prefWidth(640.0f * 0.33f).growY()
       r.bottom()
     }
