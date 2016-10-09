@@ -50,6 +50,8 @@ trait GuiImplicits extends InputListeners {
       table.row()
       table
     }
+
+    def stage: Stage = table.getStage
   }
 
   implicit class ActorImplicitsOps(actor: Actor) {

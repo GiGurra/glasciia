@@ -1,9 +1,8 @@
 package se.gigurra.glasciia.test1.testcomponents
 
-import com.badlogic.gdx.graphics.Color
 import com.badlogic.gdx.graphics.g2d.TextureRegion
 import com.badlogic.gdx.scenes.scene2d.Stage
-import com.badlogic.gdx.scenes.scene2d.ui.{Table, TextButton}
+import com.badlogic.gdx.scenes.scene2d.ui.Table
 import se.gigurra.glasciia._
 import se.gigurra.glasciia.Glasciia._
 
@@ -13,9 +12,8 @@ import se.gigurra.glasciia.Glasciia._
 object createGameWorldGui {
 
   def apply(app: App, regions: Loader.InMemory[TextureRegion]): Stage = {
-    val root: Gui = RootGui(debug = true)
+    val root: Table = RootGui(debug = true)
     val stage = root.stage
-    val table = root.table
     val skin = root.skin
 
     addDefaultGuiStyles(app, skin, regions)
@@ -47,10 +45,10 @@ object createGameWorldGui {
     // 4. unit bar. 80%->100% of screen height
     // 5. Command area. 75%->100% of screen height
 
-    val statusBar = new Table(skin)
-    val gameArea = new Table(skin)
-    val miniMap = new Table(skin)
-    val unitBar = new Table(skin)
+    val statusBar = Gui(skin)
+    val gameArea = Gui(skin)
+    val miniMap = Gui(skin)
+    val unitBar = Gui(skin)
     val commandArea = new Table(skin)
 
     root.rw {

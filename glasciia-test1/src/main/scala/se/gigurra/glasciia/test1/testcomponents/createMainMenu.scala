@@ -3,7 +3,7 @@ package se.gigurra.glasciia.test1.testcomponents
 import com.badlogic.gdx.Input.Keys
 import com.badlogic.gdx.graphics.g2d.TextureRegion
 import com.badlogic.gdx.scenes.scene2d.Stage
-import com.badlogic.gdx.scenes.scene2d.ui.{Label, TextButton}
+import com.badlogic.gdx.scenes.scene2d.ui.{Label, Table, TextButton}
 import com.badlogic.gdx.scenes.scene2d.ui.TextButton.TextButtonStyle
 import se.gigurra.glasciia.AppEvent.KeyDown
 import se.gigurra.glasciia._
@@ -15,9 +15,8 @@ import se.gigurra.glasciia.Glasciia._
 object createMainMenu {
 
   def apply(app: App, regions: Loader.InMemory[TextureRegion]): Stage = {
-    val menu: Gui = RootGui(debug = true)
+    val menu: Table = RootGui(debug = true)
     val stage = menu.stage
-    val table = menu.table
     val skin = menu.skin
 
     addDefaultGuiStyles(app, skin, regions)
@@ -46,7 +45,7 @@ object createMainMenu {
 
     val menuItemPad = 40
     val btnWidth = 200.0f
-    table
+    menu
       .rw(_.cell().height(120))
       .rw(_.cell(new Label("THE COOLEST GAME", skin).fontScale(3.5f)).center())
       .rw(_.cell().height(menuItemPad * 2))

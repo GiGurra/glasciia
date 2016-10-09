@@ -10,11 +10,13 @@ object RootGui {
 
   def apply(stage: Stage = new Stage(),
             skin: Skin = new Skin(),
-            debug: Boolean = false): Gui = {
+            debug: Boolean = false,
+            fillParent: Boolean = true): Table = {
 
-    val out = Gui(table = new Table(skin), fillParent = true)
-    stage.addActor(out.table)
-    out.table.setDebug(debug)
-    out
+    val table = Gui(skin = skin, debug = debug)
+    stage.addActor(table)
+    table.setFillParent(fillParent)
+    table.setDebug(debug)
+    table
   }
 }
