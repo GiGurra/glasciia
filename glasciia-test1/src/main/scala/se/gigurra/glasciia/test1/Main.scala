@@ -17,7 +17,7 @@ object Main {
 
     val app = new App(Conf.initialWindow, Conf.initialGl) with LwjglImplementation
 
-    loadResources(app)
+    queLoadResources(app)
 
     app.handleEvents {
 
@@ -32,8 +32,12 @@ object Main {
 
       case input: InputEvent =>
         val menu = app.resource[RootGui]("gui:main-menu")
+        val worldInputKeyboard = app.resource[Keyboard]("world-input-keyboard")
+
         input
+          .filter(worldInputKeyboard.releaseHook)
           .filter(menu)
+          .filter(worldInputKeyboard)
           .filter {
             case event: MouseEvent =>
               //println(s"MouseEvent propagated to world/Not consumed by gui: $event")

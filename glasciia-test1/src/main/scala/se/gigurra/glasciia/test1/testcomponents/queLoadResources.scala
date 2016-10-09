@@ -16,7 +16,7 @@ import se.gigurra.math.{Box2, Vec2}
 /**
   * Created by johan on 2016-10-08.
   */
-object loadResources {
+object queLoadResources {
 
   private def createTextureRegionLoader(app: App): Loader.InMemory[TextureRegion] = {
     val out = TextureRegionLoader.createNew()
@@ -32,11 +32,16 @@ object loadResources {
 
   def apply(app: App): Unit = app.executeOnRenderThread {
     val regions = createTextureRegionLoader(app)
+    loadHooks(app, regions)
     loadFonts(app, regions)
     loadImages(app, regions)
     loadParticleEffects(app, regions)
     loadBackground(app, regions)
     loadGui(app, regions)
+  }
+
+  private def loadHooks(app: App, regions: Loader[TextureRegion]): Unit = {
+    app.addResource("world-input-keyboard", Keyboard())
   }
 
   private def loadFonts(app: App, regions: Loader[TextureRegion]): Unit = {
