@@ -35,7 +35,6 @@ object Main {
         val worldInputKeyboard = app.resource[Keyboard]("world-input-keyboard")
 
         input
-          .filter(worldInputKeyboard.releaseHook)
           .filter(menu)
           .filter(worldInputKeyboard)
           .filter {

@@ -7,12 +7,15 @@ import scala.collection.mutable
 /**
   * Created by johan on 2016-10-09.
   */
-case class Keyboard() extends InputAdapter {
+case class Keyboard(autoReleaseOnFocusLoss: Boolean = true) extends InputAdapter {
 
   private var propagatedDown = new mutable.HashSet[Int]
 
   def isKeyDown(vKey: Int): Boolean = {
-    Gdx.input.isKeyPressed(vKey) && propagatedDown(vKey)
+    if (autoReleaseOnFocusLoss && !Gdx.input.isKeyPressed(vKey)) {
+      propagatedDown -= vKey
+    }
+    propagatedDown(vKey)
   }
 
   override def keyDown(keycode: Int): Boolean = {
@@ -25,7 +28,7 @@ case class Keyboard() extends InputAdapter {
     false
   }
 
-  def clear(): Unit ={
+  def clear(): Unit = {
     propagatedDown.clear()
   }
 
