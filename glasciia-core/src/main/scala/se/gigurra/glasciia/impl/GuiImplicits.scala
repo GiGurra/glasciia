@@ -52,6 +52,16 @@ trait GuiImplicits extends InputListeners {
     }
 
     def stage: Stage = table.getStage
+
+    def debug(value: Boolean): Table = {
+      table.setDebug(value)
+      table
+    }
+
+    def fillParent(value: Boolean): Table = {
+      table.setFillParent(value)
+      table
+    }
   }
 
   implicit class ActorImplicitsOps(actor: Actor) {

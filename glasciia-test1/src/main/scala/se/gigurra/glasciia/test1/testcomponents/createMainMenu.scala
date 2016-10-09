@@ -15,9 +15,8 @@ import se.gigurra.glasciia.Glasciia._
 object createMainMenu {
 
   def apply(app: App, regions: Loader.InMemory[TextureRegion]): Stage = {
-    val menu: Table = RootGui(debug = true)
-    val stage = menu.stage
-    val skin = menu.skin
+    val (stage, menu) = RootGui()
+    val skin = menu.debug(true).skin
 
     addDefaultGuiStyles(app, skin, regions)
 

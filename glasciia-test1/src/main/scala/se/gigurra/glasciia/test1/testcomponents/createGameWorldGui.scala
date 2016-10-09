@@ -12,15 +12,10 @@ import se.gigurra.glasciia.Glasciia._
 object createGameWorldGui {
 
   def apply(app: App, regions: Loader.InMemory[TextureRegion]): Stage = {
-    val root: Table = RootGui(debug = true)
-    val stage = root.stage
-    val skin = root.skin
+    val (stage, root) = RootGui()
+    val skin = root.debug(true).skin
 
     addDefaultGuiStyles(app, skin, regions)
-
-
-    //////////////////////////////////////////////////
-    // First we separate the screen into five blocks
 
     //////////////////////////////////////////////////
     // 1.                                           //

@@ -8,15 +8,11 @@ import com.badlogic.gdx.scenes.scene2d.ui.{Skin, Table}
   */
 object RootGui {
 
-  def apply(stage: Stage = new Stage(),
-            skin: Skin = new Skin(),
-            debug: Boolean = false,
-            fillParent: Boolean = true): Table = {
-
+  def apply(skin: Skin = new Skin): (Stage, Table) = {
+    val stage = new Stage()
     val table = new Table(skin)
+    table.setFillParent(true)
     stage.addActor(table)
-    table.setFillParent(fillParent)
-    table.setDebug(debug)
-    table
+    (stage, table)
   }
 }
