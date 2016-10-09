@@ -34,7 +34,7 @@ object Main {
         val mainMenu = app.resource[Stage]("gui:main-menu")
         val gameGui = app.resource[Stage]("gui:game-world")
         val controlsInverted = app.getResource[Boolean]("controls-inverted").getOrElse(false)
-        val worldInputKeyboard = app.resource[Keyboard]("world-input-keyboard")
+        val gameKeyState = app.resource[Keyboard]("world-input-keyboard")
 
         val invertedControls: PartialFunction[InputEvent, KeyboardEvent] = {
           case KeyDown(Keys.DOWN) => KeyDown(Keys.UP)
@@ -49,10 +49,10 @@ object Main {
 
         input
           .mapIf(controlsInverted, invertedControls)
-          .filter(worldInputKeyboard.releaseHook)
+          .filter(gameKeyState.releaseHook)
           .filter(mainMenu)
           .filter(gameGui)
-          .filter(worldInputKeyboard)
+          .filter(gameKeyState)
           .filter {
             case MouseScrolled(amount) =>
               app.canvas.camera.zoom += amount * 0.1f
