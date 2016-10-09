@@ -16,14 +16,12 @@ case class Gui(table: Table, fillParent: Boolean = false) {
 
   def hidden: Boolean = !table.isVisible
   def stage: Stage = table.getStage
-
-  def hide(): Unit = table.setVisible(false)
-  def show(): Unit = table.setVisible(true)
 }
 
 object Gui extends GuiImplicits {
   implicit def gui2table[T <: Table](gui: Gui): Table = gui.table
-  implicit def gui2RichTable[T <: Table](gui: Gui): TableOpsImplicits = new TableOpsImplicits(gui.table)
+  implicit def gui2RichTable[T <: Table](gui: Gui): TableImplicitsOps = new TableImplicitsOps(gui.table)
+  implicit def gui2RichActor[T <: Table](gui: Gui): ActorImplicitsOps = new ActorImplicitsOps(gui.table)
 
   trait Scaling {
     def apply(drawBounds: Vec2[Int]): Float

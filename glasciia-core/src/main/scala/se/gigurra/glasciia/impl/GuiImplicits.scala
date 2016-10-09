@@ -13,7 +13,7 @@ import scala.reflect.ClassTag
   */
 trait GuiImplicits extends InputListeners {
 
-  implicit class TableOpsImplicits(table: Table) {
+  implicit class TableImplicitsOps(table: Table) {
     def cell[T <: Actor](actor: T): Cell[T] = table.add[T](actor)
     def cell(): Cell[_] = table.add()
     def cellImg(template: String, color: Color): Cell[Scene2dImage] = cell(new Scene2dImage(table.getSkin.newDrawable(template, color)))
@@ -48,18 +48,18 @@ trait GuiImplicits extends InputListeners {
     }
   }
 
+  implicit class ActorImplicitsOps(actor: Actor) {
+    def show(): Unit = actor.setVisible(true)
+    def hide(): Unit = actor.setVisible(false)
+    def hidden: Boolean = !actor.isVisible
+    def visible: Boolean = !hidden
+  }
+
   implicit class StageImplicitOps(stage: Stage) {
-    def show(): Stage = {
-      for (a <- stage.getActors)
-        a.setVisible(true)
-      stage
-    }
-    def hide(): Stage = {
-      for (a <- stage.getActors)
-        a.setVisible(false)
-      stage
-    }
-    def hidden: Boolean = stage.getActors.headOption.fold(true)(!_.isVisible)
+    def actors: Seq[Actor] = stage.getActors.toSeq
+    def show(): Unit = actors.foreach(_.show())
+    def hide(): Unit = actors.foreach(_.hide())
+    def hidden: Boolean = actors.headOption.fold(true)(!_.visible)
     def visible: Boolean = !hidden
   }
 

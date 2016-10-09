@@ -121,7 +121,7 @@ object queLoadResources {
     val exitBtn = new TextButton("exit", table.skin).fontScale(fontScale)
     val menuButtons = Seq(startBtn, optionsBtn, exitBtn)
 
-    startBtn.onClick(menu.hide())
+    startBtn.onClick(stage.hide())
     exitBtn.onClick(app.close())
     optionsBtn.onClick(app.addResource("controls-inverted", !app.getResource[Boolean]("controls-inverted").getOrElse(false)))
 
