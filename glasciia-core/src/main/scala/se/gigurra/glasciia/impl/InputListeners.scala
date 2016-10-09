@@ -20,9 +20,8 @@ trait InputListeners {
 
   implicit class canTakeKeyboardFocus[Subject <: Actor](self: Subject) {
 
-    def setKeyFocus(): Subject = {
+    def setKeyFocus(): Unit = {
       self.getStage.setKeyboardFocus(self)
-      self
     }
   }
 
@@ -52,10 +51,10 @@ trait InputListeners {
   implicit class canConsumeEvents[Receiver <: CanAddListener](self: Receiver) {
     def on[R](f: PartialFunction[AppEvent.InputEvent, R], consume: Boolean = true): InputListener = addAndReturnListener(keyListener(f, consume))
 
-    def onClick[R](f: (Receiver, Float, Float) => R): InputListener = addAndReturnListener(clickListener((x, y) => f(self, x,y)))
-    def onClick[R](f: (Float, Float) => R): InputListener = onClick((_: Receiver, x: Float, y: Float) => f(x,y))
-    def onClick[R](f: (Receiver => R)): InputListener = onClick((receiver: Receiver, _: Float, _: Float) => f(receiver))
-    def onClick[R](f: => R): InputListener = onClick((_: Float, _: Float) => f)
+    def onClick(f: (Receiver, Float, Float) => Unit): InputListener = addAndReturnListener(clickListener((x, y) => f(self, x,y)))
+    def onClick(f: (Float, Float) => Unit): InputListener = onClick((_: Receiver, x: Float, y: Float) => f(x,y))
+    def onClick(f: (Receiver => Unit)): InputListener = onClick((receiver: Receiver, _: Float, _: Float) => f(receiver))
+    def onClick(f: => Unit): InputListener = onClick((_: Float, _: Float) => f)
 
     def onKeyFocusChange(f: (Receiver, Emitter, Boolean) => Unit): FocusListener = addAndReturnListener(focusListener((emitter, newState) => f(self, emitter, newState)))
     def onKeyFocusChange(f: (Receiver, Boolean) => Unit): FocusListener = addAndReturnListener(focusListener((emitter, newState) => f(self, newState)))

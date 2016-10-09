@@ -136,7 +136,7 @@ object queLoadResources {
       btn.onKeyFocusGained(_.setStyle(menu.style[TextButtonStyle]("default:keyboard-focus")))
       btn.onKeyFocusLost(_.setStyle(menu.style[TextButtonStyle]))
       btn.mapKeyDownToClick(Keys.ENTER)
-      btn.onClick(btn.setKeyFocus())
+      btn.onClick(_.setKeyFocus())
     }
 
     val menuItemPad = 40
