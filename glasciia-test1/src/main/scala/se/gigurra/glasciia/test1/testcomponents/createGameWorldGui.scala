@@ -17,8 +17,31 @@ import se.gigurra.glasciia._
 object createGameWorldGui {
 
   def apply(app: App, regions: Loader.InMemory[TextureRegion]): Stage = {
-    val menu: Gui = RootGui(debug = true)
-    val stage = menu.stage
+    val gui: Gui = RootGui(debug = true)
+    val stage = gui.stage
+    val table = gui.table
+
+    table
+      .addStyle("fill", classOf[TextureRegion])(regions("filled-texture"))
+      .addStyle(classOf[BitmapFont])(app.resource[Font]("font:monospace-default"))
+      .addStyle("masked-font", classOf[BitmapFont])(app.resource[Font]("font:monospace-default-masked"))
+      .addStyle(classOf[TextButtonStyle])(new TextButtonStyle {
+        val standard = table.newDrawable(style = "fill", Color.DARK_GRAY)
+        val highlighted = table.newDrawable(style = "fill", Color.LIGHT_GRAY)
+        up = standard
+        down = standard
+        over = highlighted
+        font = table.style[BitmapFont]
+      })
+      .addStyle("default:keyboard-focus", classOf[TextButtonStyle])(new TextButtonStyle(table.style[TextButtonStyle]) {
+        val kbFocus = table.newDrawable(style = "fill", Color.LIME)
+        up = kbFocus
+        down = kbFocus
+      })
+      .addStyle(classOf[LabelStyle])(new LabelStyle() {
+        font = table.style[BitmapFont]
+        fontColor = Color.CHARTREUSE
+      })
 
     stage
   }

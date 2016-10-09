@@ -29,10 +29,12 @@ object Main {
       case Render(canvas) =>
         updateCameraPos(canvas)
         drawWorld(canvas)
+        drawGameGui(canvas)
         drawMenu(canvas)
 
       case input: InputEvent =>
-        val menu = app.resource[Stage]("gui:main-menu")
+        val mainMenu = app.resource[Stage]("gui:main-menu")
+        val gameGui = app.resource[Stage]("gui:game-world")
         val controlsInverted = app.getResource[Boolean]("controls-inverted").getOrElse(false)
         val worldInputKeyboard = app.resource[Keyboard]("world-input-keyboard")
 
@@ -50,13 +52,14 @@ object Main {
         input
           .mapIf(controlsInverted, invertedControls)
           .filter(worldInputKeyboard.releaseHook)
-          .filter(menu)
+          .filter(mainMenu)
+          .filter(gameGui)
           .filter(worldInputKeyboard)
           .filter {
             case event: MouseEvent =>
               //println(s"MouseEvent propagated to world/Not consumed by gui: $event")
             case KeyDown(Keys.ESCAPE) =>
-              menu.show()
+              mainMenu.show()
             case event: KeyboardEvent =>
               println(s"KeyboardEvent propagated to world/Not consumed by gui: $event")
           }
