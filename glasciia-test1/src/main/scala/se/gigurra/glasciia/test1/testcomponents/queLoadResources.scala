@@ -117,12 +117,10 @@ object queLoadResources {
         fontColor = Color.CHARTREUSE
       })
 
-    val menuItemPad = 40
-    val itemScale = 1.35f
-
-    val startBtn = new TextButton("start", table.skin).fontScale(1.5f * itemScale)
-    val optionsBtn = new TextButton("options", table.skin).fontScale(1.5f * itemScale)
-    val exitBtn = new TextButton("exit", table.skin).fontScale(1.5f * itemScale)
+    val fontScale = 1.5f * 1.35f
+    val startBtn = new TextButton("start", table.skin).fontScale(fontScale)
+    val optionsBtn = new TextButton("options", table.skin).fontScale(fontScale)
+    val exitBtn = new TextButton("exit", table.skin).fontScale(fontScale)
     val menuButtons = Seq(startBtn, optionsBtn, exitBtn)
 
     startBtn.onClick(menu.hide())
@@ -141,10 +139,11 @@ object queLoadResources {
       btn.onClick(btn.setKeyFocus())
     }
 
+    val menuItemPad = 40
     val btnWidth = 200.0f
     table
       .rw(_.cell().height(120))
-      .rw(_.cell(new Label("THE COOLEST GAME", table.skin).fontScale(2.5f * itemScale)).center())
+      .rw(_.cell(new Label("THE COOLEST GAME", table.skin).fontScale(3.5f)).center())
       .rw(_.cell().height(menuItemPad * 2))
       .rw(_.cell(startBtn).width(btnWidth).center())
       .rw(_.cell().height(menuItemPad))
@@ -153,21 +152,10 @@ object queLoadResources {
       .rw(_.cell(exitBtn).width(btnWidth).center())
       .rw(_.cell().height(menuItemPad))
       .rw(_.cell().expandY())
-      .rw(_.cell(new Label("Copyright (c) Idiot ltd", table.skin).fontScale(0.5f * itemScale)).center())
+      .rw(_.cell(new Label("Copyright (c) Idiot ltd", table.skin).fontScale(0.8f)).center())
       .rw(_.cell().height(menuItemPad * 0.5f))
 
     startBtn.setKeyFocus()
     stage.blockInputEventPropagation()
   }
-
-  /*
-  private def loadTextureAtlases(app: App): Unit = {
-    val texturePackSettings = readTexturePackSettings("test-atlast-cfg.json")
-    val inputFolder = new File(getClass.getClassLoader.getResource("test-atlast-cfg.json").getFile).getAbsoluteFile.getParent
-    val outputFolder = LoadFile("target/").get.file().getAbsolutePath
-    packFilesIntoTextureAtlas(texturePackSettings, inputDir = inputFolder, outputDir = outputFolder, "test-atlast.atlas")
-    println(s"$inputFolder -> $outputFolder")
-    app.addResource("texture-atlas", new TextureAtlas(s"$outputFolder/test-atlast.atlas", outputFolder))
-  }
-  */
 }
