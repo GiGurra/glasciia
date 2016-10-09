@@ -41,8 +41,8 @@ object loadResources {
   }
 
   private def loadParticleEffects(app: App, regions: Loader[TextureRegion]): Unit = {
-    app.addResource("particle-effect:test-effect:instance-0", Particles.standard("particle-effects/test-effect.party", "particle-effects/").scaleEffect(0.5f))
-    def effect0 = app.resource[ParticleSource]("particle-effect:test-effect:instance-0")
+    val effect0 = Particles.standard("particle-effects/test-effect.party", "particle-effects/").scaleEffect(0.5f)
+    app.addResource("particle-effect:test-effect:instance-0", effect0)
     app.addResource("particle-effect:test-effect:instance-1", effect0.copy.scaleEffect(0.5f).flipY().setTint(Color.TEAL))
     app.addResource("particle-effect:test-effect:instance-2", effect0.copy.scaleEffect(0.25f))
     app.addResource("camera-position", Vec2(x = 320.0f, y = 240.0f))
