@@ -2,7 +2,7 @@ package se.gigurra.glasciia.impl
 
 import com.badlogic.gdx.InputProcessor
 import se.gigurra.glasciia.AppEvent._
-import se.gigurra.glasciia.{Gui, RootGui}
+import se.gigurra.glasciia.RootGui
 
 import scala.language.implicitConversions
 

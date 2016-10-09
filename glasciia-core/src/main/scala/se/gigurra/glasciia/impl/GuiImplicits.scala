@@ -11,7 +11,7 @@ import scala.reflect.ClassTag
 /**
   * Created by johan on 2016-10-02.
   */
-trait GuiImplicits {
+trait GuiImplicits extends InputListeners {
 
   implicit class TableOpsImplicits[T_Table <: Table](table: T_Table) {
     def cell[T <: Actor](actor: T): Cell[T] = table.add[T](actor)

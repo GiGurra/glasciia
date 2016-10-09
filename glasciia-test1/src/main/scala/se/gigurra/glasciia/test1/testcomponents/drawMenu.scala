@@ -9,9 +9,13 @@ import se.gigurra.math.Vec2
   */
 object drawMenu {
   def apply(canvas: Canvas): Unit = {
+    val menu = canvas.app.resource[RootGui]("gui:main-menu")
     canvas.drawGui(
-      gui = canvas.app.resource[RootGui]("gui:main-menu"),
+      gui = menu,
       scaling = LinearShortestSide(reference = Vec2(640, 480)) * Constant(0.75f)
     )
+
+   // menu.stage.setKeyboardFocus(menu.table)
+   // println(menu.stage.getKeyboardFocus)
   }
 }

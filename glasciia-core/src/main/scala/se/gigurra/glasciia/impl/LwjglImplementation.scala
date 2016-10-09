@@ -15,15 +15,9 @@ import scala.concurrent.{Await, Promise}
   */
 trait LwjglImplementation { self: App =>
 
-  def close(): Unit = lwjglApplication.stop()
+  def close(): Unit = lwjglApplication.exit()
   def width: Int = lwjglApplication.getGraphics.getWidth
   def height: Int = lwjglApplication.getGraphics.getHeight
-
-
-  ///////////////////////////
-  // startup sequence below
-
-
 
   /////////////////////////////////////////////
   // Expectations

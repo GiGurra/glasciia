@@ -18,6 +18,7 @@ abstract class App(val initialWindowConf: WindowConf,
   def height: Int
   def size: Vec2[Int] = Vec2(width, height)
   def localAppTime: Double = System.nanoTime / 1e9 - t0
+  def close(): Unit
 }
 
 object App {
