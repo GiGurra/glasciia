@@ -1,8 +1,9 @@
 package se.gigurra.glasciia.impl
 
-import com.badlogic.gdx.graphics.{Camera, OrthographicCamera}
+import com.badlogic.gdx.graphics.OrthographicCamera
 import com.badlogic.gdx.math.Vector3
-import se.gigurra.math.{Box2, Vec2, Zero}
+import se.gigurra.math.{Box2, Vec2}
+import se.gigurra.glasciia.Glasciia._
 
 /**
   * Created by johan on 2016-10-01.
@@ -10,6 +11,22 @@ import se.gigurra.math.{Box2, Vec2, Zero}
 trait Cameras {
 
   val camera = new OrthographicCamera
+
+  def zoom: Float = camera.zoom
+  def cameraPos: Vec2[Float] = Vec2[Float](camera.position.x, camera.position.y)
+  def setCameraPos(pos: Vec2[Float]): Unit = camera.position.set(pos)
+
+  def mousePos: Vec2[Int]
+
+  def setZoom(newValue: Float, preserveCursorWorldPosition: Boolean, projectionArea: Box2[Float]): Unit = {
+    val mouseWorldPosBefore = screen2World(mousePos, projectionArea)
+    camera.zoom = newValue
+    camera.update()
+    val mouseWorldPosAfter = screen2World(mousePos, projectionArea)
+    val correction = mouseWorldPosBefore - mouseWorldPosAfter
+
+    setCameraPos(cameraPos + correction)
+  }
 
   def setOrtho(yDown: Boolean, width: Float, height: Float): Unit = {
     camera.setToOrtho(yDown, width, height)

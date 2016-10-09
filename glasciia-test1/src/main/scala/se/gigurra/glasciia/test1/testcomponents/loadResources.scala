@@ -45,7 +45,6 @@ object loadResources {
     app.addResource("particle-effect:test-effect:instance-0", effect0)
     app.addResource("particle-effect:test-effect:instance-1", effect0.copy.scaleEffect(0.5f).flipY().setTint(Color.TEAL))
     app.addResource("particle-effect:test-effect:instance-2", effect0.copy.scaleEffect(0.25f))
-    app.addResource("camera-position", Vec2(x = 320.0f, y = 240.0f))
     app.addResource("cool-cursor", createCursor("cursors/c2.png"))
   }
 

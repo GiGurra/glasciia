@@ -2,6 +2,7 @@ package se.gigurra.glasciia.test1.testcomponents
 
 import com.badlogic.gdx.graphics.Color
 import se.gigurra.glasciia._
+import se.gigurra.glasciia.Glasciia._
 import se.gigurra.glasciia.impl.TextDrawer.Anchor
 import se.gigurra.math.Vec2
 
@@ -24,7 +25,7 @@ object drawWorld {
     val effect3 = app.resource[ParticleSource]("particle-effect:test-effect:instance-2")
     val controlsInverted = app.getResource[Boolean]("controls-inverted").getOrElse(false)
 
-    val cameraPos = app.resource[Vec2[Float]]("camera-position")
+    val cameraPos = app.canvas.camera.position : Vec2[Float]
     val mouseWorldPos = canvas.screen2World(canvas.mousePos)
 
     val background = app.resource[MultiLayer[Image]]("background-0")

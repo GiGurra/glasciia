@@ -21,7 +21,7 @@ object Main {
 
       case Init(canvas) =>
         loadResources(app)
-
+        setInitValues(app)
         printShaders(canvas.batch)
 
       case Render(canvas) =>
@@ -55,14 +55,16 @@ object Main {
           .filter(gameKeyState)
           .filter {
             case MouseScrolled(amount) =>
-              app.canvas.camera.zoom += amount * 0.1f
-              //println(s"MouseEvent propagated to world/Not consumed by gui: $event")
-            case KeyDown(Keys.ESCAPE) =>
-              mainMenu.show()
-            case event: KeyboardEvent =>
-              println(s"KeyboardEvent propagated to world/Not consumed by gui: $event")
+              canvas.setZoom( // Preserve mouse world position after zoom (supreme commander style!)
+                newValue = canvas.zoom + amount * 0.1f,
+                preserveCursorWorldPosition = true,
+                projectionArea = canvas.wholeCanvasProjectionArea
+              )
+            case KeyDown(Keys.ESCAPE) => mainMenu.show()
+            case event: KeyboardEvent => println(s"KeyboardEvent propagated to world/Not consumed by gui: $event")
           }
     }
 
+    def canvas: Canvas = app.canvas
   }
 }
