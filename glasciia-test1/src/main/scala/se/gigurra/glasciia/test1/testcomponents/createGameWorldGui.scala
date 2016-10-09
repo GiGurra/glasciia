@@ -2,7 +2,7 @@ package se.gigurra.glasciia.test1.testcomponents
 
 import com.badlogic.gdx.graphics.g2d.TextureRegion
 import com.badlogic.gdx.scenes.scene2d.Stage
-import com.badlogic.gdx.scenes.scene2d.ui.Table
+import com.badlogic.gdx.scenes.scene2d.ui.{Table, TextButton}
 import se.gigurra.glasciia._
 import se.gigurra.glasciia.Glasciia._
 
@@ -40,11 +40,11 @@ object createGameWorldGui {
     // 4. unit bar. 80%->100% of screen height
     // 5. Command area. 75%->100% of screen height
 
-    val statusBar = new Table(skin)
+    val statusBar = new TextButton("status-bar", skin)
     val gameArea = new Table(skin)
-    val miniMap = new Table(skin)
-    val unitBar = new Table(skin)
-    val commandArea = new Table(skin)
+    val miniMap = new TextButton("mini-map", skin)
+    val unitBar = new TextButton("unit-bar", skin)
+    val commandArea = new TextButton("cmd-area", skin)
 
     root.rw {
       _.cell(statusBar).colspan(3).growX().prefHeight(640.0f * 0.10f)
