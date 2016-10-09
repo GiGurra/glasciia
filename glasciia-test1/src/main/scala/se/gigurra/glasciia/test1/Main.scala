@@ -55,9 +55,9 @@ object Main {
           .filter(gameKeyState)
           .filter {
             case MouseScrolled(amount) =>
-              canvas.setZoom( // Preserve mouse world position after zoom (supreme commander style!)
+              canvas.setZoom(
                 newValue = canvas.zoom + amount * 0.1f,
-                preserveCursorWorldPosition = true,
+                preserveCursorWorldPosition = true, // Supreme commander style!
                 projectionArea = canvas.wholeCanvasProjectionArea
               )
             case KeyDown(Keys.ESCAPE) => mainMenu.show()
