@@ -1,7 +1,7 @@
 package se.gigurra.glasciia.impl
 import com.badlogic.gdx.scenes.scene2d.utils.{ClickListener, FocusListener}
 import com.badlogic.gdx.scenes.scene2d.utils.FocusListener.FocusEvent
-import com.badlogic.gdx.scenes.scene2d.{Actor, EventListener, InputEvent, InputListener}
+import com.badlogic.gdx.scenes.scene2d._
 import se.gigurra.glasciia.AppEvent.{CharTyped, KeyDown, KeyUp}
 
 import scala.language.{implicitConversions, reflectiveCalls}
@@ -33,6 +33,13 @@ trait InputListeners {
     def onKeyFocusLost(f: (Receiver, Emitter) => Unit): FocusListener = onKeyFocusChange((self, emitter, newState) => if (!newState) f(self, emitter))
     def onKeyFocusLost(f: Receiver => Unit): FocusListener = onKeyFocusLost({ (a, _) => f(a) }: (Receiver, Emitter) => Unit)
     def onKeyFocusLost(f: => Unit): FocusListener = onKeyFocusLost(_ => f)
+
+    def blockInputEventPropagation(): InputListener = addAndReturnListener(new InputListener{
+      override def handle(e: Event): Boolean = {
+        super.handle(e)
+        true
+      }
+    })
 
     private def addAndReturnListener[T <: EventListener](listener: T): T ={
       self.addListener(listener)

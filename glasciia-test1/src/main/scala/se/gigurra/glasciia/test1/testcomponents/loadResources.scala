@@ -4,6 +4,7 @@ import com.badlogic.gdx.Input.Keys
 import com.badlogic.gdx.graphics.{Color, Pixmap}
 import com.badlogic.gdx.graphics.g2d.Animation.PlayMode
 import com.badlogic.gdx.graphics.g2d.{BitmapFont, TextureRegion}
+import com.badlogic.gdx.scenes.scene2d.{Event, InputListener}
 import com.badlogic.gdx.scenes.scene2d.ui.Label.LabelStyle
 import com.badlogic.gdx.scenes.scene2d.ui.{Label, TextButton}
 import com.badlogic.gdx.scenes.scene2d.ui.TextButton.TextButtonStyle
@@ -140,8 +141,8 @@ object loadResources {
       btn.onKeyFocusLost(_.setStyle(menu.style[TextButtonStyle]))
     }
 
-
     menu.stage.setKeyboardFocus(startBtn)
+    menu.stage.blockInputEventPropagation()
 
     val btnWidth = 200.0f
 
