@@ -1,9 +1,9 @@
 package se.gigurra.glasciia.test1.testcomponents
 
 import com.badlogic.gdx.Input.Keys
-import com.badlogic.gdx.graphics.g2d.TextureRegion
+import com.badlogic.gdx.graphics.g2d.{Batch, TextureRegion}
 import com.badlogic.gdx.scenes.scene2d.Stage
-import com.badlogic.gdx.scenes.scene2d.ui.{Label, Table, TextButton}
+import com.badlogic.gdx.scenes.scene2d.ui.{Label, TextButton}
 import com.badlogic.gdx.scenes.scene2d.ui.TextButton.TextButtonStyle
 import se.gigurra.glasciia.AppEvent.KeyDown
 import se.gigurra.glasciia._
@@ -14,8 +14,8 @@ import se.gigurra.glasciia.Glasciia._
   */
 object createMainMenu {
 
-  def apply(app: App, regions: Loader.InMemory[TextureRegion]): Stage = {
-    val (stage, menu) = RootGui()
+  def apply(app: App, batch: Batch, regions: Loader.InMemory[TextureRegion]): Stage = {
+    val (stage, menu) = RootGui(batch)
     val skin = menu.debug(true).skin
 
     addDefaultGuiStyles(app, skin, regions)

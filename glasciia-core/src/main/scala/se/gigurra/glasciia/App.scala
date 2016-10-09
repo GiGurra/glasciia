@@ -19,6 +19,7 @@ abstract class App(val initialWindowConf: WindowConf,
   def size: Vec2[Int] = Vec2(width, height)
   def localAppTime: Double = System.nanoTime / 1e9 - t0
   def close(): Unit
+  override def canvas: Canvas = Option(super.canvas).getOrElse(throw new IllegalAccessError(s"Cannot access canvas before startup has finished"))
 }
 
 object App {

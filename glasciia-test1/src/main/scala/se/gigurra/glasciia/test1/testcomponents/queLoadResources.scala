@@ -1,14 +1,9 @@
 package se.gigurra.glasciia.test1.testcomponents
 
-import com.badlogic.gdx.Input.Keys
-import com.badlogic.gdx.graphics.{Color, Pixmap}
 import com.badlogic.gdx.graphics.g2d.Animation.PlayMode
-import com.badlogic.gdx.graphics.g2d.{BitmapFont, TextureRegion}
+import com.badlogic.gdx.graphics.g2d.{Batch, TextureRegion}
+import com.badlogic.gdx.graphics.{Color, Pixmap}
 import com.badlogic.gdx.scenes.scene2d.Stage
-import com.badlogic.gdx.scenes.scene2d.ui.Label.LabelStyle
-import com.badlogic.gdx.scenes.scene2d.ui.{Label, TextButton}
-import com.badlogic.gdx.scenes.scene2d.ui.TextButton.TextButtonStyle
-import se.gigurra.glasciia.AppEvent.KeyDown
 import se.gigurra.glasciia.Glasciia._
 import se.gigurra.glasciia._
 import se.gigurra.math.{Box2, Vec2}
@@ -31,13 +26,14 @@ object queLoadResources {
   }
 
   def apply(app: App): Unit = app.executeOnRenderThread {
+    val batch = app.canvas.batch
     val regions = createTextureRegionLoader(app)
     loadHooks(app, regions)
     loadFonts(app, regions)
     loadImages(app, regions)
     loadParticleEffects(app, regions)
     loadBackground(app, regions)
-    loadGui(app, regions)
+    loadGui(app, batch, regions)
   }
 
   private def loadHooks(app: App, regions: Loader[TextureRegion]): Unit = {
@@ -89,8 +85,8 @@ object queLoadResources {
     )
   }
 
-  private def loadGui(app: App, regions: Loader.InMemory[TextureRegion]): Unit = {
-    app.addResource[Stage]("gui:main-menu", createMainMenu(app, regions))
-    app.addResource[Stage]("gui:game-world", createGameWorldGui(app, regions))
+  private def loadGui(app: App, batch: Batch, regions: Loader.InMemory[TextureRegion]): Unit = {
+    app.addResource[Stage]("gui:main-menu", createMainMenu(app, batch, regions))
+    app.addResource[Stage]("gui:game-world", createGameWorldGui(app, batch, regions))
   }
 }

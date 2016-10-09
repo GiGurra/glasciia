@@ -19,6 +19,7 @@ trait ApplicationEventListener { self: App =>
     events.foreach(f.applyOrElse(_, (_: Any) => ()), crashHandler)
   }
 
+  def canvas: Canvas = _canvas
 
   /////////////////////////////////////////////
   // Implemented expectations
@@ -44,7 +45,7 @@ trait ApplicationEventListener { self: App =>
     }
     override def resume(): Unit = consume(Resume(canvas: Canvas))
     override def create(): Unit = {
-      canvas = Canvas(self)
+      _canvas = Canvas(self)
       flushQueuedOps()
       consume(Init(canvas))
     }
@@ -92,8 +93,8 @@ trait ApplicationEventListener { self: App =>
     }
   }
 
+  private var _canvas: Canvas = null : Canvas
   private val subject = Subject[AppEvent]().toSerialized
-  private var canvas: Canvas = _
   private var initReceived: Boolean = false
 
 }
