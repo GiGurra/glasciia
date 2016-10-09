@@ -115,7 +115,7 @@ object queLoadResources {
         fontColor = Color.CHARTREUSE
       })
 
-    val fontScale = 1.5f * 1.35f
+    val fontScale = 2.0f
     val startBtn = new TextButton("start", table.skin).fontScale(fontScale)
     val optionsBtn = new TextButton("options", table.skin).fontScale(fontScale)
     val exitBtn = new TextButton("exit", table.skin).fontScale(fontScale)
