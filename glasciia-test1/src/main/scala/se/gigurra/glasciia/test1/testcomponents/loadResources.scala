@@ -5,6 +5,7 @@ import com.badlogic.gdx.graphics.g2d.{Batch, TextureRegion}
 import com.badlogic.gdx.graphics.{Color, Cursor, Pixmap}
 import com.badlogic.gdx.scenes.scene2d.Stage
 import se.gigurra.glasciia.Glasciia._
+import se.gigurra.glasciia.Loader.InMemory
 import se.gigurra.glasciia._
 import se.gigurra.math.{Box2, Vec2}
 
@@ -23,6 +24,7 @@ object loadResources {
     loadBackground(app, regions)
     loadGui(app, batch, regions)
     loadCursor(app, regions)
+    loadMipMaps(app, regions)
   }
 
   private def loadHooks(app: App, regions: Loader[TextureRegion]): Unit = {
@@ -79,7 +81,7 @@ object loadResources {
   }
 
   private def createTextureRegionLoader(app: App): Loader.InMemory[TextureRegion] = {
-    val out = TextureRegionLoader.createNew()
+    val out = TextureRegionLoader.createNew()()
     app.addResource("texture-loader", out)
     out.add("filled-texture", {
       val fillPixMap = new Pixmap(1, 1, Pixmap.Format.RGBA8888)
@@ -94,4 +96,7 @@ object loadResources {
     app.canvas.setCursor(app.resource[Cursor]("cool-cursor"))
   }
 
+  private def loadMipMaps(app: App, regions: InMemory[TextureRegion]): Unit = {
+    regions.uploadIfDirty()
+  }
 }

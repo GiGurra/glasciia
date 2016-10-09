@@ -2,7 +2,7 @@ package se.gigurra.glasciia
 
 import com.badlogic.gdx.graphics.Texture
 import com.badlogic.gdx.graphics.g2d.{TextureAtlas, TextureRegion}
-import se.gigurra.glasciia.impl.LoadFile
+import se.gigurra.glasciia.impl.{DynamicTexturePackingAtlas, LoadFile}
 
 /**
   * Created by johan on 2016-10-08.
@@ -13,7 +13,7 @@ object TextureRegionLoader {
                   minFilter: Texture.TextureFilter = Texture.TextureFilter.MipMapLinearLinear,
                   magFilter: Texture.TextureFilter = Texture.TextureFilter.Linear)
 
-  def createNew(atlas: TextureAtlas = new TextureAtlas(), conf: Conf = Conf()): Loader.InMemory[TextureRegion] = {
+  def createNew(conf: Conf = Conf())(atlas: DynamicTexturePackingAtlas = new DynamicTexturePackingAtlas(conf)): Loader.InMemory[TextureRegion] = {
     Loader.InMemory[TextureRegion](
       fallback = Some(FromAtlas(atlas,
         fallback = Some(FromFiles(conf))
@@ -21,13 +21,13 @@ object TextureRegionLoader {
     )
   }
 
-  case class FromAtlas(atlas: TextureAtlas, fallback: Option[Loader[TextureRegion]] = None) extends Loader[TextureRegion] {
-    override def get(name: String): Option[TextureRegion] = {
+  case class FromAtlas(atlas: DynamicTexturePackingAtlas, fallback: Option[Loader[TextureRegion]] = None) extends Loader[TextureRegion] {
+    override def get(name: String, upload: Boolean = false): Option[TextureRegion] = {
       val nameWithoutFileEnding = stripEnding(name)
       Option(atlas.findRegion(nameWithoutFileEnding)) match {
         case r @ Some(region) => r
-        case None => fallback.flatMap(_.get(name)) match {
-          case Some(region) => Some(atlas.addRegion(nameWithoutFileEnding, region)) // TODO: Packing. If configured to do so..
+        case None => fallback.flatMap(_.get(name, upload)) match {
+          case Some(source) => Some(atlas.add(nameWithoutFileEnding, source, upload = upload, deleteSource = true))
           case None => None
         }
       }
@@ -39,10 +39,12 @@ object TextureRegionLoader {
         case i => name.splitAt(i)._1
       }
     }
+
+    override def uploadIfDirty(): Unit = atlas.uploadIfDirty()
   }
 
   case class FromFiles(conf: Conf) extends Loader[TextureRegion] {
-    override def get(fileName: String): Option[TextureRegion] = {
+    override def get(fileName: String, upload: Boolean = false): Option[TextureRegion] = {
       LoadFile(fileName) match {
         case r @ Some(fileHandle) =>
           Some(StaticImage.fromFile(
@@ -54,5 +56,7 @@ object TextureRegionLoader {
         case None => None
       }
     }
+
+    override def uploadIfDirty(): Unit = {}
   }
 }
