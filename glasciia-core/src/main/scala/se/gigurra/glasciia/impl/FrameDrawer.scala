@@ -34,9 +34,9 @@ trait FrameDrawer {
     )
     batch.setProjectionMatrix(camera.combined)
     transform.pushPop {
+      batch.begin()
       content
-      if (batch.isDrawing)
-        batch.end()
+      batch.end()
     }
   }
 }

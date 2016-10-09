@@ -16,9 +16,6 @@ trait ContentDrawer {
            scale: Vec2[Float] = One.vec2f,
            rotate: Float = 0.0f)(content: => Unit): Unit = {
 
-    if (!batch.isDrawing)
-      batch.begin()
-
     val needAt = notZero(at)
     val needScale = notOne(scale)
     val needRotate = rotate != 0.0f
