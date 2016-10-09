@@ -45,11 +45,11 @@ object createGameWorldGui {
     // 4. unit bar. 80%->100% of screen height
     // 5. Command area. 75%->100% of screen height
 
-    val statusBar = Gui(skin)
-    val gameArea = Gui(skin)
-    val miniMap = Gui(skin)
-    val unitBar = Gui(skin)
-    val commandArea = Gui(skin)
+    val statusBar = new Table(skin)
+    val gameArea = new Table(skin)
+    val miniMap = new Table(skin)
+    val unitBar = new Table(skin)
+    val commandArea = new Table(skin)
 
     root.rw {
       _.cell(statusBar).colspan(3).growX().prefHeight(640.0f * 0.10f)

@@ -9,14 +9,7 @@ import scala.language.implicitConversions
 /**
   * Created by johan on 2016-10-08.
   */
-
 object Gui extends GuiImplicits {
-
-  def apply(skin: Skin, debug: Boolean = false): Table = {
-    val table = new Table(skin)
-    table.setDebug(debug)
-    table
-  }
 
   trait Scaling {
     def apply(drawBounds: Vec2[Int]): Float

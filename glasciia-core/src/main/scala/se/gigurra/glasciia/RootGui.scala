@@ -13,7 +13,7 @@ object RootGui {
             debug: Boolean = false,
             fillParent: Boolean = true): Table = {
 
-    val table = Gui(skin = skin, debug = debug)
+    val table = new Table(skin)
     stage.addActor(table)
     table.setFillParent(fillParent)
     table.setDebug(debug)
