@@ -2,7 +2,7 @@ package se.gigurra.glasciia.test1.testcomponents
 
 import com.badlogic.gdx.graphics.g2d.Animation.PlayMode
 import com.badlogic.gdx.graphics.g2d.{Batch, TextureRegion}
-import com.badlogic.gdx.graphics.{Color, Pixmap}
+import com.badlogic.gdx.graphics.{Color, Cursor, Pixmap}
 import com.badlogic.gdx.scenes.scene2d.Stage
 import se.gigurra.glasciia.Glasciia._
 import se.gigurra.glasciia._
@@ -11,21 +11,9 @@ import se.gigurra.math.{Box2, Vec2}
 /**
   * Created by johan on 2016-10-08.
   */
-object queLoadResources {
+object loadResources {
 
-  private def createTextureRegionLoader(app: App): Loader.InMemory[TextureRegion] = {
-    val out = TextureRegionLoader.createNew()
-    app.addResource("texture-loader", out)
-    out.add("filled-texture", {
-      val fillPixMap = new Pixmap(1, 1, Pixmap.Format.RGBA8888)
-      fillPixMap.setColor(Color.WHITE)
-      fillPixMap.fill()
-      StaticImage.fromPixMap(fillPixMap)
-    })
-    out
-  }
-
-  def apply(app: App): Unit = app.executeOnRenderThread {
+  def apply(app: App): Unit = {
     val batch = app.canvas.batch
     val regions = createTextureRegionLoader(app)
     loadHooks(app, regions)
@@ -34,6 +22,7 @@ object queLoadResources {
     loadParticleEffects(app, regions)
     loadBackground(app, regions)
     loadGui(app, batch, regions)
+    loadCursor(app, regions)
   }
 
   private def loadHooks(app: App, regions: Loader[TextureRegion]): Unit = {
@@ -89,4 +78,21 @@ object queLoadResources {
     app.addResource[Stage]("gui:main-menu", createMainMenu(app, batch, regions))
     app.addResource[Stage]("gui:game-world", createGameWorldGui(app, batch, regions))
   }
+
+  private def createTextureRegionLoader(app: App): Loader.InMemory[TextureRegion] = {
+    val out = TextureRegionLoader.createNew()
+    app.addResource("texture-loader", out)
+    out.add("filled-texture", {
+      val fillPixMap = new Pixmap(1, 1, Pixmap.Format.RGBA8888)
+      fillPixMap.setColor(Color.WHITE)
+      fillPixMap.fill()
+      StaticImage.fromPixMap(fillPixMap)
+    })
+    out
+  }
+
+  private def loadCursor(app: App, regions: Loader[TextureRegion]): Unit = {
+    app.canvas.setCursor(app.resource[Cursor]("cool-cursor"))
+  }
+
 }

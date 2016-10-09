@@ -1,7 +1,6 @@
 package se.gigurra.glasciia.test1
 
 import com.badlogic.gdx.Input.Keys
-import com.badlogic.gdx.graphics.Cursor
 import com.badlogic.gdx.scenes.scene2d.Stage
 import se.gigurra.glasciia.AppEvent._
 import se.gigurra.glasciia.Glasciia._
@@ -18,13 +17,12 @@ object Main {
 
     val app = new App(Conf.initialWindow, Conf.initialGl) with LwjglImplementation
 
-    queLoadResources(app)
-
     app.handleEvents {
 
       case Init(canvas) =>
+        loadResources(app)
+
         printShaders(canvas.batch)
-        canvas.setCursor(app.resource[Cursor]("cool-cursor"))
 
       case Render(canvas) =>
         updateCameraPos(canvas)
