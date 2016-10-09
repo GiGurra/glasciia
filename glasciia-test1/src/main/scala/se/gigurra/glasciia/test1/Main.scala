@@ -54,7 +54,8 @@ object Main {
           .filter(gameGui)
           .filter(worldInputKeyboard)
           .filter {
-            case event: MouseEvent =>
+            case MouseScrolled(amount) =>
+              app.canvas.camera.zoom += amount * 0.1f
               //println(s"MouseEvent propagated to world/Not consumed by gui: $event")
             case KeyDown(Keys.ESCAPE) =>
               mainMenu.show()

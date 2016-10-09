@@ -9,17 +9,14 @@ import se.gigurra.math.{Box2, Vec2, Zero}
   */
 trait Cameras {
 
-  val orthographicCamera = new OrthographicCamera
-  var camera: Camera = orthographicCamera
+  val camera = new OrthographicCamera
 
   def setOrtho(yDown: Boolean, width: Float, height: Float): Unit = {
-    orthographicCamera.setToOrtho(yDown, width, height)
-    camera = orthographicCamera
+    camera.setToOrtho(yDown, width, height)
   }
 
   def setOrtho(yDown: Boolean, width: Float, height: Float, scaling: Float): Unit = {
-    orthographicCamera.setToOrtho(yDown, width / scaling, height / scaling)
-    camera = orthographicCamera
+    camera.setToOrtho(yDown, width / scaling, height / scaling)
   }
 
   def screen2World(screenPos: Vec2[Int], projectionArea: Box2[Float]): Vec2[Float] = {
