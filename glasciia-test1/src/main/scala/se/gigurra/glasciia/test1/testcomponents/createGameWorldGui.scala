@@ -49,7 +49,7 @@ object createGameWorldGui {
     val gameArea = Gui(skin)
     val miniMap = Gui(skin)
     val unitBar = Gui(skin)
-    val commandArea = new Table(skin)
+    val commandArea = Gui(skin)
 
     root.rw {
       _.cell(statusBar).colspan(3).growX().prefHeight(640.0f * 0.10f)
