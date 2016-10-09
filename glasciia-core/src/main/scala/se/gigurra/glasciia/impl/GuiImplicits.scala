@@ -2,8 +2,9 @@ package se.gigurra.glasciia.impl
 
 import com.badlogic.gdx.graphics.Color
 import com.badlogic.gdx.scenes.scene2d.{Actor, Stage}
-import com.badlogic.gdx.scenes.scene2d.ui.{Cell, Label, Table, TextButton, Image => Scene2dImage}
+import com.badlogic.gdx.scenes.scene2d.ui.{Cell, Label, Skin, Table, TextButton, Image => Scene2dImage}
 import com.badlogic.gdx.scenes.scene2d.utils.Drawable
+
 import scala.collection.JavaConversions._
 import scala.language.implicitConversions
 import scala.reflect.ClassTag
@@ -13,23 +14,18 @@ import scala.reflect.ClassTag
   */
 trait GuiImplicits extends InputListeners {
 
-  implicit class TableImplicitsOps(table: Table) {
-    def cell[T <: Actor](actor: T): Cell[T] = table.add[T](actor)
-    def cell(): Cell[_] = table.add()
-    def cellImg(template: String, color: Color): Cell[Scene2dImage] = cell(new Scene2dImage(table.getSkin.newDrawable(template, color)))
+  class skinOps[SelfType](self: SelfType, val skin: Skin) {
 
-    def skin = table.getSkin
-
-    def addStyle[T](name: String, styleClass: Class[T])(style: T): Table = {
+    def addStyle[T](name: String, styleClass: Class[T])(style: T): SelfType = {
       skin.add(name, style, styleClass)
-      table
+      self
     }
 
-    def addStyle[T](styleClass: Class[T])(style: T): Table = {
+    def addStyle[T](styleClass: Class[T])(style: T): SelfType = {
       addStyle("default", styleClass)(style)
     }
 
-    def newDrawable(style: String, color: Color): Drawable = {
+    def newInstance(style: String, color: Color): Drawable = {
       skin.newDrawable(style, color)
     }
 
@@ -40,6 +36,14 @@ trait GuiImplicits extends InputListeners {
     def style[T: ClassTag]: T = {
       style[T]("default")
     }
+  }
+
+  implicit class SkinImplicitOps(skin: Skin) extends skinOps[Skin](skin, skin)
+
+  implicit class TableImplicitsOps(table: Table) extends skinOps[Table](table, table.getSkin) {
+    def cell[T <: Actor](actor: T): Cell[T] = table.add[T](actor)
+    def cell(): Cell[_] = table.add()
+    def cellImg(template: String, color: Color): Cell[Scene2dImage] = cell(new Scene2dImage(table.getSkin.newDrawable(template, color)))
 
     def rw[A](f: Table => A): Table = {
       f(table)

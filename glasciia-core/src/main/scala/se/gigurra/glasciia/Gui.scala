@@ -10,9 +10,10 @@ import scala.language.implicitConversions
 /**
   * Created by johan on 2016-10-08.
   */
-case class Gui(table: Table, fillParent: Boolean = false) {
+case class Gui(table: Table, fillParent: Boolean = false, debug: Boolean = false) {
 
   table.setFillParent(fillParent)
+  table.setDebug(debug)
 
   def hidden: Boolean = !table.isVisible
   def stage: Stage = table.getStage

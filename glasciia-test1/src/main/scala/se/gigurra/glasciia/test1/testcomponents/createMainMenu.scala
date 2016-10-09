@@ -1,10 +1,8 @@
 package se.gigurra.glasciia.test1.testcomponents
 
 import com.badlogic.gdx.Input.Keys
-import com.badlogic.gdx.graphics.Color
-import com.badlogic.gdx.graphics.g2d.{BitmapFont, TextureRegion}
+import com.badlogic.gdx.graphics.g2d.TextureRegion
 import com.badlogic.gdx.scenes.scene2d.Stage
-import com.badlogic.gdx.scenes.scene2d.ui.Label.LabelStyle
 import com.badlogic.gdx.scenes.scene2d.ui.{Label, TextButton}
 import com.badlogic.gdx.scenes.scene2d.ui.TextButton.TextButtonStyle
 import se.gigurra.glasciia.AppEvent.KeyDown
@@ -20,33 +18,14 @@ object createMainMenu {
     val menu: Gui = RootGui(debug = true)
     val stage = menu.stage
     val table = menu.table
+    val skin = menu.skin
 
-    table
-      .addStyle("fill", classOf[TextureRegion])(regions("filled-texture"))
-      .addStyle(classOf[BitmapFont])(app.resource[Font]("font:monospace-default"))
-      .addStyle("masked-font", classOf[BitmapFont])(app.resource[Font]("font:monospace-default-masked"))
-      .addStyle(classOf[TextButtonStyle])(new TextButtonStyle {
-        val standard = table.newDrawable(style = "fill", Color.DARK_GRAY)
-        val highlighted = table.newDrawable(style = "fill", Color.LIGHT_GRAY)
-        up = standard
-        down = standard
-        over = highlighted
-        font = table.style[BitmapFont]
-      })
-      .addStyle("default:keyboard-focus", classOf[TextButtonStyle])(new TextButtonStyle(table.style[TextButtonStyle]) {
-        val kbFocus = table.newDrawable(style = "fill", Color.LIME)
-        up = kbFocus
-        down = kbFocus
-      })
-      .addStyle(classOf[LabelStyle])(new LabelStyle() {
-        font = table.style[BitmapFont]
-        fontColor = Color.CHARTREUSE
-      })
+    addDefaultGuiStyles(app, skin, regions)
 
     val fontScale = 2.0f
-    val startBtn = new TextButton("start", table.skin).fontScale(fontScale)
-    val optionsBtn = new TextButton("options", table.skin).fontScale(fontScale)
-    val exitBtn = new TextButton("exit", table.skin).fontScale(fontScale)
+    val startBtn = new TextButton("start", skin).fontScale(fontScale)
+    val optionsBtn = new TextButton("options", skin).fontScale(fontScale)
+    val exitBtn = new TextButton("exit", skin).fontScale(fontScale)
     val menuButtons = Seq(startBtn, optionsBtn, exitBtn)
 
     startBtn.onClick(stage.hide())
@@ -69,7 +48,7 @@ object createMainMenu {
     val btnWidth = 200.0f
     table
       .rw(_.cell().height(120))
-      .rw(_.cell(new Label("THE COOLEST GAME", table.skin).fontScale(3.5f)).center())
+      .rw(_.cell(new Label("THE COOLEST GAME", skin).fontScale(3.5f)).center())
       .rw(_.cell().height(menuItemPad * 2))
       .rw(_.cell(startBtn).width(btnWidth).center())
       .rw(_.cell().height(menuItemPad))
@@ -78,7 +57,7 @@ object createMainMenu {
       .rw(_.cell(exitBtn).width(btnWidth).center())
       .rw(_.cell().height(menuItemPad))
       .rw(_.cell().expandY())
-      .rw(_.cell(new Label("Copyright (c) Idiot ltd", table.skin).fontScale(0.8f)).center())
+      .rw(_.cell(new Label("Copyright (c) Idiot ltd", skin).fontScale(0.8f)).center())
       .rw(_.cell().height(menuItemPad * 0.5f))
 
     startBtn.setKeyFocus()
