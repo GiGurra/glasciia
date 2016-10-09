@@ -24,7 +24,7 @@ object AppEvent {
   case class KeyUp(vKey: Int) extends KeyboardEvent
 
   sealed trait ControllerEvent extends InputEvent { def controller: Controller }
-  case class AxisMoved(controller: Controller, axis: Int, newValue: Float) extends ControllerEvent
+  case class AxisMoved(controller: Controller, axis: Int, newValue: Float, oldValue: Float) extends ControllerEvent
   case class ButtonDown(controller: Controller, button: Int) extends ControllerEvent
   case class ButtonUp(controller: Controller, button: Int) extends ControllerEvent
 

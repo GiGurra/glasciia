@@ -5,6 +5,7 @@ import se.gigurra.glasciia.AppEvent._
 import se.gigurra.glasciia.RootGui
 
 import scala.language.implicitConversions
+import scala.reflect.ClassTag
 
 /**
   * Created by johan on 2016-10-02.
@@ -21,8 +22,20 @@ trait EventFilters {
       }
     }
 
-    def map(mappings: PartialFunction[InputEvent, InputEvent]): InputEvent = returnEarlyIfConsumed {
-      mappings.applyOrElse(event, (_: Any) => event)
+    def map[A <: InputEvent : ClassTag, B <: InputEvent](mappings: PartialFunction[A, B]): InputEvent = returnEarlyIfConsumed {
+      event match {
+        case a: A => mappings.applyOrElse(a, (_: Any) => a)
+        case _ => event
+      }
+    }
+
+    def fork[A <: InputEvent : ClassTag](mappings: PartialFunction[A, Seq[InputEvent]]): Seq[InputEvent] = {
+      event match {
+        case a: A =>
+          mappings.applyOrElse(a, (_: Any) => Seq(a))
+        case _ =>
+          Seq(event)
+      }
     }
 
     def filter(mappings: PartialFunction[InputEvent, InputEvent], filter: PartialFunction[InputEvent, Unit]): InputEvent = event.map(mappings).filter(filter)

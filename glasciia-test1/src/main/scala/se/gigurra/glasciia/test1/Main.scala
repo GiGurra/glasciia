@@ -34,7 +34,14 @@ object Main {
         val menu = app.resource[RootGui]("gui:main-menu")
         val worldInputKeyboard = app.resource[Keyboard]("world-input-keyboard")
 
+        val controls: PartialFunction[InputEvent, KeyboardEvent] = {
+          case KeyDown(Keys.A) => KeyDown(Keys.B)
+          case KeyDown(Keys.B) => KeyDown(Keys.A)
+        }
+
         input
+          .map(controls)
+          .filter(worldInputKeyboard.releaseHook)
           .filter(menu)
           .filter(worldInputKeyboard)
           .filter {

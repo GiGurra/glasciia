@@ -1,6 +1,6 @@
 package se.gigurra.glasciia
 
-import com.badlogic.gdx.{Gdx, InputAdapter}
+import com.badlogic.gdx.InputAdapter
 
 import scala.collection.mutable
 
@@ -12,9 +12,6 @@ case class Keyboard(autoReleaseOnFocusLoss: Boolean = true) extends InputAdapter
   private var propagatedDown = new mutable.HashSet[Int]
 
   def isKeyDown(vKey: Int): Boolean = {
-    if (autoReleaseOnFocusLoss && !Gdx.input.isKeyPressed(vKey)) {
-      propagatedDown -= vKey
-    }
     propagatedDown(vKey)
   }
 
