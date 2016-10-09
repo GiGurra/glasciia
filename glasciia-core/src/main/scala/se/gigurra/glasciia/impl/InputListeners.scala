@@ -42,9 +42,8 @@ trait InputListeners {
 
   implicit class canFireAndReceiveEvents[Subject <: CanFireAndReceiveEvents](subject: Subject) {
 
-    def mapKeyDownToClick(vKey: Int, consume: Boolean = true): Subject = {
+    def mapKeyDownToClick(vKey: Int, consume: Boolean = true): InputListener = {
       subject.on({ case KeyDown(`vKey`) => subject.click()}, consume = consume)
-      subject
     }
   }
 
