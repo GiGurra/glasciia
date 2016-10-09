@@ -54,6 +54,7 @@ trait InputListeners {
 
     def onClick[R](f: (Receiver, Float, Float) => R): InputListener = addAndReturnListener(clickListener((x, y) => f(self, x,y)))
     def onClick[R](f: (Float, Float) => R): InputListener = onClick((_: Receiver, x: Float, y: Float) => f(x,y))
+    def onClick[R](f: (Receiver => R)): InputListener = onClick((receiver: Receiver, _: Float, _: Float) => f(receiver))
     def onClick[R](f: => R): InputListener = onClick((_: Float, _: Float) => f)
 
     def onKeyFocusChange(f: (Receiver, Emitter, Boolean) => Unit): FocusListener = addAndReturnListener(focusListener((emitter, newState) => f(self, emitter, newState)))
