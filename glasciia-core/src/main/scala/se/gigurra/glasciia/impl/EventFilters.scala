@@ -1,9 +1,9 @@
 package se.gigurra.glasciia.impl
 
 import com.badlogic.gdx.InputProcessor
-import com.badlogic.gdx.scenes.scene2d.ui.Table
+import com.badlogic.gdx.scenes.scene2d.Stage
 import se.gigurra.glasciia.AppEvent._
-import se.gigurra.glasciia.{Gui, RootGui}
+import se.gigurra.glasciia.Glasciia._
 
 import scala.language.implicitConversions
 
@@ -53,6 +53,14 @@ trait EventFilters {
       } else {
         event
       }
+    }
+  }
+
+  implicit def stage2Filter(stage: Stage): PartialFunction[InputEvent, Unit] = {
+    if (stage.visible) {
+      inputProcessor2Filter(stage)
+    } else {
+      PartialFunction.empty
     }
   }
 

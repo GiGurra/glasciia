@@ -50,7 +50,7 @@ object Main {
         input
           .mapIf(controlsInverted, invertedControls)
           .filter(worldInputKeyboard.releaseHook)
-          .filterIf(menu.visible, menu)
+          .filter(menu)
           .filter(worldInputKeyboard)
           .filter {
             case event: MouseEvent =>
