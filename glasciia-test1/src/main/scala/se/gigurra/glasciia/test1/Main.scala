@@ -32,15 +32,22 @@ object Main {
 
       case input: InputEvent =>
         val menu = app.resource[RootGui]("gui:main-menu")
+        val controlsInverted = app.getResource[Boolean]("controls-inverted").getOrElse(false)
         val worldInputKeyboard = app.resource[Keyboard]("world-input-keyboard")
 
-        val controls: PartialFunction[InputEvent, KeyboardEvent] = {
-          case KeyDown(Keys.A) => KeyDown(Keys.B)
-          case KeyDown(Keys.B) => KeyDown(Keys.A)
+        val invertedControls: PartialFunction[InputEvent, KeyboardEvent] = {
+          case KeyDown(Keys.DOWN) => KeyDown(Keys.UP)
+          case KeyDown(Keys.UP) => KeyDown(Keys.DOWN)
+          case KeyDown(Keys.LEFT) => KeyDown(Keys.RIGHT)
+          case KeyDown(Keys.RIGHT) => KeyDown(Keys.LEFT)
+          case KeyUp(Keys.DOWN) => KeyUp(Keys.UP)
+          case KeyUp(Keys.UP) => KeyUp(Keys.DOWN)
+          case KeyUp(Keys.LEFT) => KeyUp(Keys.RIGHT)
+          case KeyUp(Keys.RIGHT) => KeyUp(Keys.LEFT)
         }
 
         input
-          .map(controls)
+          .mapIf(controlsInverted, invertedControls)
           .filter(worldInputKeyboard.releaseHook)
           .filter(menu)
           .filter(worldInputKeyboard)

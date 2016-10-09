@@ -130,6 +130,8 @@ object queLoadResources {
     exitBtn.onKeyDown{ case KeyDown(Keys.ENTER) => app.close() }
     exitBtn.onClicked(app.close())
 
+    optionsBtn.onKeyDown{ case KeyDown(Keys.ENTER) => app.addResource("controls-inverted", !app.getResource[Boolean]("controls-inverted").getOrElse(false)) }
+
     app.addResource("gui:main-menu:table", table)
     app.addResource("gui:main-menu:btn1", startBtn)
     app.addResource("gui:main-menu:btn2", optionsBtn)

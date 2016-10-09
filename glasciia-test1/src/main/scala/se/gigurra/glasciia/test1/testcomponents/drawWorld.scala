@@ -5,6 +5,8 @@ import se.gigurra.glasciia._
 import se.gigurra.glasciia.impl.TextDrawer.Anchor
 import se.gigurra.math.Vec2
 
+import scala.util.Random
+
 /**
   * Created by johan on 2016-10-08.
   */
@@ -20,6 +22,7 @@ object drawWorld {
     val effect1 = app.resource[ParticleSource]("particle-effect:test-effect:instance-0")
     val effect2 = app.resource[ParticleSource]("particle-effect:test-effect:instance-1")
     val effect3 = app.resource[ParticleSource]("particle-effect:test-effect:instance-2")
+    val controlsInverted = app.getResource[Boolean]("controls-inverted").getOrElse(false)
 
     val cameraPos = app.resource[Vec2[Float]]("camera-position")
     val mouseWorldPos = canvas.screen2World(canvas.mousePos)
@@ -83,6 +86,16 @@ object drawWorld {
         at = Vec2(0, 50),
         scale = 50
       )
+
+      if (controlsInverted) {
+        canvas.drawText(
+          text = "HAHA - CONTROLS INVERTED",
+          font = monospaceFont,
+          color = new Color(Random.nextFloat, Random.nextFloat, Random.nextFloat, 1.0f),
+          at = Vec2(10, 80),
+          scale = 40
+        )
+      }
 
       canvas.drawText(
         text = "UR",

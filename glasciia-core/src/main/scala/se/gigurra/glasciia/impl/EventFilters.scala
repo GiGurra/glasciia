@@ -5,7 +5,6 @@ import se.gigurra.glasciia.AppEvent._
 import se.gigurra.glasciia.RootGui
 
 import scala.language.implicitConversions
-import scala.reflect.ClassTag
 
 /**
   * Created by johan on 2016-10-02.
@@ -22,25 +21,8 @@ trait EventFilters {
       }
     }
 
-    def map[A <: InputEvent : ClassTag, B <: InputEvent](mappings: PartialFunction[A, B]): InputEvent = returnEarlyIfConsumed {
-      event match {
-        case a: A => mappings.applyOrElse(a, (_: Any) => a)
-        case _ => event
-      }
-    }
-
-    def fork[A <: InputEvent : ClassTag](mappings: PartialFunction[A, Seq[InputEvent]]): Seq[InputEvent] = {
-      event match {
-        case a: A =>
-          mappings.applyOrElse(a, (_: Any) => Seq(a))
-        case _ =>
-          Seq(event)
-      }
-    }
-
-    def filter(mappings: PartialFunction[InputEvent, InputEvent], filter: PartialFunction[InputEvent, Unit]): InputEvent = event.map(mappings).filter(filter)
-    def filter(filter: PartialFunction[InputEvent, Unit]): InputEvent = returnEarlyIfConsumed {
-      filter.lift.apply(event).map(_ => ConsumedEvent).getOrElse(event)
+    def fork(mappings: PartialFunction[InputEvent, Seq[InputEvent]]): Seq[InputEvent] = {
+      mappings.applyOrElse(event, (_: Any) => Seq(event))
     }
 
     def foreach(filter: PartialFunction[InputEvent, Unit]): Unit = returnEarlyIfConsumed {
@@ -48,10 +30,25 @@ trait EventFilters {
       ConsumedEvent
     }
 
-    def filterIf(condition: => Boolean, mappings: PartialFunction[InputEvent, InputEvent], filter: PartialFunction[InputEvent, Unit]): InputEvent = event.map(mappings).filterIf(condition, filter)
-    def filterIf(condition: => Boolean, filter: PartialFunction[InputEvent, Unit]): InputEvent = returnEarlyIfConsumed {
+    def map(mappings: PartialFunction[InputEvent, InputEvent]): InputEvent = returnEarlyIfConsumed { mapIf(condition = true, mappings) }
+    def mapIf(condition: Boolean, mappings: PartialFunction[InputEvent, InputEvent]): InputEvent = returnEarlyIfConsumed {
       if (condition) {
-        this.filter(filter)
+        mappings.applyOrElse(event, (_: Any) => event)
+      } else {
+        event
+      }
+    }
+
+    def filter(mappings: PartialFunction[InputEvent, InputEvent], filter: PartialFunction[InputEvent, Unit]): InputEvent = filterIf(condition = true, mappings, filter)
+    def filter(filter: PartialFunction[InputEvent, Unit]): InputEvent = filterIf(condition = true, mappings = PartialFunction.empty, filter)
+    def filterIf(condition: Boolean, filter: PartialFunction[InputEvent, Unit]): InputEvent = filterIf(condition, mappings = PartialFunction.empty, filter)
+    def filterIf(condition: Boolean, mappings: PartialFunction[InputEvent, InputEvent], filter: PartialFunction[InputEvent, Unit]): InputEvent = returnEarlyIfConsumed {
+      if (condition) {
+        val mappedEvent = mappings.lift.apply(event).getOrElse(event)
+        filter.lift.apply(mappedEvent) match {
+          case Some(_) => ConsumedEvent
+          case None => event
+        }
       } else {
         event
       }
