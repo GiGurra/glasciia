@@ -2,6 +2,7 @@ package se.gigurra.glasciia.test1
 
 import com.badlogic.gdx.Input.Keys
 import com.badlogic.gdx.graphics.Cursor
+import com.badlogic.gdx.scenes.scene2d.Stage
 import se.gigurra.glasciia.AppEvent._
 import se.gigurra.glasciia.Glasciia._
 import se.gigurra.glasciia._
@@ -31,7 +32,7 @@ object Main {
         drawMenu(canvas)
 
       case input: InputEvent =>
-        val menu = app.resource[RootGui]("gui:main-menu")
+        val menu = app.resource[Stage]("gui:main-menu")
         val controlsInverted = app.getResource[Boolean]("controls-inverted").getOrElse(false)
         val worldInputKeyboard = app.resource[Keyboard]("world-input-keyboard")
 
@@ -49,7 +50,7 @@ object Main {
         input
           .mapIf(controlsInverted, invertedControls)
           .filter(worldInputKeyboard.releaseHook)
-          .filter(menu)
+          .filterIf(menu.visible, menu)
           .filter(worldInputKeyboard)
           .filter {
             case event: MouseEvent =>

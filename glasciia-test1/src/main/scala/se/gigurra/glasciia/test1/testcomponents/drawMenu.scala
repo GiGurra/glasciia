@@ -1,5 +1,6 @@
 package se.gigurra.glasciia.test1.testcomponents
 
+import com.badlogic.gdx.scenes.scene2d.Stage
 import se.gigurra.glasciia.Gui.Scaling.{Constant, LinearShortestSide}
 import se.gigurra.glasciia._
 import se.gigurra.math.Vec2
@@ -9,13 +10,10 @@ import se.gigurra.math.Vec2
   */
 object drawMenu {
   def apply(canvas: Canvas): Unit = {
-    val menu = canvas.app.resource[RootGui]("gui:main-menu")
+    val stage = canvas.app.resource[Stage]("gui:main-menu")
     canvas.drawGui(
-      gui = menu,
+      stage = stage,
       scaling = LinearShortestSide(reference = Vec2(640, 480)) * Constant(0.75f)
     )
-
-   // menu.stage.setKeyboardFocus(menu.table)
-   // println(menu.stage.getKeyboardFocus)
   }
 }

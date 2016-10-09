@@ -89,9 +89,7 @@ object queLoadResources {
   }
 
   private def loadGui(app: App, regions: Loader.InMemory[TextureRegion]): Unit = {
-    app.addResource("gui:main-menu", RootGui(debug = true))
-
-    val menu = app.resource[RootGui]("gui:main-menu")
+    val menu: Gui = RootGui(debug = true)
     val stage = menu.stage
     val table = menu.table
 
@@ -157,5 +155,7 @@ object queLoadResources {
 
     startBtn.setKeyFocus()
     stage.blockInputEventPropagation()
+
+    app.addResource("gui:main-menu", menu.stage)
   }
 }
