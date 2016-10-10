@@ -7,7 +7,7 @@ import scala.collection.mutable
 /**
   * Created by johan on 2016-10-09.
   */
-case class Keyboard(autoReleaseOnFocusLoss: Boolean = true) extends InputAdapter {
+case class Keyboard() extends InputAdapter {
 
   private var propagatedDown = new mutable.HashSet[Int]
 
@@ -32,4 +32,9 @@ case class Keyboard(autoReleaseOnFocusLoss: Boolean = true) extends InputAdapter
   val releaseHook = new InputAdapter {
     override def keyUp(keycode: Int): Boolean = Keyboard.this.keyUp(keycode)
   }
+}
+
+object Keyboard {
+  import scala.language.implicitConversions
+  implicit def kb2apply(kb: Keyboard): (Int => Boolean) = kb.isKeyDown
 }
