@@ -7,8 +7,7 @@ import se.gigurra.math.{Box2, Vec2, Zero}
   * Created by johan on 2016-09-29.
   */
 case class Canvas(app: App)
-    extends DefaultShader
-    with Batcher
+    extends Batcher
     with Cameras
     with ContentDrawer
     with FrameDrawer
