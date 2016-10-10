@@ -24,11 +24,9 @@ object drawWorld {
     val effect2 = app.resource[ParticleSource]("particle-effect:test-effect:instance-1")
     val effect3 = app.resource[ParticleSource]("particle-effect:test-effect:instance-2")
     val controlsInverted = app.getResource[Boolean]("controls-inverted").getOrElse(false)
-
-    val cameraPos = app.canvas.camera.position : Vec2[Float]
-    val mouseWorldPos = canvas.screen2World(canvas.mousePos)
-
     val background = app.resource[MultiLayer[Image]]("background-0")
+    val mouseWorldPos = canvas.screen2World(canvas.mousePos)
+    val cameraPos = canvas.cameraPos
 
     canvas.setOrtho(
       yDown = false,
