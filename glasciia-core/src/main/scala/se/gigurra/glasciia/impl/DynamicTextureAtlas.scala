@@ -111,7 +111,7 @@ object DynamicTextureAtlas {
 
     def copyIn(name: String, source: Pixmap, to: Vec2[Int], upload: Boolean): AtlasRegion = {
       val region = new AtlasRegion(texture, to.x, to.y, source.width, source.height)
-      val itemBounds = Box2(ll = to, size = source.size)
+      val itemBounds = region.bounds
       region.name = name
       region.index = -1
       region.originalWidth = source.getWidth
@@ -127,8 +127,6 @@ object DynamicTextureAtlas {
 
       byName += name -> region
       bounds += itemBounds
-
-      println(s"Loaded $name into $this at $itemBounds")
 
       region
     }
