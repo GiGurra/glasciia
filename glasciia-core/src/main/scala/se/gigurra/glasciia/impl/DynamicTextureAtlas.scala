@@ -23,6 +23,19 @@ case class DynamicTextureAtlas(conf: Conf,
                                atlas: TextureAtlas = new TextureAtlas()) {
 
   private val pages = new ArrayBuffer[Page]()
+  private val lookup = new mutable.HashMap[String, AtlasRegion]()
+
+  def get(name: String): Option[AtlasRegion] = {
+    lookup.get(name) match {
+      case r@Some(region) => r
+      case None => Option(atlas.findRegion(name)) match {
+        case None => None
+        case r@Some(region) =>
+          lookup.put(name, region)
+          r
+      }
+    }
+  }
 
   def add(name: String,
           source: TextureRegion,
@@ -56,6 +69,7 @@ case class DynamicTextureAtlas(conf: Conf,
 
     def addRegionToPage(page: Page, position: Vec2[Int], upload: Boolean): AtlasRegion = {
       val newRegion = page.copyIn(name, source, position, upload = upload)
+      lookup.put(name, newRegion)
       atlas.getRegions.add(newRegion)
       newRegion
     }
@@ -66,7 +80,7 @@ case class DynamicTextureAtlas(conf: Conf,
       case Some((page, position)) =>
         addRegionToPage(page, position, upload = upload)
       case None =>
-        val newTexture = new Texture(new PixmapTextureData(new Pixmap(pageSize.x, pageSize.y, Pixmap.Format.RGBA8888), null : Pixmap.Format, conf.useMipMaps, false))
+        val newTexture = new Texture(new PixmapTextureData(new Pixmap(pageSize.x, pageSize.y, Pixmap.Format.RGBA8888), null: Pixmap.Format, conf.useMipMaps, false))
         newTexture.setFilter(conf.minFilter, conf.magFilter)
         atlas.getTextures.add(newTexture)
         val page = new Page(pageSize, newTexture)

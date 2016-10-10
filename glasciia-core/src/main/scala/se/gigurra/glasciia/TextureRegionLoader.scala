@@ -24,7 +24,7 @@ object TextureRegionLoader {
   case class FromAtlas(atlas: DynamicTextureAtlas, fallback: Option[Loader[TextureRegion]] = None) extends Loader[TextureRegion] {
     override def get(name: String, upload: Boolean = false): Option[TextureRegion] = {
       val nameWithoutFileEnding = stripEnding(name)
-      Option(atlas.findRegion(nameWithoutFileEnding)) match {
+      atlas.get(nameWithoutFileEnding) match {
         case r @ Some(region) => r
         case None => fallback.flatMap(_.get(name, upload)) match {
           case Some(source) => Some(atlas.add(nameWithoutFileEnding, source, upload = upload, deleteSource = true))
