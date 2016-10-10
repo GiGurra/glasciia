@@ -1,8 +1,8 @@
 package se.gigurra.glasciia
 
 import com.badlogic.gdx.graphics.Texture
-import com.badlogic.gdx.graphics.g2d.{TextureAtlas, TextureRegion}
-import se.gigurra.glasciia.impl.{DynamicTexturePackingAtlas, LoadFile}
+import com.badlogic.gdx.graphics.g2d.TextureRegion
+import se.gigurra.glasciia.impl.{DynamicTextureAtlas, LoadFile}
 
 /**
   * Created by johan on 2016-10-08.
@@ -13,7 +13,7 @@ object TextureRegionLoader {
                   minFilter: Texture.TextureFilter = Texture.TextureFilter.MipMapLinearLinear,
                   magFilter: Texture.TextureFilter = Texture.TextureFilter.Linear)
 
-  def createNew(conf: Conf = Conf())(atlas: DynamicTexturePackingAtlas = new DynamicTexturePackingAtlas(conf)): Loader.InMemory[TextureRegion] = {
+  def createNew(conf: Conf = Conf())(atlas: DynamicTextureAtlas = new DynamicTextureAtlas(conf)): Loader.InMemory[TextureRegion] = {
     Loader.InMemory[TextureRegion](
       fallback = Some(FromAtlas(atlas,
         fallback = Some(FromFiles(conf))
@@ -21,7 +21,7 @@ object TextureRegionLoader {
     )
   }
 
-  case class FromAtlas(atlas: DynamicTexturePackingAtlas, fallback: Option[Loader[TextureRegion]] = None) extends Loader[TextureRegion] {
+  case class FromAtlas(atlas: DynamicTextureAtlas, fallback: Option[Loader[TextureRegion]] = None) extends Loader[TextureRegion] {
     override def get(name: String, upload: Boolean = false): Option[TextureRegion] = {
       val nameWithoutFileEnding = stripEnding(name)
       Option(atlas.findRegion(nameWithoutFileEnding)) match {

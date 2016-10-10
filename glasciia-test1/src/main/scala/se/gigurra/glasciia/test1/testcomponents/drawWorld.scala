@@ -123,7 +123,7 @@ object drawWorld {
       canvas.drawImage(
         image = testImage,
         at = Vec2(100, 300),
-        scale = Vec2(120.0f, 120.0f)
+        scale = Vec2(160.0f, 120.0f)
       )
 
       canvas.drawParticles(

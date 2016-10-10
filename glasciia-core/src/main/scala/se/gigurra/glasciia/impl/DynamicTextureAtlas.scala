@@ -5,8 +5,9 @@ import com.badlogic.gdx.graphics.g2d.TextureAtlas.AtlasRegion
 import com.badlogic.gdx.graphics.g2d.{TextureAtlas, TextureRegion}
 import com.badlogic.gdx.graphics.glutils.PixmapTextureData
 import se.gigurra.glasciia.TextureRegionLoader.Conf
-import se.gigurra.glasciia.impl.DynamicTexturePackingAtlas.{Page, Strategy, SweepStrategy}
-import se.gigurra.math.{Box2, Vec2}
+import se.gigurra.glasciia.Glasciia._
+import se.gigurra.glasciia.impl.DynamicTextureAtlas.{Page, Strategy, SweepStrategy}
+import se.gigurra.math.{Box2, Vec2, Zero}
 
 import scala.collection.mutable
 import scala.collection.mutable.ArrayBuffer
@@ -15,11 +16,11 @@ import scala.language.implicitConversions
 /**
   * Created by johan on 2016-10-09.
   */
-case class DynamicTexturePackingAtlas(conf: Conf,
-                                      pageSize: Vec2[Int] = Vec2[Int](2048, 2048),
-                                      strategy: Strategy = SweepStrategy(),
-                                      padding: Int = 10,
-                                      atlas: TextureAtlas = new TextureAtlas()) {
+case class DynamicTextureAtlas(conf: Conf,
+                               pageSize: Vec2[Int] = Vec2[Int](2048, 2048),
+                               strategy: Strategy = SweepStrategy(),
+                               padding: Int = 10,
+                               atlas: TextureAtlas = new TextureAtlas()) {
 
   private val pages = new ArrayBuffer[Page]()
 
@@ -47,11 +48,9 @@ case class DynamicTexturePackingAtlas(conf: Conf,
     require(source.getWidth + padding <= pageSize.x, s"Tried to add region $name, but it was larger that the maximum allowed texture width - 2*padding, which set to ${pageSize.x - 2 * padding}")
     require(source.getHeight + padding <= pageSize.y, s"Tried to add region $name, but it was larger that the maximum allowed texture height - 2*padding, which set to ${pageSize.y - 2 * padding}")
 
-    val paddedSize = Vec2(source.getWidth, source.getHeight) + 2 * padding
-
     object Fitting {
       def unapply(page: Page): Option[(Page, Vec2[Int])] = {
-        strategy.findPosition(paddedSize, page).map(pos => (page, pos))
+        strategy.findPosition(source.size, padding = padding, page).map(pos => (page, pos))
       }
     }
 
@@ -71,9 +70,8 @@ case class DynamicTexturePackingAtlas(conf: Conf,
         newTexture.setFilter(conf.minFilter, conf.magFilter)
         atlas.getTextures.add(newTexture)
         val page = new Page(pageSize, newTexture)
-        val position = Vec2(0,0)
         pages += page
-        addRegionToPage(page, position, upload = upload)
+        addRegionToPage(page, position = Zero.vec2i + padding, upload = upload)
     }
 
     if (deleteSource)
@@ -87,9 +85,9 @@ case class DynamicTexturePackingAtlas(conf: Conf,
   }
 }
 
-object DynamicTexturePackingAtlas {
+object DynamicTextureAtlas {
 
-  implicit def dynamic2atlas(dynamicTexturePackingAtlas: DynamicTexturePackingAtlas): TextureAtlas = dynamicTexturePackingAtlas.atlas
+  implicit def dynamic2atlas(dynamicTexturePackingAtlas: DynamicTextureAtlas): TextureAtlas = dynamicTexturePackingAtlas.atlas
 
   class Page(val capacity: Vec2[Int],
              val texture: Texture,
@@ -98,8 +96,8 @@ object DynamicTexturePackingAtlas {
              var dirty: Boolean = false) {
 
     def copyIn(name: String, source: Pixmap, to: Vec2[Int], upload: Boolean): AtlasRegion = {
-      val region = new AtlasRegion(texture, to.x, to.y, source.getWidth, source.getHeight)
-      val itemBounds = Box2(ll = to, size = Vec2(source.getWidth, source.getHeight))
+      val region = new AtlasRegion(texture, to.x, to.y, source.width, source.height)
+      val itemBounds = Box2(ll = to, size = source.size)
       region.name = name
       region.index = -1
       region.originalWidth = source.getWidth
@@ -130,26 +128,28 @@ object DynamicTexturePackingAtlas {
   }
 
   trait Strategy {
-    def findPosition(requiredSize: Vec2[Int], page: Page): Option[Vec2[Int]]
+    def findPosition(sourceSize: Vec2[Int], padding: Int, page: Page): Option[Vec2[Int]]
   }
 
-  case class SweepStrategy(minStep: Int = 10) extends Strategy {
-    override def findPosition(requiredSize: Vec2[Int], page: Page): Option[Vec2[Int]] = {
+  case class SweepStrategy(step: Int = 20) extends Strategy {
+    override def findPosition(sourceSize: Vec2[Int], padding: Int, page: Page): Option[Vec2[Int]] = {
 
       // This can prob be done with some magical functional solution, but I just dont care..
       // PLUS: The performance would likely suck since we're doing low level math here. Heck,
       // we should probably macro expand the for loop below
 
+      val requiredSize = sourceSize + 2 * padding
+
       val yLim = page.capacity.y - requiredSize.y
       val xLim = page.capacity.x - requiredSize.x
 
       for {
-        yOffs <- 0 until yLim //by requiredSize.x
-        xOffs <- 0 until xLim //by requiredSize.y
-        bounds = Box2[Int](ll = Vec2[Int](xOffs, yOffs), size = requiredSize)
+        yOffs <- 0 until yLim by step
+        xOffs <- 0 until xLim by step
+        bounds = Box2(ll = Vec2(xOffs, yOffs), size = requiredSize)
         if page.bounds.forall(_.notOverlaps(bounds))
       } {
-        return Some(bounds.ll)
+        return Some(bounds.ll + padding)
       }
 
       None
