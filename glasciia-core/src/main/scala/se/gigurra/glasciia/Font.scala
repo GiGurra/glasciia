@@ -5,58 +5,8 @@ import com.badlogic.gdx.graphics.Texture.TextureFilter
 import com.badlogic.gdx.graphics.g2d.freetype.FreeTypeFontGenerator
 import com.badlogic.gdx.graphics.g2d.freetype.FreeTypeFontGenerator.FreeTypeFontParameter
 import com.badlogic.gdx.graphics.g2d._
-import com.badlogic.gdx.utils.Align
-import se.gigurra.math.{Vec2, Zero}
-import Glasciia._
 import com.badlogic.gdx.files.FileHandle
 import com.badlogic.gdx.graphics.g2d.BitmapFont.BitmapFontData
-
-case class Font(bitmapFont: BitmapFont, size: Float)  {
-
-  def preload(str: CharSequence,
-              at: Vec2[Float] = Zero.vec2f,
-              align: Int = Align.left,
-              targetWidth: Float = 0.0f,
-              wrap: Boolean = false,
-              color: Color = null,
-              alphaScale: Float = 1.0f): BitmapFontCache = {
-    val cached = bitmapFont.newFontCache()
-    cached.addText(new GlyphLayout(
-      bitmapFont,
-      str,
-      Option(color).getOrElse(bitmapFont.getColor).scaleAlpha(alphaScale),
-      targetWidth,
-      align,
-      wrap), at.x, at.y)
-    cached
-  }
-
-  def spaceWidth(normalized: Boolean = true): Float = {
-    if (normalized) bitmapFont.getSpaceWidth / size
-    else bitmapFont.getSpaceWidth
-  }
-
-  def heightOf(lines: Seq[String], normalized: Boolean = true): Float = {
-    val numLines = lines.size
-    val heightPerLine = size
-    val out = heightPerLine * numLines
-    if (normalized) out / size
-    else out
-  }
-
-  def lineHeight(normalized: Boolean = true): Float = {
-    if (normalized) bitmapFont.getLineHeight / size
-    else bitmapFont.getLineHeight
-  }
-
-  def close(): Unit = {
-    bitmapFont.dispose()
-  }
-
-  def createMaskedInstance(maskChar: Char, deleteSource: Boolean): Font = {
-    new Font(Font.createMaskedFont(bitmapFont, maskChar, ownsTexture = deleteSource), size)
-  }
-}
 
 object Font {
 
@@ -84,13 +34,12 @@ object Font {
                   mask: Option[Char] = None,
                   loadExtraCharacters: String = DEFAULT_EXTRA_CHARACTERS,
                   minFilter: TextureFilter = TextureFilter.Linear,
-                  magFilter: TextureFilter = TextureFilter.Linear): Font = {
+                  magFilter: TextureFilter = TextureFilter.Linear): BitmapFont = {
 
     val generator = new FreeTypeFontGenerator(source)
     val parameter = new FreeTypeFontParameter()
 
     parameter.size = size
-
     parameter.color = color
     parameter.borderWidth = borderWidth
     parameter.borderColor = borderColor
@@ -116,7 +65,7 @@ object Font {
     }
 
     bitmapFont.setUseIntegerPositions(false)
-    new Font(bitmapFont, size.toFloat)
+    bitmapFont
   }
 
   def createMaskedFont(source: BitmapFont, maskChar: Char, ownsTexture: Boolean): BitmapFont = {
@@ -170,7 +119,4 @@ object Font {
 
     out
   }
-
-  import scala.language.implicitConversions
-  implicit def toFont(font: Font): BitmapFont = font.bitmapFont
 }

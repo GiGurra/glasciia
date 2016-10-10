@@ -16,6 +16,7 @@ object Glasciia
     with TextureAtlasCreation
     with CursorCreation
     with GuiImplicits
-    with ImageImplicits {
+    with ImageImplicits
+    with FontImplicits {
 
 }

@@ -1,6 +1,7 @@
 package se.gigurra.glasciia.test1.testcomponents
 
 import com.badlogic.gdx.graphics.Color
+import com.badlogic.gdx.graphics.g2d.BitmapFont
 import se.gigurra.glasciia._
 import se.gigurra.glasciia.Glasciia._
 import se.gigurra.glasciia.impl.TextDrawer.Anchor
@@ -16,8 +17,8 @@ object drawWorld {
 
     val app = canvas.app
 
-    val monospaceFont = app.resource[Font]("font:monospace-default")
-    val monospaceFontMasked = app.resource[Font]("font:monospace-default-masked")
+    val monospaceFont = app.resource[BitmapFont]("font:monospace-default")
+    val monospaceFontMasked = app.resource[BitmapFont]("font:monospace-default-masked")
     val walkingDudeAnimation = app.resource[Animation.Instance]("animation:capguy-walk:instance-0")
     val testImage = app.resource[StaticImage]("image:test-image")
     val effect1 = app.resource[ParticleSource]("particle-effect:test-effect:instance-0")

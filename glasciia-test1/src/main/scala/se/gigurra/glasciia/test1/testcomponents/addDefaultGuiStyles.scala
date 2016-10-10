@@ -16,8 +16,8 @@ object addDefaultGuiStyles {
   def apply(app: App, skin: Skin, regions: Loader.InMemory[TextureRegion]): Unit = {
     skin
       .addStyle[TextureRegion]("fill", regions("filled-texture"))
-      .addStyle[BitmapFont](app.resource[Font]("font:monospace-default"))
-      .addStyle[BitmapFont]("masked-font", app.resource[Font]("font:monospace-default-masked"))
+      .addStyle[BitmapFont](app.resource[BitmapFont]("font:monospace-default"))
+      .addStyle[BitmapFont]("masked-font", app.resource[BitmapFont]("font:monospace-default-masked"))
       .addStyle[TextButtonStyle](new TextButtonStyle {
         val standard = skin.newInstance("fill", Color.DARK_GRAY)
         val highlighted = skin.newInstance("fill", Color.LIGHT_GRAY)

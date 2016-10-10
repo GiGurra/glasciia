@@ -1,10 +1,11 @@
 package se.gigurra.glasciia.impl
 
 import com.badlogic.gdx.graphics.Color
+import com.badlogic.gdx.graphics.g2d.BitmapFont
 import com.badlogic.gdx.utils.Align
-import se.gigurra.glasciia.Font
 import se.gigurra.glasciia.impl.TextDrawer.Anchor
 import se.gigurra.math.{Vec2, Zero}
+import se.gigurra.glasciia.Glasciia._
 
 /**
   * Created by johan on 2016-10-01.
@@ -12,7 +13,7 @@ import se.gigurra.math.{Vec2, Zero}
 trait TextDrawer { self: ContentDrawer =>
 
   def drawText(text: String,
-               font: Font,
+               font: BitmapFont,
                color: Color,
                at: Vec2[Float] = Zero.vec2f,
                scale: Float = 1.0f,

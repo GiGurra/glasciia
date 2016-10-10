@@ -1,7 +1,7 @@
 package se.gigurra.glasciia.test1.testcomponents
 
 import com.badlogic.gdx.graphics.g2d.Animation.PlayMode
-import com.badlogic.gdx.graphics.g2d.{Batch, TextureRegion}
+import com.badlogic.gdx.graphics.g2d.{Batch, BitmapFont, TextureRegion}
 import com.badlogic.gdx.graphics.{Color, Cursor, Pixmap}
 import com.badlogic.gdx.scenes.scene2d.Stage
 import se.gigurra.glasciia.Glasciia._
@@ -33,7 +33,7 @@ object loadResources {
 
   private def loadFonts(app: App, regions: Loader[TextureRegion]): Unit = {
     app.addResource("font:monospace-default", Font.fromTtfFile("pt-mono/PTM55FT.ttf"))
-    app.addResource("font:monospace-default-masked", app.resource[Font]("font:monospace-default").createMaskedInstance(maskChar = Font.DEFAULT_MASK_CHAR, deleteSource = false))
+    app.addResource("font:monospace-default-masked", app.resource[BitmapFont]("font:monospace-default").createMaskedInstance(maskChar = Font.DEFAULT_MASK_CHAR, deleteSource = false))
   }
 
   private def loadImages(app: App, regions: Loader[TextureRegion]): Unit = {
