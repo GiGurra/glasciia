@@ -16,26 +16,16 @@ trait GuiImplicits extends InputListeners {
 
   class skinOps[SelfType](self: SelfType, val skin: Skin) {
 
-    def addStyle[T](name: String, styleClass: Class[T])(style: T): SelfType = {
-      skin.add(name, style, styleClass)
+    def addStyle[T : ClassTag](style: T): SelfType = addStyle[T]("default", style)
+    def addStyle[T : ClassTag](name: String, style: T): SelfType = {
+      skin.add(name, style, implicitly[ClassTag[T]].runtimeClass)
       self
     }
 
-    def addStyle[T](styleClass: Class[T])(style: T): SelfType = {
-      addStyle("default", styleClass)(style)
-    }
+    def newInstance(style: String, color: Color): Drawable = skin.newDrawable(style, color)
 
-    def newInstance(style: String, color: Color): Drawable = {
-      skin.newDrawable(style, color)
-    }
-
-    def style[T: ClassTag](name: String): T = {
-      skin.get(name, implicitly[ClassTag[T]].runtimeClass.asInstanceOf[Class[T]])
-    }
-
-    def style[T: ClassTag]: T = {
-      style[T]("default")
-    }
+    def style[T: ClassTag](name: String): T = skin.get(name, implicitly[ClassTag[T]].runtimeClass.asInstanceOf[Class[T]])
+    def style[T: ClassTag]: T = style[T]("default")
   }
 
   implicit class SkinImplicitOps(skin: Skin) extends skinOps[Skin](skin, skin)
