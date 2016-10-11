@@ -1,7 +1,7 @@
 package se.gigurra.glasciia.test1.testcomponents
 
 import com.badlogic.gdx.graphics.Color
-import com.badlogic.gdx.graphics.g2d.BitmapFont
+import com.badlogic.gdx.graphics.g2d.{BitmapFont, TextureRegion}
 import se.gigurra.glasciia._
 import se.gigurra.glasciia.Glasciia._
 import se.gigurra.glasciia.impl.TextDrawer.Anchor
@@ -20,12 +20,12 @@ object drawWorld {
     val monospaceFont = app.resource[BitmapFont]("font:monospace-default")
     val monospaceFontMasked = app.resource[BitmapFont]("font:monospace-default-masked")
     val walkingDudeAnimation = app.resource[Animation.Instance]("animation:capguy-walk:instance-0")
-    val testImage = app.resource[StaticImage]("image:test-image")
+    val testImage = app.resource[TextureRegion]("image:test-image")
     val effect1 = app.resource[ParticleSource]("particle-effect:test-effect:instance-0")
     val effect2 = app.resource[ParticleSource]("particle-effect:test-effect:instance-1")
     val effect3 = app.resource[ParticleSource]("particle-effect:test-effect:instance-2")
     val controlsInverted = app.getResource[Boolean]("controls-inverted").getOrElse(false)
-    val background = app.resource[MultiLayer[Image]]("background-0")
+    val background = app.resource[MultiLayer[TextureRegion]]("background-0")
     val mouseWorldPos = canvas.screen2World(canvas.mousePos)
     val cameraPos = canvas.cameraPos
 

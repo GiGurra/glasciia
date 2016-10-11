@@ -34,7 +34,7 @@ object loadResources {
   private def loadImages(app: App, regions: Loader[TextureRegion]): Unit = {
     app.addResource("animation:capguy-walk", Animation(regions("animations/capguy-walk.png"), nx = 8, ny = 1, dt = 0.1, mode = PlayMode.LOOP))
     app.addResource("animation:capguy-walk:instance-0", app.resource[Animation]("animation:capguy-walk").newInstance(t0 = app.localAppTime))
-    app.addResource("image:test-image", StaticImage(regions("images/test-image.png")))
+    app.addResource("image:test-image", regions("images/test-image.png"))
   }
 
   private def loadParticleEffects(app: App, regions: Loader[TextureRegion]): Unit = {
@@ -46,24 +46,24 @@ object loadResources {
   }
 
   private def loadBackground(app: App, regions: Loader[TextureRegion]): Unit = {
-    app.addResource("bg-image", StaticImage(regions("backgrounds/bgtest2.jpg")))
+    app.addResource[TextureRegion]("bg-image", regions("backgrounds/bgtest2.jpg"))
     app.addResource("background-0",
-      MultiLayer[Image]() {
+      MultiLayer[TextureRegion]() {
         _.layer(translationScale = 0.5f, camZero = Vec2(320.0f, 240.0f)) {
           _.piece(
             bounds = Box2(ll = Vec2(0.0f, 0.0f), size = Vec2(640.0f, 480.0f)),
-            image = app.resource[Image]("bg-image")
+            image = app.resource[TextureRegion]("bg-image")
           )
         }.layer(translationScale = 0.75f, camZero = Vec2(320.0f, 240.0f)) {
           _.piece(
             bounds = Box2(ll = Vec2(120.0f, 200.0f), size = Vec2(40.0f, 80.0f)),
-            image = app.resource[Image]("bg-image")
+            image = app.resource[TextureRegion]("bg-image")
           ).piece(
             bounds = Box2(ll = Vec2(240.0f, 200.0f), size = Vec2(40.0f, 80.0f)),
-            image = app.resource[Image]("bg-image")
+            image = app.resource[TextureRegion]("bg-image")
           ).piece(
             bounds = Box2(ll = Vec2(360.0f, 200.0f), size = Vec2(40.0f, 80.0f)),
-            image = app.resource[Image]("bg-image")
+            image = app.resource[TextureRegion]("bg-image")
           )
         }
       }

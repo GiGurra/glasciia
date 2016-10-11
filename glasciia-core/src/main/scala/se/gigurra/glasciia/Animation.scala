@@ -4,6 +4,7 @@ import com.badlogic.gdx.files.FileHandle
 import com.badlogic.gdx.graphics.Texture
 import com.badlogic.gdx.graphics.g2d.Animation.PlayMode
 import com.badlogic.gdx.graphics.g2d.{TextureRegion, Animation => GdxAnimation}
+import com.badlogic.gdx.scenes.scene2d.utils.Drawable
 import com.badlogic.gdx.utils.{Array => GdxArray}
 import se.gigurra.math.Vec2
 
@@ -81,9 +82,7 @@ object Animation {
     def stop(): Unit = active = false
     def continue(): Unit = active = true
     def restart(): Unit = { tAcc = 0.0; active = true }
-    def asImage(timeFunc: => Double): Image = new Image {
-      override def region: TextureRegion = currentFrame(timeFunc)
-    }
+    def asDrawable(timeFunc: => Double): Drawable = new ChangingRegionDrawable(currentFrame(timeFunc))
   }
 
   object Instance {

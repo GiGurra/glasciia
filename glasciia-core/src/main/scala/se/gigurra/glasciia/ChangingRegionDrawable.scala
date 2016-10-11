@@ -7,7 +7,7 @@ import se.gigurra.math.Vec2
 /**
   * Created by johan on 2016-10-07.
   */
-trait Image extends GdxScene2dDrawable {
+class ChangingRegionDrawable(fRegion: => TextureRegion) extends GdxScene2dDrawable {
 
   private lazy val baseDrawable: GdxScene2dDrawable = {
     val out = new BaseDrawable()
@@ -16,7 +16,7 @@ trait Image extends GdxScene2dDrawable {
     out
   }
 
-  def region: TextureRegion
+  def region: TextureRegion = fRegion
 
   def width: Int = region.getRegionWidth
   def height: Int = region.getRegionHeight

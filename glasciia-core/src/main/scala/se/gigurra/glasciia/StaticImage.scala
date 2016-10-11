@@ -4,50 +4,23 @@ import com.badlogic.gdx.files.FileHandle
 import com.badlogic.gdx.graphics.{Pixmap, Texture}
 import com.badlogic.gdx.graphics.g2d.TextureRegion
 
-case class StaticImage(region: TextureRegion) extends Image {
-
-  def subPixels(x: Int, y: Int, width: Int, height: Int): StaticImage = {
-    StaticImage(new TextureRegion(region, x, y, width, height))
-  }
-
-  def subFraction(x: Float, y: Float, width: Float, height: Float): StaticImage = {
-    val uAbs = u + x * uuSize
-    val vAbs = v + y * vvSize
-    StaticImage(new TextureRegion(
-      region.getTexture,
-      uAbs,
-      vAbs,
-      uAbs + width * uuSize,
-      vAbs + height * vvSize
-    ))
-  }
-
-}
-
 object StaticImage {
 
   def fromFile(fileHandle: FileHandle,
                useMipMaps: Boolean = true,
                minFilter: Texture.TextureFilter = Texture.TextureFilter.MipMapLinearLinear,
-               magFilter: Texture.TextureFilter = Texture.TextureFilter.Linear): StaticImage = {
+               magFilter: Texture.TextureFilter = Texture.TextureFilter.Linear): TextureRegion = {
     val texture = new Texture(fileHandle, useMipMaps)
     texture.setFilter(minFilter, magFilter)
-    fromRegion(new TextureRegion(texture))
-  }
-
-  def fromRegion(region: TextureRegion): StaticImage = {
-    new StaticImage(region)
+    new TextureRegion(texture)
   }
 
   def fromPixMap(pixMap: Pixmap,
                  useMipMaps: Boolean = true,
                  minFilter: Texture.TextureFilter = Texture.TextureFilter.MipMapLinearLinear,
-                 magFilter: Texture.TextureFilter = Texture.TextureFilter.Linear): StaticImage = {
+                 magFilter: Texture.TextureFilter = Texture.TextureFilter.Linear): TextureRegion = {
     val texture = new Texture(pixMap, useMipMaps)
     texture.setFilter(minFilter, magFilter)
-    fromRegion(new TextureRegion(texture))
+    new TextureRegion(texture)
   }
-
-  import scala.language.implicitConversions
-  implicit def simg2region(staticImage: StaticImage): TextureRegion = staticImage.region
 }

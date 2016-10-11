@@ -52,7 +52,7 @@ object TextureRegionLoader {
             useMipMaps = conf.useMipMaps,
             minFilter = conf.minFilter,
             magFilter = conf.magFilter
-          ).region)
+          ))
         case None => None
       }
     }
