@@ -25,7 +25,7 @@ object Main {
         printShaders(canvas.batch)
 
       case Render(canvas) =>
-        updateCameraPos(canvas)
+        updateWorld(canvas)
         drawWorld(canvas)
         drawGameGui(canvas)
         drawMenu(canvas)
@@ -34,7 +34,6 @@ object Main {
         val mainMenu = app.resource[Stage]("gui:main-menu")
         val gameGui = app.resource[Stage]("gui:game-world")
         val controlsInverted = app.getResource[Boolean]("controls-inverted").getOrElse(false)
-        val gameKeyState = app.resource[Keyboard]("world-input-keyboard")
 
         val invertedControls: PartialFunction[InputEvent, KeyboardEvent] = {
           case KeyDown(Keys.DOWN) => KeyDown(Keys.UP)
@@ -49,10 +48,8 @@ object Main {
 
         input
           .mapIf(controlsInverted, invertedControls)
-          .filter(gameKeyState.releaseHook)
           .filter(mainMenu)
           .filter(gameGui)
-          .filter(gameKeyState)
           .filter {
             case MouseScrolled(amount) =>
               canvas.setZoom(

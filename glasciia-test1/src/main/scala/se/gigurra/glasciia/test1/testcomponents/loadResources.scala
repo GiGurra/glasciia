@@ -17,7 +17,6 @@ object loadResources {
   def apply(app: App): Unit = {
     val batch = app.canvas.batch
     val regions = createTextureRegionLoader(app)
-    loadHooks(app, regions)
     loadFonts(app, regions)
     loadImages(app, regions)
     loadParticleEffects(app, regions)
@@ -25,10 +24,6 @@ object loadResources {
     loadGui(app, batch, regions)
     loadCursor(app, regions)
     loadMipMaps(app, regions)
-  }
-
-  private def loadHooks(app: App, regions: Loader[TextureRegion]): Unit = {
-    app.addResource("world-input-keyboard", Keyboard())
   }
 
   private def loadFonts(app: App, regions: Loader[TextureRegion]): Unit = {
