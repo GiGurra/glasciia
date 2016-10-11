@@ -14,8 +14,8 @@ import scala.language.implicitConversions
 trait FileReadImplicits {
 
   implicit class FileHandleReadString(file: FileHandle) {
-    def readString(): String = readString(StandardCharsets.UTF_8)
-    def readString(charset: Charset): String = {
+    def mkString(): String = mkString(StandardCharsets.UTF_8)
+    def mkString(charset: Charset): String = {
       val stream = file.read()
       try {
         scala.io.Source.fromInputStream(stream)(Codec(charset)).mkString
