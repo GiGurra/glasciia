@@ -7,11 +7,10 @@ import se.gigurra.glasciia.AppEvent.{CharTyped, KeyDown, KeyUp, KeyboardEvent}
 
 import scala.language.{implicitConversions, reflectiveCalls}
 
-
 /**
   * Created by johan on 2016-10-09.
   */
-trait InputListeners {
+trait ActorImplicits {
 
   type CanAddListener = { def addListener(l: EventListener): Boolean }
   type CanFireEvents = { def fire (event: Event): Boolean }
@@ -102,4 +101,4 @@ trait InputListeners {
   }
 }
 
-object InputListeners extends InputListeners
+object ActorImplicits extends ActorImplicits
