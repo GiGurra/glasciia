@@ -23,7 +23,7 @@ trait ImageImplicits {
     def vvSize: Float = v2 - v
 
     def slice(x: Int, y: Int, width: Int, height: Int): TextureRegion = new TextureRegion(texture, x, y, width, height)
-    def sluceUV(u: Float, u2: Float, v: Float, v2: Float): TextureRegion = new TextureRegion(texture, u, v, u2, v2)
+    def sliceUV(u: Float, u2: Float, v: Float, v2: Float): TextureRegion = new TextureRegion(texture, u, v, u2, v2)
     def sliceFraction(x: Float, y: Float, width: Float, height: Float): TextureRegion = {
       val uAbs = u + x * uuSize
       val vAbs = v + y * vvSize
@@ -59,7 +59,7 @@ trait ImageImplicits {
     def vvSize: Float = v2 - v
 
     def slice(x: Int, y: Int, width: Int, height: Int): TextureRegion = new TextureRegion(region, x, y, width, height)
-    def sluceUV(u: Float, u2: Float, v: Float, v2: Float): TextureRegion = new TextureRegion(region.getTexture, u, v, u2, v2)
+    def sliceUV(u: Float, u2: Float, v: Float, v2: Float): TextureRegion = new TextureRegion(region.getTexture, u, v, u2, v2)
     def sliceFraction(x: Float, y: Float, width: Float, height: Float): TextureRegion = {
       val uAbs = u + x * uuSize
       val vAbs = v + y * vvSize
