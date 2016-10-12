@@ -18,7 +18,7 @@ import scala.language.implicitConversions
   */
 case class DynamicTextureAtlas(conf: Conf,
                                pageSize: Vec2[Int] = Vec2[Int](2048, 2048),
-                               strategy: Strategy = SweepStrategy(),
+                               strategy: Strategy = SweepStrategy,
                                padding: Int = 10,
                                atlas: TextureAtlas = new TextureAtlas()) {
 
@@ -147,7 +147,7 @@ object DynamicTextureAtlas {
     def findPosition(sourceSize: Vec2[Int], padding: Int, page: Page): Option[Vec2[Int]]
   }
 
-  case class SweepStrategy(step: Int = 20) extends Strategy {
+  object SweepStrategy extends Strategy {
     override def findPosition(sourceSize: Vec2[Int], padding: Int, page: Page): Option[Vec2[Int]] = {
 
       if (page.bounds.isEmpty) {
