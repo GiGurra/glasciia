@@ -197,8 +197,8 @@ object DynamicTextureAtlas {
             }
           }
           if (answer.isEmpty) {
+            yOffs = bounds(passed).top + 1
             passed += 1
-            yOffs = bounds(passed - 1).top + 1
           }
         }
 
