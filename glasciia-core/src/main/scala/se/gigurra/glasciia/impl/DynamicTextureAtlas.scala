@@ -109,6 +109,7 @@ object DynamicTextureAtlas {
              val texture: Texture,
              val byName: mutable.HashMap[String, AtlasRegion] = new mutable.HashMap[String, AtlasRegion],
              val bounds: mutable.ArrayBuffer[Box2[Int]] = new mutable.ArrayBuffer[Box2[Int]],
+             var boundsSortedByTop: Seq[Box2[Int]] = Nil,
              var dirty: Boolean = false) {
 
     def copyIn(name: String, source: Pixmap, to: Vec2[Int], upload: Boolean): AtlasRegion = {
@@ -129,6 +130,7 @@ object DynamicTextureAtlas {
 
       byName += name -> region
       bounds += itemBounds
+      boundsSortedByTop = bounds.sortBy(_.top)
 
       region
     }
@@ -162,7 +164,7 @@ object DynamicTextureAtlas {
         val xLim = page.capacity.x - requiredSize.x
 
         // Sort by top so we can mark some as guaranteed passed
-        val bounds = page.bounds.sortBy(_.top)
+        val bounds = page.boundsSortedByTop
 
         // Stupid scala when it comes to optimized loops. Give us back for-loops :S
         var passed = 0
