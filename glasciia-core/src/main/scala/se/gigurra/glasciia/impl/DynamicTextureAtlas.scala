@@ -91,6 +91,8 @@ case class DynamicTextureAtlas(conf: Conf,
     if (deleteSource)
       source.dispose()
 
+    println(s"Placing $name at ${out.bounds}")
+
     out
   }
 
@@ -146,25 +148,61 @@ object DynamicTextureAtlas {
   case class SweepStrategy(step: Int = 20) extends Strategy {
     override def findPosition(sourceSize: Vec2[Int], padding: Int, page: Page): Option[Vec2[Int]] = {
 
-      // This can prob be done with some magical functional solution, but I just dont care..
-      // PLUS: The performance would likely suck since we're doing low level math here. Heck,
-      // we should probably macro expand the for loop below
+      if (page.bounds.isEmpty) {
+        Some(Zero.vec2i)
+      } else {
 
-      val requiredSize = sourceSize + 2 * padding
+        // This can prob be done with some magical functional solution, but I just dont care..
+        // PLUS: The performance would likely suck since we're doing low level math here. Heck,
+        // we should probably macro expand the for loop below
 
-      val yLim = page.capacity.y - requiredSize.y
-      val xLim = page.capacity.x - requiredSize.x
+        val requiredSize = sourceSize + 2 * padding
 
-      for {
-        yOffs <- 0 until yLim by step
-        xOffs <- 0 until xLim by step
-        bounds = Box2(ll = Vec2(xOffs, yOffs), size = requiredSize)
-        if page.bounds.forall(_.notOverlaps(bounds))
-      } {
-        return Some(bounds.ll + padding)
+        val yLim = page.capacity.y - requiredSize.y
+        val xLim = page.capacity.x - requiredSize.x
+
+        // Sort by top so we can mark some as guaranteed passed
+        val bounds = page.bounds.sortBy(_.top)
+
+        // Stupid scala when it comes to optimized loops. Give us back for-loops :S
+        var passed = 0
+        var yOffs = 0
+        var answer: Option[Vec2[Int]] = None
+        while (yOffs < yLim && answer.isEmpty) {
+          var xOffs = 0
+          while (xOffs < xLim && answer.isEmpty) {
+            val left = xOffs
+            val bottom = yOffs
+            val right = left + requiredSize.x
+            val top = bottom + requiredSize.y
+            var collision = false
+            var i = passed
+            var collisionObstacleWidth = 0
+            var obstacle: Box2[Int] = null
+            while (i < bounds.length && !collision) {
+              obstacle = bounds(i)
+              if (obstacle.notOverlaps(left, right, bottom, top)) {
+                i += 1
+              } else {
+                collision = true
+                collisionObstacleWidth = obstacle.width
+              }
+            }
+            if (collision) {
+              xOffs = obstacle.right + 1
+            } else {
+              answer = Some(Vec2(left, bottom) + padding)
+            }
+          }
+          if (answer.isEmpty) {
+            passed += 1
+            yOffs = bounds(passed - 1).top + 1
+          }
+        }
+
+        answer
       }
 
-      None
     }
   }
 
