@@ -23,6 +23,7 @@ object Main {
         loadResources(app)
         setInitValues(app)
         printShaders(canvas.batch)
+        app.reloadTexturesAfterContextLoss() // TODO: For testing only! Don't have here in production code! Intentional GPU memory leak!
 
       case Render(canvas) =>
         updateWorld(canvas)
@@ -31,7 +32,7 @@ object Main {
         drawMenu(canvas)
 
       case Resume(canvas) =>
-        // TODO: Handle context loss / minimizing of app on Android -> reload textures
+        app.reloadTexturesAfterContextLoss()
 
       case input: InputEvent =>
         val mainMenu = app.resource[Stage]("gui:main-menu")

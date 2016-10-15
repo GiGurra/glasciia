@@ -1,16 +1,23 @@
 package se.gigurra.glasciia.impl
 
-import se.gigurra.glasciia.App
+import com.badlogic.gdx.graphics.{Cursor, Texture, TextureAccess}
+import com.badlogic.gdx.graphics.g2d.{BitmapFont, NinePatch, ParticleEffect, ParticleEmitter, TextureAtlas, TextureRegion, Animation => GdxAnimation}
+import com.badlogic.gdx.scenes.scene2d.ui.Skin
+import com.badlogic.gdx.scenes.scene2d.{Actor, Stage}
+import se.gigurra.glasciia._
 import se.gigurra.glasciia.impl.ResourceManager.{ExplicitTypeRequired, Resource}
 
 import scala.annotation.implicitNotFound
-import scala.reflect.Manifest
+import scala.collection.mutable
 import scala.language.existentials
+import scala.reflect.Manifest
 
 /**
   * Created by johan on 2016-10-01.
   */
 trait ResourceManager { self: App =>
+
+  def contextLossHandler: PartialFunction[Any, Seq[Texture]] = defaultContextLossHandler
 
   def addResource[T : Manifest : ExplicitTypeRequired](path: String, ctor: => T, closer: T => Unit = (x: T) => ())(implicit a: T =:= T): Unit = executeOnRenderThread {
     val resource = ctor
@@ -33,6 +40,31 @@ trait ResourceManager { self: App =>
     resources.values.toArray[Resource]
   }
 
+  def texturesReferencedBy(resource: Any): Seq[Texture] = {
+    contextLossHandler.applyOrElse(resource, (_: Any) => {
+      // Some warning perhaps when there exists no handler?
+      System.err.println(s"Don't know how to handle context loss for, $resource, ignoring")
+      Nil
+    })
+  }
+
+  /**
+    * Call if managing assets manually (e.g. if you have dynamic resources) when you receive a Resume event
+    * Calling this any other time results in a memory leak (gpu side)
+    */
+  def reloadTexturesAfterContextLoss(): Unit = {
+    val uniqueTexturesToBeReloaded = new mutable.HashSet[Texture]()
+    for (resource <- listResources) {
+      val textures = texturesReferencedBy(resource.data)
+      uniqueTexturesToBeReloaded ++= textures
+    }
+    for (texture <- uniqueTexturesToBeReloaded) {
+      TextureAccess.reloadOnContextLoss(texture)
+    }
+  }
+
+
+
 
   /////////////////////////////////////////////
   // Expectations
@@ -42,6 +74,33 @@ trait ResourceManager { self: App =>
 
   /////////////////////////////////////////////
   // Private
+  import scala.collection.JavaConversions._
+
+  private val defaultContextLossHandler: PartialFunction[Any, Seq[Texture]] = {
+    case x: Resource => texturesReferencedBy(x.data)
+    case x: Texture => Seq(x)
+    case x: TextureRegion => Seq(x.getTexture)
+    case x: GdxAnimation => x.getKeyFrames.map(_.getTexture)
+    case x: Animation => texturesReferencedBy(x.animation : GdxAnimation)
+    case x: Animation.Instance => texturesReferencedBy(x.animation : Animation)
+    case x: TextureAtlas => x.getTextures.toSeq
+    case x: InMemoryLoader[_] => x.fallback.toSeq.flatMap(texturesReferencedBy)
+    case x: AtlasTextureRegionLoader => texturesReferencedBy(x.atlas)
+    case x: DynamicTextureAtlas => x.getTextures.toSeq
+    case x: NinePatch => Seq(x.getTexture)
+    case x: ParticleSource => x.getEmitters.flatMap(texturesReferencedBy).toSeq
+    case x: ParticleEmitter => Seq(x.getSprite.getTexture)
+    case x: ParticleEffect => x.getEmitters.flatMap(texturesReferencedBy).toSeq
+    case x: BitmapFont => x.getRegions.map(_.getTexture).toSeq
+    case x: MultiLayer[_] => x.layers.flatMap(texturesReferencedBy)
+    case x: Layer[_] => x.pieces.flatMap(texturesReferencedBy)
+    case x: Piece[_] => texturesReferencedBy(x.image)
+    case x: Cursor => Seq.empty // Cursors don't exist on touch devices where context loss can occur. No factor
+    // To handle skins, actors, guis, you should let them depend on resources in this ResourceManager, and not allocate any free floating textures of their own
+    case x: Stage => Seq.empty
+    case x: Actor => Seq.empty
+    case x: Skin => Seq.empty
+  }
 
   private def doGetResource(path: String): Option[Any] = {
     resources.get(path).map(_.data)
