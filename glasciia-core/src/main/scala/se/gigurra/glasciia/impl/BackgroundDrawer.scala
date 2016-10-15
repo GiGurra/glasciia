@@ -1,6 +1,6 @@
 package se.gigurra.glasciia.impl
 
-import com.badlogic.gdx.graphics.Camera
+import com.badlogic.gdx.graphics.{Camera, OrthographicCamera}
 import com.badlogic.gdx.graphics.g2d.TextureRegion
 import se.gigurra.glasciia.MultiLayer
 import se.gigurra.math.{Box2, Vec2}
@@ -10,11 +10,11 @@ import se.gigurra.math.{Box2, Vec2}
   */
 trait BackgroundDrawer { self: ImageDrawer =>
 
-  def camera: Camera
+  def camera: OrthographicCamera
 
   def drawBackGround(backGround: MultiLayer[TextureRegion]): Unit = {
     val cameraPos = Vec2(camera.position.x, camera.position.y)
-    val cameraSize = Vec2(camera.viewportWidth, camera.viewportHeight)
+    val cameraSize = Vec2(camera.viewportWidth, camera.viewportHeight) * math.abs(camera.zoom)
     val cameraBounds = Box2(ll = cameraPos - cameraSize / 2.0f, size = cameraSize)
 
     for {
