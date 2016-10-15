@@ -55,7 +55,7 @@ trait ResourceManager { self: App =>
   def reloadTexturesAfterContextLoss(): Unit = {
     val uniqueTexturesToBeReloaded = new mutable.HashSet[Texture]()
     for (resource <- listResources) {
-      val textures = texturesReferencedBy(resource.data)
+      val textures = texturesReferencedBy(resource)
       uniqueTexturesToBeReloaded ++= textures
     }
     for (texture <- uniqueTexturesToBeReloaded) {
