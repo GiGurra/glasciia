@@ -30,6 +30,9 @@ object Main {
         drawGameGui(canvas)
         drawMenu(canvas)
 
+      case Resume(canvas) =>
+        // TODO: Handle context loss / minimizing of app on Android -> reload textures
+
       case input: InputEvent =>
         val mainMenu = app.resource[Stage]("gui:main-menu")
         val gameGui = app.resource[Stage]("gui:game-world")
