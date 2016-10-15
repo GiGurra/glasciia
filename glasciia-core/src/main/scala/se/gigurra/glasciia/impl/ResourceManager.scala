@@ -5,15 +5,16 @@ import se.gigurra.glasciia.impl.ResourceManager.{ExplicitTypeRequired, Resource}
 
 import scala.annotation.implicitNotFound
 import scala.reflect.Manifest
+import scala.language.existentials
 
 /**
   * Created by johan on 2016-10-01.
   */
 trait ResourceManager { self: App =>
 
-  def addResource[T : ExplicitTypeRequired](path: String, ctor: => T, closer: T => Unit = (x: T) => ())(implicit a: T =:= T): Unit = executeOnRenderThread {
+  def addResource[T : Manifest : ExplicitTypeRequired](path: String, ctor: => T, closer: T => Unit = (x: T) => ())(implicit a: T =:= T): Unit = executeOnRenderThread {
     val resource = ctor
-    resources.put(path, Resource(resource, () => closer(resource))).foreach(_.close())
+    resources.put(path, Resource(path, resource, () => closer(resource), implicitly[Manifest[T]])).foreach(_.close())
   }
 
   def getResource[T: Manifest : ExplicitTypeRequired](path: String): Option[T] = doGetResource(path).map {
@@ -28,6 +29,10 @@ trait ResourceManager { self: App =>
     }
   }
 
+  def listResources: Seq[Resource] = {
+    resources.values.toArray[Resource]
+  }
+
 
   /////////////////////////////////////////////
   // Expectations
@@ -39,15 +44,27 @@ trait ResourceManager { self: App =>
   // Private
 
   private def doGetResource(path: String): Option[Any] = {
-    resources.get(path).map(_.resource)
+    resources.get(path).map(_.data)
   }
 
   private val resources = new scala.collection.concurrent.TrieMap[String, Resource]
 }
 
 object ResourceManager {
-  case class Resource(resource: Any, closer: () => Unit) {
+  case class Resource(path: String, data: Any, closer: () => Unit, manifest: Manifest[_]) {
     def close() = closer()
+    def class_ : Class[_] = manifest.runtimeClass
+    override def toString: String = {
+      def toStringManifest(m: Manifest[_]): String = {
+        val simpleName = m.runtimeClass.getSimpleName
+        m.typeArguments match {
+          case Nil => simpleName
+          case typeArgs => s"$simpleName[${m.typeArguments.map(toStringManifest).mkString(", ")}]"
+        }
+      }
+      s"$path: ${toStringManifest(manifest)}"
+    }
+
   }
 
   @implicitNotFound("Explicit typing required for accessing resources")

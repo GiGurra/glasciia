@@ -5,7 +5,6 @@ import com.badlogic.gdx.graphics.g2d.{Batch, BitmapFont, TextureRegion}
 import com.badlogic.gdx.graphics.{Color, Cursor, Pixmap}
 import com.badlogic.gdx.scenes.scene2d.Stage
 import se.gigurra.glasciia.Glasciia._
-import se.gigurra.glasciia.Loader.InMemory
 import se.gigurra.glasciia._
 import se.gigurra.math.{Box2, Vec2}
 
@@ -24,6 +23,12 @@ object loadResources {
     loadGui(app, batch, regions)
     loadCursor(app, regions)
     loadMipMaps(app, regions)
+
+    println()
+    println("Loaded Resources:")
+    for (resource <- app.listResources.sortBy(_.path)) {
+      println(s"  $resource")
+    }
   }
 
   private def loadFonts(app: App, regions: Loader[TextureRegion]): Unit = {
@@ -70,13 +75,13 @@ object loadResources {
     )
   }
 
-  private def loadGui(app: App, batch: Batch, regions: Loader.InMemory[TextureRegion]): Unit = {
+  private def loadGui(app: App, batch: Batch, regions: InMemoryLoader[TextureRegion]): Unit = {
     app.addResource[Stage]("gui:main-menu", createMainMenu(app, batch, regions))
     app.addResource[Stage]("gui:game-world", createGameWorldGui(app, batch, regions))
   }
 
-  private def createTextureRegionLoader(app: App): Loader.InMemory[TextureRegion] = {
-    val out = TextureRegionLoader.createNew()()
+  private def createTextureRegionLoader(app: App): InMemoryLoader[TextureRegion] = {
+    val out = TextureRegionLoader.newDefault()()
     app.addResource("texture-loader", out)
     out.add("filled-texture", {
       val fillPixMap = new Pixmap(1, 1, Pixmap.Format.RGBA8888)
@@ -91,7 +96,7 @@ object loadResources {
     app.canvas.setCursor(app.resource[Cursor]("cool-cursor"))
   }
 
-  private def loadMipMaps(app: App, regions: InMemory[TextureRegion]): Unit = {
+  private def loadMipMaps(app: App, regions: InMemoryLoader[TextureRegion]): Unit = {
     regions.uploadIfDirty()
   }
 }
