@@ -13,7 +13,10 @@ trait Cameras {
   val camera = new OrthographicCamera
 
   def zoom: Float = camera.zoom
-  def cameraPos: Vec2[Float] = Vec2[Float](camera.position.x, camera.position.y)
+  def cameraPos: Vec2[Float] = Vec2(camera.position.x, camera.position.y)
+  def cameraSize: Vec2[Float] = Vec2(camera.viewportWidth, camera.viewportHeight) * math.abs(camera.zoom)
+  def cameraBounds: Box2[Float] = Box2(ll = cameraPos - cameraSize / 2.0f, size = cameraSize)
+
   def setCameraPos(pos: Vec2[Float]): Unit = camera.position.set(pos)
   def mousePos: Vec2[Int]
 
