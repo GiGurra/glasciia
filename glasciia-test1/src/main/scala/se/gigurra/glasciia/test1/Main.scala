@@ -58,7 +58,7 @@ object Main {
             case MouseScrolled(amount) =>
               canvas.setZoom(
                 newValue = canvas.zoom + amount * 0.1f,
-                preserveCursorWorldPosition = true, // Supreme commander style!
+                preserveMouseWorldPosition = true, // Supreme commander style!
                 projectionArea = canvas.wholeCanvasProjectionArea
               )
             case KeyDown(Keys.ESCAPE) => mainMenu.show()

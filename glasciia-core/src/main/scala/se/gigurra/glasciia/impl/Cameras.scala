@@ -20,7 +20,7 @@ trait Cameras {
   def setCameraPos(pos: Vec2[Float]): Unit = camera.position.set(pos)
   def mousePos: Vec2[Int]
 
-  def setZoom(newValue: Float, preserveCursorWorldPosition: Boolean, projectionArea: Box2[Float]): Unit = {
+  def setZoom(newValue: Float, preserveMouseWorldPosition: Boolean, projectionArea: Box2[Float]): Unit = {
     val mouseWorldPosBefore = screen2World(mousePos, projectionArea)
     camera.zoom = newValue
     camera.update()
