@@ -18,9 +18,9 @@ trait FrameDrawer {
   def transform: Matrix4Stack
 
   def drawFrame(drawBounds: Box2[Int] = screenBounds,
-                background: Option[Color] = Some(Color.BLACK),
+                clearBuffer: Option[Color] = Some(Color.BLACK),
                 camPos: Vec2[Float] = camera.position)(content: => Unit): Unit = {
-    background foreach { color =>
+    clearBuffer foreach { color =>
       gl.glClearColor(color.r, color.g, color.b, color.a)
       gl.glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT)
     }

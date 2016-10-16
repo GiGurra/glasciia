@@ -2,7 +2,7 @@ package se.gigurra.glasciia.test1.testcomponents
 
 import com.badlogic.gdx.graphics.g2d.Animation.PlayMode
 import com.badlogic.gdx.graphics.g2d.{Batch, BitmapFont, TextureRegion}
-import com.badlogic.gdx.graphics.{Color, Cursor, Pixmap}
+import com.badlogic.gdx.graphics.{Color, Cursor, Pixmap, Texture}
 import com.badlogic.gdx.scenes.scene2d.Stage
 import se.gigurra.glasciia.Glasciia._
 import se.gigurra.glasciia._
@@ -40,6 +40,7 @@ object loadResources {
     app.addResource("animation:capguy-walk", Animation(regions("animations/capguy-walk.png"), nx = 8, ny = 1, dt = 0.1, mode = PlayMode.LOOP))
     app.addResource("animation:capguy-walk:instance-0", app.resource[Animation]("animation:capguy-walk").newInstance(t0 = app.localAppTime))
     app.addResource("image:test-image", regions("images/test-image.png"))
+    app.addResource("image:fill-yellow", regions("square-90-percent"))
   }
 
   private def loadParticleEffects(app: App, regions: Loader[TextureRegion]): Unit = {
@@ -88,6 +89,16 @@ object loadResources {
       fillPixMap.setColor(Color.WHITE)
       fillPixMap.fill()
       StaticImage.fromPixMap(fillPixMap)
+    })
+    out.add("square-90-percent", {
+      val out = new Pixmap(400, 400, Pixmap.Format.RGBA8888)
+      out.setColor(Color.YELLOW.scaleAlpha(0.9f))
+      out.fill()
+      Pixmap.setBlending(Pixmap.Blending.None)
+      out.setColor(new Color(0,0,0,0))
+      out.fillRectangle(10,10,380,380)
+      Pixmap.setBlending(Pixmap.Blending.SourceOver)
+      StaticImage.fromPixMap(out)
     })
     out
   }

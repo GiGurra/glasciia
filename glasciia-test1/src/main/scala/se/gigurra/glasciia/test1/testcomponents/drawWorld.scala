@@ -20,6 +20,7 @@ object drawWorld {
     val monospaceFont = app.resource[BitmapFont]("font:monospace-default")
     val monospaceFontMasked = app.resource[BitmapFont]("font:monospace-default-masked")
     val walkingDudeAnimation = app.resource[Animation.Instance]("animation:capguy-walk:instance-0")
+    val fillYellowTextureRegion = app.resource[TextureRegion]("image:fill-yellow")
     val testImage = app.resource[TextureRegion]("image:test-image")
     val effect1 = app.resource[ParticleSource]("particle-effect:test-effect:instance-0")
     val effect2 = app.resource[ParticleSource]("particle-effect:test-effect:instance-1")
@@ -38,7 +39,7 @@ object drawWorld {
 
     canvas.drawFrame(
       drawBounds = canvas.screenBounds,
-      background = Some(Color.DARK_GRAY),
+      clearBuffer = Some(Color.DARK_GRAY),
       camPos = cameraPos
     ) {
 
@@ -123,6 +124,12 @@ object drawWorld {
         image = testImage,
         at = Vec2(100, 300),
         scale = Vec2(160.0f, 120.0f)
+      )
+
+      canvas.drawImage(
+        image = fillYellowTextureRegion,
+        at = canvas.cameraPos - canvas.cameraSize / 2.0f,
+        scale = canvas.cameraSize
       )
 
       canvas.drawParticles(
