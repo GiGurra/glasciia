@@ -15,7 +15,8 @@ trait AnimationDrawer { self: ContentDrawer =>
                     scale: Vec2[Float] = Zero.vec2f,
                     rotate: Float = 0.0f,
                     normalizeScale: Boolean = true,
-                    active: Boolean = true): Unit = {
+                    active: Boolean = true,
+                    time: Double = drawTime): Unit = {
 
     val frameSize = animation.frameSize
     val normalizedScale =
@@ -25,7 +26,7 @@ trait AnimationDrawer { self: ContentDrawer =>
         scale
 
     draw(at, normalizedScale, rotate) {
-      batch.draw(animation.currentFrame(drawTime, active), 0.0f, 0.0f)
+      batch.draw(animation.currentFrame(time, active), 0.0f, 0.0f)
     }
   }
 }
