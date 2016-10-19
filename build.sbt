@@ -1,16 +1,13 @@
 lazy val commonSettings = Seq(
-  resolvers += "Sonatype OSS Snapshots" at "https://oss.sonatype.org/content/repositories/snapshots",
   organization := "com.github.gigurra",
   version := "SNAPSHOT",
   scalaVersion := "2.11.8",
-  scalacOptions ++= Seq("-feature", "-unchecked", "-deprecation"),
-  libraryDependencies ++= Seq(
-  )
+  scalacOptions ++= Seq("-feature", "-unchecked", "-deprecation")
 )
 
 lazy val glasciia_core = module("core").settings(
   libraryDependencies ++= Seq(
-    "com.github.gigurra"    %   "libgurra_2.11"         % "0.2.6",
+    "com.github.gigurra"    %%  "libgurra"              % "0.2.6",
     "io.reactivex"          %%  "rxscala"               % "0.26.2",
     "com.badlogicgames.gdx" %   "gdx"                   % "1.9.4",
     "com.badlogicgames.gdx" %   "gdx-tools"             % "1.9.4",
