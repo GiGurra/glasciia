@@ -1,5 +1,5 @@
 val commonSettings = Seq(
-  organization := "se.gigurra",
+  organization := "com.github.gigurra",
   version := "SNAPSHOT",
   scalaVersion := "2.11.8",
   scalacOptions ++= Seq("-feature", "-unchecked", "-deprecation"),
@@ -18,7 +18,7 @@ val glasciia_core = module("core").settings(
     "com.badlogicgames.gdx" %   "gdx-platform"          % "1.9.4" classifier "natives-desktop",
     "com.badlogicgames.gdx" %   "gdx-freetype-platform" % "1.9.4" classifier "natives-desktop"
   )
-).dependsOn(uri("git://github.com/gigurra/scala-libgurra.git#0.2.5"))
+).dependsOn(uri("git://github.com/gigurra/scala-libgurra.git#0.2.6"))
 
 val glasciia_test1 = module("test1", dependencies = glasciia_core)
 
