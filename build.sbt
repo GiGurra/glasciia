@@ -1,4 +1,5 @@
-val commonSettings = Seq(
+lazy val commonSettings = Seq(
+  resolvers += "Sonatype OSS Snapshots" at "https://oss.sonatype.org/content/repositories/snapshots",
   organization := "com.github.gigurra",
   version := "SNAPSHOT",
   scalaVersion := "2.11.8",
@@ -7,8 +8,9 @@ val commonSettings = Seq(
   )
 )
 
-val glasciia_core = module("core").settings(
+lazy val glasciia_core = module("core").settings(
   libraryDependencies ++= Seq(
+    "com.github.gigurra"    %   "libgurra_2.11"         % "0.2.6",
     "io.reactivex"          %%  "rxscala"               % "0.26.2",
     "com.badlogicgames.gdx" %   "gdx"                   % "1.9.4",
     "com.badlogicgames.gdx" %   "gdx-tools"             % "1.9.4",
@@ -18,11 +20,11 @@ val glasciia_core = module("core").settings(
     "com.badlogicgames.gdx" %   "gdx-platform"          % "1.9.4" classifier "natives-desktop",
     "com.badlogicgames.gdx" %   "gdx-freetype-platform" % "1.9.4" classifier "natives-desktop"
   )
-).dependsOn(uri("git://github.com/gigurra/scala-libgurra.git#0.2.6"))
+)
 
-val glasciia_test1 = module("test1", dependencies = glasciia_core)
+lazy val glasciia_test1 = module("test1", dependencies = glasciia_core)
 
-val glasciia = aggregate(glasciia_core, glasciia_test1)
+lazy val glasciia = aggregate(glasciia_core, glasciia_test1)
 
 def module(name: String, dependencies: ClasspathDep[ProjectReference]*): Project = {
   Project(
