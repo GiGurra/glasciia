@@ -33,7 +33,7 @@ public class CollidingParticleEmitter extends ParticleEmitter {
     }
 
     @Override
-    protected Particle newParticle (Sprite sprite) {
+    protected CollidingParticle newParticle (Sprite sprite) {
         return new CollidingParticle(sprite, collider);
     }
 }
