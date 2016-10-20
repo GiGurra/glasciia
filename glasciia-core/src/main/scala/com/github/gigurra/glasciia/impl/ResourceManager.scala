@@ -15,11 +15,11 @@ import scala.reflect.Manifest
 /**
   * Created by johan on 2016-10-01.
   */
-trait ResourceManager { self: App =>
+trait ResourceManager { self: Game =>
 
   def contextLossHandler: PartialFunction[Any, Seq[Texture]] = defaultContextLossHandler
 
-  def addResource[T : Manifest : ExplicitTypeRequired](path: String, ctor: => T, closer: T => Unit = (x: T) => ())(implicit a: T =:= T): Unit = executeOnRenderThread {
+  def addResource[T : Manifest : ExplicitTypeRequired](path: String, ctor: => T, closer: T => Unit = (x: T) => ())(implicit a: T =:= T): Unit = {
     val resource = ctor
     resources.put(path, Resource(path, resource, () => closer(resource), implicitly[Manifest[T]])).foreach(_.close())
   }
@@ -30,9 +30,17 @@ trait ResourceManager { self: App =>
   }
 
   def resource[T : Manifest : ExplicitTypeRequired](path: String): T = {
+    resource[T](path, default = throw new NoSuchElementException(s"No resource stored on path '$path'"))
+  }
+
+  def resource[T : Manifest : ExplicitTypeRequired](path: String, default: => T, addDefault: Boolean = true): T = {
     getResource[T](path) match {
       case Some(resource) => resource
-      case None => throw new NoSuchElementException(s"No resource stored on path '$path'")
+      case None =>
+        val newValue = default
+        if (addDefault)
+          addResource[T](path, newValue)
+        newValue
     }
   }
 
@@ -62,14 +70,6 @@ trait ResourceManager { self: App =>
       TextureAccess.reloadOnContextLoss(texture)
     }
   }
-
-
-
-
-  /////////////////////////////////////////////
-  // Expectations
-
-  def executeOnRenderThread(f: => Unit): Unit
 
 
   /////////////////////////////////////////////

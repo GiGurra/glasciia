@@ -2,26 +2,24 @@ package com.github.gigurra.glasciia.impl
 
 import java.util.concurrent.ConcurrentLinkedQueue
 
-import com.badlogic.gdx.{ApplicationListener, InputProcessor}
-import com.github.gigurra.glasciia.AppEvent._
-import com.github.gigurra.glasciia.{App, AppEvent, Canvas}
+import com.badlogic.gdx.{ApplicationListener, Gdx, InputProcessor}
+import com.github.gigurra.glasciia.GameEvent._
+import com.github.gigurra.glasciia.{Game, GameEvent, Canvas}
 import com.github.gigurra.math.Vec2
 import rx.lang.scala.{Observable, Subject}
 
 /**
   * Created by johan on 2016-10-01.
   */
-trait ApplicationEventListener { self: App =>
+trait ApplicationEventListener extends ApplicationListener { self: Game =>
 
-  def events: Observable[AppEvent] = subject
-
-  def handleEvents(f: PartialFunction[AppEvent, Unit], crashHandler: Throwable => Unit = App.defaultCrashHandler): Unit = {
-    events.foreach(f.applyOrElse(_, (_: Any) => ()), crashHandler)
+  def handleEvents(f: PartialFunction[GameEvent, Unit], crashHandler: Throwable => Unit = Game.defaultCrashHandler): Unit = {
+    subject.foreach(f.applyOrElse(_, (_: Any) => ()), crashHandler)
   }
 
   def canvas: Canvas = _canvas
 
-  /////////////////////////////////////////////
+    /////////////////////////////////////////////
   // Implemented expectations
 
   protected val inputListener = new InputProcessor {
@@ -35,41 +33,38 @@ trait ApplicationEventListener { self: App =>
     override def touchDragged(screenX: Int, screenY: Int, pointer: Int): Boolean = consume(TouchDrag(Vec2(screenX, screenY), pointer))
   }
 
-  protected val appListener = new ApplicationListener {
-    override def resize(width: Int, height: Int): Unit = consume(Resize(Vec2(width, height), canvas: Canvas))
-    override def dispose(): Unit = consume(Exit(canvas: Canvas))
-    override def pause(): Unit = consume(Pause(canvas: Canvas))
-    override def render(): Unit = {
-      canvas.setDrawTime()
-      consume(Render(canvas))
-    }
-    override def resume(): Unit = consume(Resume(canvas: Canvas))
-    override def create(): Unit = {
-      _canvas = Canvas(self)
-      flushQueuedOps()
-      consume(Init(canvas))
-    }
-  }
-
-  def executeOnRenderThread(op: => Unit): Unit = {
-    if (isOnRenderThread) {
-      op
-    } else {
-      queuedOps.add(() => op)
+  protected lazy val appListener = {
+    handleEvents(self.eventHandler, self.crashHandler)
+    new ApplicationListener {
+      override def resize(width: Int, height: Int): Unit = consume(Resize(Vec2(width, height), canvas: Canvas))
+      override def dispose(): Unit = consume(Exit(canvas: Canvas))
+      override def pause(): Unit = consume(Pause(canvas: Canvas))
+      override def render(): Unit = {
+        canvas.setDrawTime()
+        consume(Render(canvas))
+      }
+      override def resume(): Unit = consume(Resume(canvas: Canvas))
+      override def create(): Unit = {
+        _canvas = Canvas(self)
+        Gdx.input.setInputProcessor(inputListener)
+        flushQueuedOps()
+        consume(Init(canvas))
+      }
     }
   }
 
-
-  /////////////////////////////////////////////
-  // Expectations
-
-  def isOnRenderThread: Boolean
+  override def resize(width: Int, height: Int): Unit = appListener.resize(width, height)
+  override def dispose(): Unit = appListener.dispose()
+  override def pause(): Unit = appListener.pause()
+  override def render(): Unit = appListener.render()
+  override def resume(): Unit = appListener.resume()
+  override def create(): Unit = appListener.create()
 
 
   /////////////////////////////////////////////
   // Private
 
-  private def consume(ev: AppEvent): Boolean = {
+  private def consume(ev: GameEvent): Boolean = {
     flushQueuedOps()
     ev match { // Guarantee we always receieve an init event!
       case init: Init =>
@@ -94,7 +89,7 @@ trait ApplicationEventListener { self: App =>
   }
 
   private var _canvas: Canvas = null : Canvas
-  private val subject = Subject[AppEvent]().toSerialized
+  private val subject = Subject[GameEvent]().toSerialized
   private var initReceived: Boolean = false
 
 }

@@ -11,7 +11,7 @@ import com.github.gigurra.glasciia.Glasciia._
   */
 object createGameWorldGui {
 
-  def apply(app: App, batch: Batch, regions: InMemoryLoader[TextureRegion]): Stage = {
+  def apply(app: Game, batch: Batch, regions: InMemoryLoader[TextureRegion]): Stage = {
     val (stage, root) = RootGui(batch)
     val skin = root.debug(true).skin
 

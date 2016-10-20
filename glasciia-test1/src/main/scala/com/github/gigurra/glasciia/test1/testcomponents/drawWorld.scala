@@ -15,7 +15,7 @@ import scala.util.Random
 object drawWorld {
   def apply(canvas: Canvas): Unit = {
 
-    val app = canvas.app
+    val app = canvas.game
 
     val monospaceFont = app.resource[BitmapFont]("font:monospace-default")
     val monospaceFontMasked = app.resource[BitmapFont]("font:monospace-default-masked")

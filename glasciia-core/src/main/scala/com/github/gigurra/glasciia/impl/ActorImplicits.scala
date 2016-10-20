@@ -3,8 +3,8 @@ package com.github.gigurra.glasciia.impl
 import com.badlogic.gdx.scenes.scene2d._
 import com.badlogic.gdx.scenes.scene2d.utils.FocusListener.FocusEvent
 import com.badlogic.gdx.scenes.scene2d.utils.{ClickListener, FocusListener}
-import com.github.gigurra.glasciia.AppEvent
-import com.github.gigurra.glasciia.AppEvent.{CharTyped, KeyDown, KeyUp, KeyboardEvent}
+import com.github.gigurra.glasciia.GameEvent
+import com.github.gigurra.glasciia.GameEvent.{CharTyped, KeyDown, KeyUp, KeyboardEvent}
 
 import scala.language.{implicitConversions, reflectiveCalls}
 
@@ -48,7 +48,7 @@ trait ActorImplicits {
   }
 
   implicit class canConsumeEvents[Receiver <: CanAddListener](self: Receiver) {
-    def on[R](f: PartialFunction[AppEvent.InputEvent, R], consume: Boolean = true): InputListener = addAndReturnListener(keyListener(f, consume))
+    def on[R](f: PartialFunction[GameEvent.InputEvent, R], consume: Boolean = true): InputListener = addAndReturnListener(keyListener(f, consume))
 
     def onClick(f: (Receiver, Float, Float) => Unit): InputListener = addAndReturnListener(clickListener((x, y) => f(self, x,y)))
     def onClick(f: (Float, Float) => Unit): InputListener = onClick((_: Receiver, x: Float, y: Float) => f(x,y))

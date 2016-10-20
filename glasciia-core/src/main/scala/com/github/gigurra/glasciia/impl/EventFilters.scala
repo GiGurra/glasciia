@@ -2,7 +2,7 @@ package com.github.gigurra.glasciia.impl
 
 import com.badlogic.gdx.InputProcessor
 import com.badlogic.gdx.scenes.scene2d.Stage
-import com.github.gigurra.glasciia.AppEvent._
+import com.github.gigurra.glasciia.GameEvent._
 import com.github.gigurra.glasciia.Glasciia._
 
 import scala.language.implicitConversions

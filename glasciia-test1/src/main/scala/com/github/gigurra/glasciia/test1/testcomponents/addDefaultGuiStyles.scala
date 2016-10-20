@@ -6,14 +6,14 @@ import com.badlogic.gdx.scenes.scene2d.ui.Label.LabelStyle
 import com.badlogic.gdx.scenes.scene2d.ui.Skin
 import com.badlogic.gdx.scenes.scene2d.ui.TextButton.TextButtonStyle
 import com.github.gigurra.glasciia.Glasciia._
-import com.github.gigurra.glasciia.{App, InMemoryLoader}
+import com.github.gigurra.glasciia.{Game, InMemoryLoader}
 
 /**
   * Created by johan on 2016-10-09.
   */
 object addDefaultGuiStyles {
 
-  def apply(app: App, skin: Skin, regions: InMemoryLoader[TextureRegion]): Unit = {
+  def apply(app: Game, skin: Skin, regions: InMemoryLoader[TextureRegion]): Unit = {
     skin
       .addStyle[TextureRegion]("fill", regions("filled-texture"))
       .addStyle[BitmapFont](app.resource[BitmapFont]("font:monospace-default"))

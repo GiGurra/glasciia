@@ -12,7 +12,7 @@ import com.github.gigurra.math.Vec2
   */
 object updateWorld {
   def apply(canvas: Canvas): Unit = {
-    val mainMenu = canvas.app.resource[Stage]("gui:main-menu")
+    val mainMenu = canvas.game.resource[Stage]("gui:main-menu")
     if (mainMenu.hidden) {
       val speed = if (Gdx.input.isKeyPressed(Keys.SHIFT_LEFT) || Gdx.input.isKeyPressed(Keys.SHIFT_RIGHT)) 200.0f else 100.0f
       val dr = Pov4W().dir.toFloat * Gdx.graphics.getDeltaTime * speed

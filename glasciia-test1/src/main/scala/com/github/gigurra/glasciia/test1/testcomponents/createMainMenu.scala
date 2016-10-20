@@ -5,7 +5,7 @@ import com.badlogic.gdx.graphics.g2d.{Batch, TextureRegion}
 import com.badlogic.gdx.scenes.scene2d.Stage
 import com.badlogic.gdx.scenes.scene2d.ui.{Label, TextButton}
 import com.badlogic.gdx.scenes.scene2d.ui.TextButton.TextButtonStyle
-import com.github.gigurra.glasciia.AppEvent.KeyDown
+import com.github.gigurra.glasciia.GameEvent.KeyDown
 import com.github.gigurra.glasciia._
 import com.github.gigurra.glasciia.Glasciia._
 
@@ -14,7 +14,7 @@ import com.github.gigurra.glasciia.Glasciia._
   */
 object createMainMenu {
 
-  def apply(app: App, batch: Batch, regions: InMemoryLoader[TextureRegion]): Stage = {
+  def apply(app: Game, batch: Batch, regions: InMemoryLoader[TextureRegion]): Stage = {
     val (stage, menu) = RootGui(batch)
     val skin = menu.debug(true).skin
 

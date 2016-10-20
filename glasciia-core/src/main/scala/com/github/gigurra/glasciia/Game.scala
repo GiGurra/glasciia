@@ -1,6 +1,6 @@
 package com.github.gigurra.glasciia
 
-import com.github.gigurra.glasciia.App.{GlConf, WindowConf}
+import com.badlogic.gdx.Gdx
 import com.github.gigurra.glasciia.impl.{ApplicationEventListener, ResourceManager}
 import com.github.gigurra.math.Vec2
 
@@ -9,20 +9,22 @@ import scala.util.control.NonFatal
 /**
   * Created by johan on 2016-09-19.
   */
-abstract class App(val initialWindowConf: WindowConf,
-                   val initialGlConf: GlConf) extends ApplicationEventListener with ResourceManager {
+abstract class Game extends ApplicationEventListener with ResourceManager {
 
   private val t0 = System.nanoTime / 1e9
 
-  def width: Int
-  def height: Int
+  def width: Int = Gdx.graphics.getWidth
+  def height: Int = Gdx.graphics.getHeight
   def size: Vec2[Int] = Vec2(width, height)
   def localAppTime: Double = System.nanoTime / 1e9 - t0
-  def close(): Unit
+  def close(): Unit = Gdx.app.exit()
   override def canvas: Canvas = Option(super.canvas).getOrElse(throw new IllegalAccessError(s"Cannot access canvas before startup has finished"))
+
+  def eventHandler: PartialFunction[GameEvent, Unit]
+  def crashHandler: Throwable => Unit = Game.defaultCrashHandler
 }
 
-object App {
+object Game {
 
   def defaultCrashHandler(err: Throwable): Unit = {
     err match {
@@ -35,18 +37,4 @@ object App {
         System.exit(2)
     }
   }
-
-  case class GlConf(vsync: Boolean = true,
-                    msaa: Int = 4,
-                    foregroundFpsCap: Option[Int] = None,
-                    backgroundFpsCap: Option[Int] = Some(30)) {
-
-  }
-
-  case class WindowConf(position: Vec2[Int],
-                        size: Vec2[Int],
-                        resizable: Boolean,
-                        maximized: Boolean,
-                        fullscreen: Boolean,
-                        title: String)
 }

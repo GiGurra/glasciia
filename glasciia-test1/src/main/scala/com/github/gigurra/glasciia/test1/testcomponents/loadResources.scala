@@ -13,7 +13,7 @@ import com.github.gigurra.math.{Box2, Vec2}
   */
 object loadResources {
 
-  def apply(app: App): Unit = {
+  def apply(app: Game): Unit = {
     val batch = app.canvas.batch
     val regions = createTextureRegionLoader(app)
     loadFonts(app, regions)
@@ -31,19 +31,19 @@ object loadResources {
     }
   }
 
-  private def loadFonts(app: App, regions: Loader[TextureRegion]): Unit = {
+  private def loadFonts(app: Game, regions: Loader[TextureRegion]): Unit = {
     app.addResource("font:monospace-default", Font.fromTtfFile("pt-mono/PTM55FT.ttf"))
     app.addResource("font:monospace-default-masked", app.resource[BitmapFont]("font:monospace-default").createMaskedInstance(maskChar = Font.DEFAULT_MASK_CHAR, deleteSource = false))
   }
 
-  private def loadImages(app: App, regions: Loader[TextureRegion]): Unit = {
+  private def loadImages(app: Game, regions: Loader[TextureRegion]): Unit = {
     app.addResource("animation:capguy-walk", Animation(regions("animations/capguy-walk.png"), nx = 8, ny = 1, dt = 0.1, mode = PlayMode.LOOP))
     app.addResource("animation:capguy-walk:instance-0", app.resource[Animation]("animation:capguy-walk").newInstance(t0 = app.localAppTime))
     app.addResource("image:test-image", regions("images/test-image.png"))
     app.addResource("image:fill-yellow", regions("square-90-percent"))
   }
 
-  private def loadParticleEffects(app: App, regions: Loader[TextureRegion]): Unit = {
+  private def loadParticleEffects(app: Game, regions: Loader[TextureRegion]): Unit = {
     val effect0 = Particles.standard("particle-effects/test-effect.party", "particle-effects/").scaleEffect(0.5f)
     app.addResource("particle-effect:test-effect:instance-0", effect0)
     app.addResource("particle-effect:test-effect:instance-1", effect0.copy.scaleEffect(0.5f).flipY().setTint(Color.TEAL))
@@ -51,7 +51,7 @@ object loadResources {
     app.addResource("cool-cursor", createCursor("cursors/c2.png"))
   }
 
-  private def loadBackground(app: App, regions: Loader[TextureRegion]): Unit = {
+  private def loadBackground(app: Game, regions: Loader[TextureRegion]): Unit = {
     app.addResource[TextureRegion]("bg-image", regions("backgrounds/bgtest2.jpg"))
     app.addResource("background-0",
       MultiLayer[TextureRegion]() {
@@ -76,12 +76,12 @@ object loadResources {
     )
   }
 
-  private def loadGui(app: App, batch: Batch, regions: InMemoryLoader[TextureRegion]): Unit = {
+  private def loadGui(app: Game, batch: Batch, regions: InMemoryLoader[TextureRegion]): Unit = {
     app.addResource[Stage]("gui:main-menu", createMainMenu(app, batch, regions))
     app.addResource[Stage]("gui:game-world", createGameWorldGui(app, batch, regions))
   }
 
-  private def createTextureRegionLoader(app: App): InMemoryLoader[TextureRegion] = {
+  private def createTextureRegionLoader(app: Game): InMemoryLoader[TextureRegion] = {
     val out = TextureRegionLoader.newDefault()()
     app.addResource("texture-loader", out)
     out.add("filled-texture", {
@@ -103,11 +103,11 @@ object loadResources {
     out
   }
 
-  private def loadCursor(app: App, regions: Loader[TextureRegion]): Unit = {
+  private def loadCursor(app: Game, regions: Loader[TextureRegion]): Unit = {
     app.canvas.setCursor(app.resource[Cursor]("cool-cursor"))
   }
 
-  private def loadMipMaps(app: App, regions: InMemoryLoader[TextureRegion]): Unit = {
+  private def loadMipMaps(app: Game, regions: InMemoryLoader[TextureRegion]): Unit = {
     regions.uploadIfDirty()
   }
 }

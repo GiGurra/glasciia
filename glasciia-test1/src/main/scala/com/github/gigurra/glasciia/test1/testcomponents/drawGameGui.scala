@@ -10,7 +10,7 @@ import com.github.gigurra.math.Vec2
   */
 object drawGameGui {
   def apply(canvas: Canvas): Unit = {
-    val stage = canvas.app.resource[Stage]("gui:game-world")
+    val stage = canvas.game.resource[Stage]("gui:game-world")
     canvas.drawGui(
       stage = stage,
       scaling = LinearShortestSide(reference = Vec2(640, 480)) * Constant(0.75f)

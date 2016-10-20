@@ -5,9 +5,9 @@ import com.github.gigurra.math.Vec2
 /**
   * Created by johan on 2016-09-26.
   */
-sealed trait AppEvent
-object AppEvent {
-  sealed trait WindowEvent extends AppEvent
+sealed trait GameEvent
+object GameEvent {
+  sealed trait WindowEvent extends GameEvent { def canvas: Canvas; def game: Game = canvas.game }
   case class Init(canvas: Canvas) extends WindowEvent
   case class Render(canvas: Canvas) extends WindowEvent
   case class Pause(canvas: Canvas) extends WindowEvent
@@ -15,7 +15,7 @@ object AppEvent {
   case class Exit(canvas: Canvas) extends WindowEvent
   case class Resize(newSize: Vec2[Int], canvas: Canvas) extends WindowEvent
 
-  sealed trait InputEvent extends AppEvent
+  sealed trait InputEvent extends GameEvent
   case object ConsumedEvent extends InputEvent
 
   sealed trait KeyboardEvent extends InputEvent

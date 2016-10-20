@@ -1,6 +1,6 @@
 lazy val commonSettings = Seq(
   organization := "com.github.gigurra",
-  version := "0.2.0-SNAPSHOT",
+  version := "0.2.1-SNAPSHOT",
   scalaVersion := "2.11.8",
   scalacOptions ++= Seq("-feature", "-unchecked", "-deprecation"),
   pgpPassphrase := sys.env.get("PGP_PASSPHRASE").map(_.toArray)

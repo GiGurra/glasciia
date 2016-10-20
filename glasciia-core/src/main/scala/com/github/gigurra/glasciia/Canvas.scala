@@ -6,7 +6,7 @@ import com.github.gigurra.math.{Box2, Vec2, Zero}
 /**
   * Created by johan on 2016-09-29.
   */
-case class Canvas(app: App)
+case class Canvas(game: Game)
     extends Batcher
     with Cameras
     with ContentDrawer
@@ -19,10 +19,10 @@ case class Canvas(app: App)
     with BackgroundDrawer
     with GuiDrawer {
 
-  def size: Vec2[Int] = app.size
+  def size: Vec2[Int] = game.size
   def screenBounds: Box2[Int] = Box2[Int](0,0,width,height)
-  def width: Int = app.width
-  def height: Int = app.height
+  def width: Int = game.width
+  def height: Int = game.height
   def aspectRatio: Float = width.toFloat / height.toFloat
 
   def drawTime: Double = _drawTimeSeconds
@@ -35,9 +35,9 @@ case class Canvas(app: App)
   /**
     * Used by time dependent drawing, e.g. animations
     */
-  protected[glasciia] def setDrawTime(now: Double = app.localAppTime): Unit = {
+  protected[glasciia] def setDrawTime(now: Double = game.localAppTime): Unit = {
     _drawTimeSeconds = now
   }
 
-  private var _drawTimeSeconds: Double = app.localAppTime
+  private var _drawTimeSeconds: Double = game.localAppTime
 }

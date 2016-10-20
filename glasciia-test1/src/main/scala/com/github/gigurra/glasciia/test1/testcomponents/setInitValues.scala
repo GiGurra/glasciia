@@ -7,7 +7,7 @@ import com.github.gigurra.glasciia._
   */
 object setInitValues {
 
-  def apply(app: App): Unit = {
+  def apply(app: Game): Unit = {
     val canvas = app.canvas
     canvas.setCameraPos(canvas.size.toFloat / 2)
   }
