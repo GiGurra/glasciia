@@ -1,8 +1,9 @@
 lazy val commonSettings = Seq(
   organization := "com.github.gigurra",
-  version := "SNAPSHOT",
+  version := "0.1.0-SNAPSHOT",
   scalaVersion := "2.11.8",
-  scalacOptions ++= Seq("-feature", "-unchecked", "-deprecation")
+  scalacOptions ++= Seq("-feature", "-unchecked", "-deprecation"),
+  pgpPassphrase := sys.env.get("PGP_PASSPHRASE").map(_.toArray)
 )
 
 lazy val glasciia_core = module("core").settings(
