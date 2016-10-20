@@ -1,6 +1,6 @@
 lazy val commonSettings = Seq(
   organization := "com.github.gigurra",
-  version := "0.2.1-SNAPSHOT",
+  version := "0.2.2-SNAPSHOT",
   scalaVersion := "2.11.8",
   scalacOptions ++= Seq("-feature", "-unchecked", "-deprecation"),
   pgpPassphrase := sys.env.get("PGP_PASSPHRASE").map(_.toArray)
@@ -9,7 +9,6 @@ lazy val commonSettings = Seq(
 lazy val glasciia_core = module("core").settings(
   libraryDependencies ++= Seq(
     "com.github.gigurra"    %%  "libgurra"              % "0.2.6",
-    "io.reactivex"          %%  "rxscala"               % "0.26.2",
     "com.badlogicgames.gdx" %   "gdx"                   % "1.9.4",
     "com.badlogicgames.gdx" %   "gdx-freetype"          % "1.9.4"
   )

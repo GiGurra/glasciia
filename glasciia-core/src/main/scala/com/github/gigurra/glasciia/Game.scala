@@ -21,20 +21,4 @@ abstract class Game extends ApplicationEventListener with ResourceManager {
   override def canvas: Canvas = Option(super.canvas).getOrElse(throw new IllegalAccessError(s"Cannot access canvas before startup has finished"))
 
   def eventHandler: PartialFunction[GameEvent, Unit]
-  def crashHandler: Throwable => Unit = Game.defaultCrashHandler
-}
-
-object Game {
-
-  def defaultCrashHandler(err: Throwable): Unit = {
-    err match {
-      case NonFatal(e) =>
-        err.printStackTrace(System.err)
-        System.exit(1)
-      case e =>
-        System.err.println(s"Fatal exception, Logging failure.. OOM?. Attempting stack trace print..\n")
-        err.printStackTrace(System.err)
-        System.exit(2)
-    }
-  }
 }
