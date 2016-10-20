@@ -26,15 +26,27 @@ lazy val glasciia_desktop = module("desktop", dependencies = glasciia_core).sett
 
 lazy val glasciia_ios = module("ios", dependencies = glasciia_core).settings(
   libraryDependencies ++= Seq(
-    "com.badlogicgames.gdx" %   "gdx-platform"          % "1.9.4" classifier "natives-desktop",
-    "com.badlogicgames.gdx" %   "gdx-freetype-platform" % "1.9.4" classifier "natives-desktop"
+    "com.badlogicgames.gdx" %   "gdx-backend-robovm"    % "1.9.4",
+    "com.badlogicgames.gdx" %   "gdx-platform"          % "1.9.4" classifier "natives-ios",
+    "com.badlogicgames.gdx" %   "gdx-freetype-platform" % "1.9.4" classifier "natives-ios"
   )
 )
 
 lazy val glasciia_android = module("android", dependencies = glasciia_core).settings(
   libraryDependencies ++= Seq(
-    "com.badlogicgames.gdx" %   "gdx-platform"          % "1.9.4" classifier "natives-desktop",
-    "com.badlogicgames.gdx" %   "gdx-freetype-platform" % "1.9.4" classifier "natives-desktop"
+    "com.badlogicgames.gdx" %   "gdx-backend-android"   % "1.9.4",
+
+    "com.badlogicgames.gdx" %   "gdx-platform"          % "1.9.4" classifier "natives-armeabi",
+    "com.badlogicgames.gdx" %   "gdx-platform"          % "1.9.4" classifier "natives-armeabi-v7a",
+    "com.badlogicgames.gdx" %   "gdx-platform"          % "1.9.4" classifier "natives-arm64-v8a",
+    "com.badlogicgames.gdx" %   "gdx-platform"          % "1.9.4" classifier "natives-x86",
+    "com.badlogicgames.gdx" %   "gdx-platform"          % "1.9.4" classifier "natives-x86_64",
+
+    "com.badlogicgames.gdx" %   "gdx-freetype-platform" % "1.9.4" classifier "natives-armeabi",
+    "com.badlogicgames.gdx" %   "gdx-freetype-platform" % "1.9.4" classifier "natives-armeabi-v7a",
+    "com.badlogicgames.gdx" %   "gdx-freetype-platform" % "1.9.4" classifier "natives-arm64-v8a",
+    "com.badlogicgames.gdx" %   "gdx-freetype-platform" % "1.9.4" classifier "natives-x86",
+    "com.badlogicgames.gdx" %   "gdx-freetype-platform" % "1.9.4" classifier "natives-x86_64"
   )
 )
 
