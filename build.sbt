@@ -11,7 +11,6 @@ lazy val glasciia_core = module("core").settings(
     "com.github.gigurra"    %%  "libgurra"              % "0.2.6",
     "io.reactivex"          %%  "rxscala"               % "0.26.2",
     "com.badlogicgames.gdx" %   "gdx"                   % "1.9.4",
-    "com.badlogicgames.gdx" %   "gdx-box2d"             % "1.9.4",
     "com.badlogicgames.gdx" %   "gdx-freetype"          % "1.9.4"
   )
 )
