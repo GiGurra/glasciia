@@ -3,6 +3,7 @@ package com.github.gigurra.glasciia.impl
 import com.badlogic.gdx.InputProcessor
 import com.badlogic.gdx.scenes.scene2d.Stage
 import com.github.gigurra.glasciia.GameEvent._
+import com.github.gigurra.glasciia.GestureState
 import com.github.gigurra.glasciia.Glasciia._
 
 import scala.language.implicitConversions
@@ -54,6 +55,11 @@ trait EventFilters {
         event
       }
     }
+
+    def filterGestures(filter: PartialFunction[GestureEvent, Unit]): InputEvent = filterGestures(GestureState.GLOBAL, filter)
+    def filterGestures(state: GestureState, filter: PartialFunction[GestureEvent, Unit]): InputEvent = filterGesturesIf(state, condition = true, filter)
+    def filterGesturesIf(condition: Boolean, filter: PartialFunction[GestureEvent, Unit]): InputEvent = filterGesturesIf(GestureState.GLOBAL, condition, filter)
+    def filterGesturesIf(state: GestureState, condition: Boolean, filter: PartialFunction[GestureEvent, Unit]): InputEvent = filterIf(condition, state.toInputProcessor(filter))
   }
 
   implicit def stage2Filter(stage: Stage): PartialFunction[InputEvent, Unit] = {

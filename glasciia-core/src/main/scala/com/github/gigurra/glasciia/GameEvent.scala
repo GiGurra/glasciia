@@ -34,4 +34,15 @@ object GameEvent {
   case class TouchDown(pos: Vec2[Int], ptr: Int, btn: Int) extends MouseEvent
   case class TouchUp(pos: Vec2[Int], ptr: Int, btn: Int) extends MouseEvent
   case class TouchDrag(pos: Vec2[Int], ptr: Int) extends MouseEvent
+
+  sealed trait GestureEvent extends GameEvent
+  case class GestureTouchDown(pos: Vec2[Float], pointer: Int, button: Int) extends GestureEvent
+  case class GestureTap(pos: Vec2[Float], count: Int, button: Int) extends GestureEvent
+  case class GestureLongPress(pos: Vec2[Float]) extends GestureEvent
+  case class GestureFling(velocity: Vec2[Float], button: Int) extends GestureEvent
+  case class GesturePan(pos: Vec2[Float], delta: Vec2[Float]) extends GestureEvent
+  case class GesturePanStop(pos: Vec2[Float], pointer: Int, button: Int) extends GestureEvent
+  case class GestureZoom(initialDistance: Float, distance: Float) extends GestureEvent
+  case class GesturePinch(initialPointer1: Vec2[Float], initialPointer2: Vec2[Float], pointer1: Vec2[Float], pointer2: Vec2[Float]) extends GestureEvent
+  case class GesturePinchStop() extends GestureEvent
 }

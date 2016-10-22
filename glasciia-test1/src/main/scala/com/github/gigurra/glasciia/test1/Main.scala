@@ -67,6 +67,10 @@ object Main {
             .mapIf(controlsInverted, invertedControls)
             .filter(mainMenu)
             .filter(gameGui)
+            .filterGestures {
+              case GesturePan(pos, delta) => println(s"Panning from $pos with amount $delta")
+              case GestureFling(velocity, button) => println(s"Flinging with velocity $velocity using button $button")
+            }
             .filter {
               case MouseScrolled(amount) =>
                 canvas.setZoom(
