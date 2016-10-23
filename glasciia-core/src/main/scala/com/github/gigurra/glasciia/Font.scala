@@ -54,7 +54,7 @@ object Font {
     parameter.genMipMaps = genMipMaps
     parameter.minFilter = minFilter
     parameter.magFilter = magFilter
-    parameter.characters ++= loadExtraCharacters
+    parameter.characters += loadExtraCharacters
 
     val bitmapFontUnmasked = generator.generateFont(parameter)
     generator.dispose()
