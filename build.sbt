@@ -1,14 +1,17 @@
 lazy val commonSettings = Seq(
   organization := "com.github.gigurra",
-  version := "0.2.4-SNAPSHOT",
+  version := "0.2.5-SNAPSHOT",
   scalaVersion := "2.11.8",
   scalacOptions ++= Seq("-feature", "-unchecked", "-deprecation"),
-  pgpPassphrase := sys.env.get("PGP_PASSPHRASE").map(_.toArray)
+  scalacOptions += "-target:jvm-1.6",
+  javacOptions ++= Seq("-source", "1.6", "-target", "1.6"),
+  pgpPassphrase := sys.env.get("PGP_PASSPHRASE").map(_.toArray),
+  resolvers += "Sonatype OSS Snapshots" at "https://oss.sonatype.org/content/repositories/snapshots"
 )
 
 lazy val glasciia_core = module("core").settings(
   libraryDependencies ++= Seq(
-    "com.github.gigurra"    %%  "libgurra"              % "0.2.6",
+    "com.github.gigurra"    %%  "libgurra"              % "0.2.7-SNAPSHOT",
     "com.badlogicgames.gdx" %   "gdx"                   % "1.9.4",
     "com.badlogicgames.gdx" %   "gdx-freetype"          % "1.9.4"
   )
