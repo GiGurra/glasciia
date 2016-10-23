@@ -15,9 +15,9 @@ object TextureRegionLoader {
 
   def newDefault(conf: Conf = Conf())(atlas: DynamicTextureAtlas = new DynamicTextureAtlas(conf)): InMemoryLoader[TextureRegion] = {
     InMemoryLoader[TextureRegion](
-      fallback = Some(AtlasTextureRegionLoader(atlas,
+      loader = AtlasTextureRegionLoader(atlas,
         fallback = Some(FileTextureRegionLoader(conf))
-      ))
+      )
     )
   }
 }
