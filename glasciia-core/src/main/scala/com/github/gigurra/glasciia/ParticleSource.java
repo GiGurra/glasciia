@@ -29,12 +29,12 @@ public class ParticleSource implements Disposable {
 
     public ParticleSource(ParticleCollider collider) {
         this.collider = collider;
-        emitters = new Array<>(8);
+        emitters = new Array<CollidingParticleEmitter>(8);
     }
 
     public ParticleSource(ParticleCollider collider, ParticleSource effect) {
         this.collider = collider;
-        emitters = new Array<>(true, effect.emitters.size);
+        emitters = new Array<CollidingParticleEmitter>(true, effect.emitters.size);
         for (int i = 0, n = effect.emitters.size; i < n; i++)
             emitters.add(new CollidingParticleEmitter(collider, effect.emitters.get(i)));
     }
