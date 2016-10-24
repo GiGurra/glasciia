@@ -13,6 +13,7 @@ case class Canvas(game: Game)
     with FrameDrawer
     with TextDrawer
     with ImageDrawer
+    with PolygonDrawer
     with AnimationDrawer
     with ParticleDrawer
     with MouseFunctions

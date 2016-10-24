@@ -1,6 +1,6 @@
 package com.github.gigurra.glasciia.impl
 
-import com.badlogic.gdx.graphics.g2d.Batch
+import com.badlogic.gdx.graphics.g2d.PolygonSpriteBatch
 import com.github.gigurra.math.{One, Vec2, Zero}
 
 /**
@@ -8,7 +8,7 @@ import com.github.gigurra.math.{One, Vec2, Zero}
   */
 trait ContentDrawer {
 
-  def batch: Batch
+  def batch: PolygonSpriteBatch
 
   val transform = Matrix4Stack(depth = 32)
 

@@ -1,6 +1,6 @@
 package com.github.gigurra.glasciia.impl
 
-import com.badlogic.gdx.graphics.g2d.TextureRegion
+import com.badlogic.gdx.graphics.g2d.{PolygonRegion, TextureRegion}
 import com.badlogic.gdx.graphics.{Pixmap, Texture}
 import com.github.gigurra.math.{Box2, Vec2}
 
@@ -65,6 +65,23 @@ trait ImageImplicits {
       val vAbs = v + y * vvSize
       new TextureRegion(region.getTexture, uAbs, vAbs, uAbs + width * uuSize, vAbs + height * vvSize)
     }
+  }
+
+  implicit class PolygonRegionSizeImplicits(polygon: PolygonRegion) {
+    def region: TextureRegion = polygon.getRegion
+    def regionSize: Vec2[Int] = Vec2(regionWidth, regionHeight)
+    def regionWidth: Int = region.getRegionWidth
+    def regionHeight: Int = region.getRegionHeight
+    def regionX: Int = region.getRegionX
+    def regionY: Int = region.getRegionY
+    def regionPos: Vec2[Int] = Vec2(regionX, regionY)
+    def regionBounds: Box2[Int] = Box2(ll = regionPos, size = regionSize)
+    def regionU: Float = region.getU
+    def regionU2: Float = region.getU2
+    def regionV: Float = region.getV
+    def regionV2: Float = region.getV2
+    def regionUUSize: Float = regionU2 - regionU
+    def regionVVSize: Float = regionV2 - regionV
   }
 }
 
