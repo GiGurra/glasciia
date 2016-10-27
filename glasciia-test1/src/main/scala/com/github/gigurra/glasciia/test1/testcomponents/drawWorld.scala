@@ -30,17 +30,15 @@ object drawWorld {
     val mouseWorldPos = canvas.screen2World(canvas.mousePos)
     val cameraPos = canvas.cameraPos
 
-    canvas.setOrtho(
-      yDown = false,
-      width = canvas.width,
-      height = canvas.height,
-      scaling = 0.5f * (1.0f + math.min(canvas.width / 640.0f, canvas.height / 480.0f))
-    )
-
+    val camScale = 0.5f * (1.0f + math.min(canvas.width / 640.0f, canvas.height / 480.0f))
     canvas.drawFrame(
-      drawBounds = canvas.screenBounds,
+      pixelViewport = canvas.screenBounds,
       clearBuffer = Some(Color.DARK_GRAY),
-      camPos = cameraPos
+      camPos = cameraPos,
+      yDown = false,
+      camViewportWithoutZoom = Vec2[Float](canvas.width, canvas.height) / camScale,
+      setOrtho = true,
+      useBatch = true
     ) {
 
       canvas.drawBackGround(background)

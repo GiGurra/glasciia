@@ -29,14 +29,6 @@ trait Cameras {
     setCameraPos(cameraPos + correction)
   }
 
-  def setOrtho(yDown: Boolean, width: Float, height: Float): Unit = {
-    camera.setToOrtho(yDown, width, height)
-  }
-
-  def setOrtho(yDown: Boolean, width: Float, height: Float, scaling: Float): Unit = {
-    camera.setToOrtho(yDown, width / scaling, height / scaling)
-  }
-
   def screen2World(screenPos: Vec2[Int], projectionArea: Box2[Float]): Vec2[Float] = {
     val out = new Vector3(screenPos.x, screenPos.y, 0.0f)
     camera.unproject(out, projectionArea.ll.x, projectionArea.ll.y, projectionArea.width, projectionArea.height)
