@@ -7,6 +7,7 @@ import com.github.gigurra.glasciia.GameEvent._
 import com.github.gigurra.glasciia.Glasciia._
 import com.github.gigurra.glasciia._
 import com.github.gigurra.glasciia.test1.testcomponents._
+import GameLauncher._
 
 /**
   * Created by johan on 2016-09-26.
@@ -31,21 +32,19 @@ object Main {
     }
 
     new LwjglApplication(new Game {
-      def eventHandler = {
-        case Init(canvas) =>
-          loadResources(this)
-          setInitValues(this)
-          printShaders(canvas.batch)
-          canvas.game.reloadTexturesAfterContextLoss() // TODO: For testing only! Don't have here in production code! Intentional GPU memory leak!
 
-        case Render(canvas) =>
+      loadResources(this)
+      setInitValues(this)
+      printShaders(canvas.batch)
+      canvas.game.reloadTexturesAfterContextLoss() // TODO: For testing only! Don't have here in production code! Intentional GPU memory leak!
+
+      def eventHandler = {
+
+        case Render =>
           updateWorld(canvas)
           drawWorld(canvas)
           drawGameGui(canvas)
           drawMenu(canvas)
-
-        case Resume(canvas) =>
-          canvas.game.reloadTexturesAfterContextLoss()
 
         case input: InputEvent =>
           val mainMenu = resource[Stage]("gui:main-menu")

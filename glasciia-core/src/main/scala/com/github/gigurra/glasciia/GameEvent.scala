@@ -7,12 +7,12 @@ import com.github.gigurra.math.Vec2
   */
 sealed trait GameEvent
 object GameEvent {
-  sealed trait WindowEvent extends GameEvent { def canvas: Canvas; def game: Game = canvas.game }
-  case class Init(canvas: Canvas) extends WindowEvent
-  case class Render(canvas: Canvas) extends WindowEvent
-  case class Pause(canvas: Canvas) extends WindowEvent
-  case class Resume(canvas: Canvas) extends WindowEvent
-  case class Exit(canvas: Canvas) extends WindowEvent
+  sealed trait WindowEvent extends GameEvent
+  case object Init extends WindowEvent
+  case object Render extends WindowEvent
+  case object Pause extends WindowEvent
+  case object Resume extends WindowEvent
+  case object Exit extends WindowEvent
   case class Resize(newSize: Vec2[Int], canvas: Canvas) extends WindowEvent
 
   sealed trait InputEvent extends GameEvent
