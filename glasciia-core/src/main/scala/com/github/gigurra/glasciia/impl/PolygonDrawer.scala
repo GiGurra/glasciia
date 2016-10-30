@@ -13,7 +13,7 @@ trait PolygonDrawer { self: ContentDrawer =>
                   at: Vec2[Float] = Zero.vec2f,
                   scale: Vec2[Float] = One.vec2f,
                   rotate: Float = 0.0f,
-                  normalizeScale: Boolean = true): Unit = {
+                  normalizeScale: Boolean = false): Unit = {
 
     val frameSize = polygon.regionSize
     val normalizedScale =

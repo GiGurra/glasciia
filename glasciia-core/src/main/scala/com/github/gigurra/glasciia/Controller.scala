@@ -8,4 +8,5 @@ trait Controller {
   def name: String
   def axes: Seq[Axis]
   def buttons: Seq[Button]
+  def metadata: Any
 }
