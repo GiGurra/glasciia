@@ -1,13 +1,12 @@
 package com.github.gigurra.glasciia
 
 import com.badlogic.gdx.Gdx
-import com.github.gigurra.glasciia.impl.ResourceManager
 
 /**
   * Created by johan on 2016-09-19.
   * Must be used with a GameLauncher
   */
-abstract class Game extends ResourceManager {
+abstract class Game {
 
   val t0: Long = System.nanoTime / 1000000L
   val canvas: Canvas = Canvas(this)

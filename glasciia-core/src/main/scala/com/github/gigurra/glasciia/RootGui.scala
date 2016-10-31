@@ -12,9 +12,8 @@ import com.badlogic.gdx.utils.viewport.ScalingViewport
   * Created by johan on 2016-10-08.
   */
 object RootGui {
-
-  def apply(batch: Batch, skin: Skin = new Skin): (Stage, Table) = {
-    val stage = new Stage(new ScalingViewport(Scaling.stretch, Gdx.graphics.getWidth, Gdx.graphics.getHeight, new OrthographicCamera), batch)
+  def apply(skin: Skin = new Skin): (Stage, Table) = {
+    val stage = new Stage(new ScalingViewport(Scaling.stretch, Gdx.graphics.getWidth, Gdx.graphics.getHeight, new OrthographicCamera))
     val table = new Table(skin)
     table.setFillParent(true)
     stage.addActor(table)

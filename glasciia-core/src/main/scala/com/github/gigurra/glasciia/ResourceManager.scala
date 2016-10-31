@@ -1,45 +1,45 @@
-package com.github.gigurra.glasciia.impl
+package com.github.gigurra.glasciia
 
 import com.badlogic.gdx.graphics.g2d.{BitmapFont, NinePatch, ParticleEffect, ParticleEmitter, TextureAtlas, TextureRegion, Animation => GdxAnimation}
 import com.badlogic.gdx.graphics.{Cursor, Texture, TextureAccess}
 import com.badlogic.gdx.scenes.scene2d.ui.Skin
 import com.badlogic.gdx.scenes.scene2d.{Actor, Stage}
-import com.github.gigurra.glasciia._
-import com.github.gigurra.glasciia.impl.ResourceManager.{ExplicitTypeRequired, Resource}
+import com.github.gigurra.glasciia.impl.DynamicTextureAtlas
 
 import scala.annotation.implicitNotFound
 import scala.collection.mutable
 import scala.language.existentials
 import scala.reflect.Manifest
+import ResourceManager._
 
 /**
   * Created by johan on 2016-10-01.
   */
-trait ResourceManager { self: Game =>
+class ResourceManager {
 
   def contextLossHandler: PartialFunction[Any, Seq[Texture]] = defaultContextLossHandler
 
-  def addResource[T : Manifest : ExplicitTypeRequired](path: String, ctor: => T, closer: T => Unit = (x: T) => ())(implicit a: T =:= T): Unit = {
+  def add[T : Manifest : ExplicitTypeRequired](path: String, ctor: => T, closer: T => Unit = (x: T) => ())(implicit a: T =:= T): Unit = {
     val resource = ctor
     resources.put(path, Resource(path, resource, () => closer(resource), implicitly[Manifest[T]])).foreach(_.close())
   }
 
-  def getResource[T: Manifest : ExplicitTypeRequired](path: String): Option[T] = doGetResource(path).map {
+  def get[T: Manifest : ExplicitTypeRequired](path: String): Option[T] = doGetResource(path).map {
     case resource: T => resource
     case resource => throw new ClassCastException(s"Resource of incorrect type (exp: ${implicitly[Manifest[T]]}, actual: ${resource.getClass}")
   }
 
-  def resource[T : Manifest : ExplicitTypeRequired](path: String): T = {
-    resource[T](path, default = throw new NoSuchElementException(s"No resource stored on path '$path'"))
+  def apply[T : Manifest : ExplicitTypeRequired](path: String): T = {
+    apply[T](path, default = throw new NoSuchElementException(s"No resource stored on path '$path'"))
   }
 
-  def resource[T : Manifest : ExplicitTypeRequired](path: String, default: => T, addDefault: Boolean = true): T = {
-    getResource[T](path) match {
+  def apply[T : Manifest : ExplicitTypeRequired](path: String, default: => T, addDefault: Boolean = true): T = {
+    get[T](path) match {
       case Some(resource) => resource
       case None =>
         val newValue = default
         if (addDefault)
-          addResource[T](path, newValue)
+          add[T](path, newValue)
         newValue
     }
   }
@@ -60,7 +60,7 @@ trait ResourceManager { self: Game =>
     * Call if managing assets manually (e.g. if you have dynamic resources) when you receive a Resume event
     * Calling this any other time results in a memory leak (gpu side)
     */
-  def reloadTexturesAfterContextLoss(): Unit = {
+  def reloadAfterContextLoss(): Unit = {
     val uniqueTexturesToBeReloaded = new mutable.HashSet[Texture]()
     for (resource <- listResources) {
       val textures = texturesReferencedBy(resource)

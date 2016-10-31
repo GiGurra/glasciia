@@ -13,20 +13,20 @@ import scala.util.Random
   * Created by johan on 2016-10-08.
   */
 object drawWorld {
-  def apply(canvas: Canvas): Unit = {
+  def apply(canvas: Canvas, resources: ResourceManager): Unit = {
 
     val app = canvas.game
 
-    val monospaceFont = app.resource[BitmapFont]("font:monospace-default")
-    val monospaceFontMasked = app.resource[BitmapFont]("font:monospace-default-masked")
-    val walkingDudeAnimation = app.resource[Animation.Instance]("animation:capguy-walk:instance-0")
-    val fillYellowTextureRegion = app.resource[TextureRegion]("image:fill-yellow")
-    val testImage = app.resource[TextureRegion]("image:test-image")
-    val effect1 = app.resource[ParticleSource]("particle-effect:test-effect:instance-0")
-    val effect2 = app.resource[ParticleSource]("particle-effect:test-effect:instance-1")
-    val effect3 = app.resource[ParticleSource]("particle-effect:test-effect:instance-2")
-    val controlsInverted = app.getResource[Boolean]("controls-inverted").getOrElse(false)
-    val background = app.resource[MultiLayer[TextureRegion]]("background-0")
+    val monospaceFont = resources[BitmapFont]("font:monospace-default")
+    val monospaceFontMasked = resources[BitmapFont]("font:monospace-default-masked")
+    val walkingDudeAnimation = resources[Animation.Instance]("animation:capguy-walk:instance-0")
+    val fillYellowTextureRegion = resources[TextureRegion]("image:fill-yellow")
+    val testImage = resources[TextureRegion]("image:test-image")
+    val effect1 = resources[ParticleSource]("particle-effect:test-effect:instance-0")
+    val effect2 = resources[ParticleSource]("particle-effect:test-effect:instance-1")
+    val effect3 = resources[ParticleSource]("particle-effect:test-effect:instance-2")
+    val controlsInverted = resources.get[Boolean]("controls-inverted").getOrElse(false)
+    val background = resources[MultiLayer[TextureRegion]]("background-0")
     val mouseWorldPos = canvas.screen2World(canvas.mousePos)
     val cameraPos = canvas.cameraPos
 

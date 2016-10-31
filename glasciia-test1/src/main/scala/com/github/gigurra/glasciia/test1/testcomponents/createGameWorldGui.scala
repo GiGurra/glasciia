@@ -1,6 +1,6 @@
 package com.github.gigurra.glasciia.test1.testcomponents
 
-import com.badlogic.gdx.graphics.g2d.{Batch, TextureRegion}
+import com.badlogic.gdx.graphics.g2d.TextureRegion
 import com.badlogic.gdx.scenes.scene2d.Stage
 import com.badlogic.gdx.scenes.scene2d.ui.{Table, TextButton}
 import com.github.gigurra.glasciia._
@@ -11,11 +11,11 @@ import com.github.gigurra.glasciia.Glasciia._
   */
 object createGameWorldGui {
 
-  def apply(app: Game, batch: Batch, regions: InMemoryLoader[TextureRegion]): Stage = {
-    val (stage, root) = RootGui(batch)
+  def apply(resources: ResourceManager, regions: InMemoryLoader[TextureRegion]): Stage = {
+    val (stage, root) = RootGui()
     val skin = root.debug(true).skin
 
-    addDefaultGuiStyles(app, skin, regions)
+    addDefaultGuiStyles(resources, skin, regions)
 
     //////////////////////////////////////////////////
     // 1.                                           //

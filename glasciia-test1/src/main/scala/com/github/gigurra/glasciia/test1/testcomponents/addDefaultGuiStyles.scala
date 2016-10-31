@@ -6,18 +6,18 @@ import com.badlogic.gdx.scenes.scene2d.ui.Label.LabelStyle
 import com.badlogic.gdx.scenes.scene2d.ui.Skin
 import com.badlogic.gdx.scenes.scene2d.ui.TextButton.TextButtonStyle
 import com.github.gigurra.glasciia.Glasciia._
-import com.github.gigurra.glasciia.{Game, InMemoryLoader}
+import com.github.gigurra.glasciia.{InMemoryLoader, ResourceManager}
 
 /**
   * Created by johan on 2016-10-09.
   */
 object addDefaultGuiStyles {
 
-  def apply(app: Game, skin: Skin, regions: InMemoryLoader[TextureRegion]): Unit = {
+  def apply(resources: ResourceManager, skin: Skin, regions: InMemoryLoader[TextureRegion]): Unit = {
     skin
       .addStyle[TextureRegion]("fill", regions("filled-texture"))
-      .addStyle[BitmapFont](app.resource[BitmapFont]("font:monospace-default"))
-      .addStyle[BitmapFont]("masked-font", app.resource[BitmapFont]("font:monospace-default-masked"))
+      .addStyle[BitmapFont](resources[BitmapFont]("font:monospace-default"))
+      .addStyle[BitmapFont]("masked-font", resources[BitmapFont]("font:monospace-default-masked"))
       .addStyle[TextButtonStyle](new TextButtonStyle {
         val standard = skin.newInstance("fill", Color.DARK_GRAY)
         val highlighted = skin.newInstance("fill", Color.LIGHT_GRAY)

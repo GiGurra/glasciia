@@ -9,8 +9,8 @@ import com.github.gigurra.math.Vec2
   * Created by johan on 2016-10-08.
   */
 object drawMenu {
-  def apply(canvas: Canvas): Unit = {
-    val stage = canvas.game.resource[Stage]("gui:main-menu")
+  def apply(canvas: Canvas, resources: ResourceManager): Unit = {
+    val stage = resources[Stage]("gui:main-menu")
     canvas.drawGui(
       stage = stage,
       scaling = LinearShortestSide(reference = Vec2(640, 480)) * Constant(0.75f)

@@ -12,10 +12,10 @@ import com.github.gigurra.glasciia.test1.testcomponents._
   */
 object TestGame extends Game {
 
-  loadResources(this)
+  val resources = loadResources(this)
+  resources.reloadAfterContextLoss() // TODO: For testing only! Don't have here in production code! Intentional GPU memory leak!
   setInitValues(this)
   printShaders(canvas.batch)
-  canvas.game.reloadTexturesAfterContextLoss() // TODO: For testing only! Don't have here in production code! Intentional GPU memory leak!
 
   val testTimedAct = new Act(Seq(
     new TimedScene(length = 1000) { override def onEnd(): Unit = { println("Scene1 ended")} },
@@ -29,17 +29,17 @@ object TestGame extends Game {
   def eventHandler = {
 
     case Render(time, _) =>
-      updateWorld(canvas)
-      drawWorld(canvas)
-      drawGameGui(canvas)
-      drawMenu(canvas)
+      updateWorld(canvas, resources)
+      drawWorld(canvas, resources)
+      drawGameGui(canvas, resources)
+      drawMenu(canvas, resources)
 
       testTimedAct.update(time)
 
     case input: InputEvent =>
-      val mainMenu = resource[Stage]("gui:main-menu")
-      val gameGui = resource[Stage]("gui:game-world")
-      val controlsInverted = resource[Boolean]("controls-inverted", default = false)
+      val mainMenu = resources[Stage]("gui:main-menu")
+      val gameGui = resources[Stage]("gui:game-world")
+      val controlsInverted = resources[Boolean]("controls-inverted", default = false)
 
       val invertedControls: PartialFunction[InputEvent, KeyboardEvent] = {
         case KeyDown(Keys.DOWN) => KeyDown(Keys.UP)
