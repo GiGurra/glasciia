@@ -25,28 +25,28 @@ class GameLauncher(launchFcn: => Game) extends ApplicationListener {
       override def touchUp(screenX: Int, screenY: Int, pointer: Int, button: Int): Boolean = consume(TouchUp(Vec2(screenX, screenY), pointer, button))
       override def touchDragged(screenX: Int, screenY: Int, pointer: Int): Boolean = consume(TouchDrag(Vec2(screenX, screenY), pointer))
     })
-    consume(Init(time))
+    consume(Init(time, game.canvas))
   }
 
   override def resize(width: Int, height: Int): Unit = {
-    consume(Resize(time, Vec2(width, height), canvas))
+    consume(Resize(time, canvas, Vec2(width, height)))
   }
 
   override def dispose(): Unit = {
-    consume(Exit(time))
+    consume(Exit(time, canvas))
   }
 
   override def pause(): Unit = {
-    consume(Pause(time))
+    consume(Pause(time, canvas))
   }
 
   override def render(): Unit = {
     canvas.setDrawTime()
-    consume(Render(time))
+    consume(Render(time, canvas))
   }
 
   override def resume(): Unit = {
-    consume(Resume(time))
+    consume(Resume(time, canvas))
   }
 }
 

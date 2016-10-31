@@ -2,7 +2,7 @@ package com.github.gigurra.glasciia.test1
 
 import com.badlogic.gdx.Input.Keys
 import com.badlogic.gdx.scenes.scene2d.Stage
-import com.github.gigurra.glasciia.Game
+import com.github.gigurra.glasciia.{Act, Game, TimedScene}
 import com.github.gigurra.glasciia.Glasciia._
 import com.github.gigurra.glasciia.GameEvent._
 import com.github.gigurra.glasciia.test1.testcomponents._
@@ -17,13 +17,24 @@ object TestGame extends Game {
   printShaders(canvas.batch)
   canvas.game.reloadTexturesAfterContextLoss() // TODO: For testing only! Don't have here in production code! Intentional GPU memory leak!
 
+  val testTimedAct = new Act(Seq(
+    new TimedScene(length = 1000) { override def onEnd(): Unit = { println("Scene1 ended")} },
+    new TimedScene(length = 1000) { override def onEnd(): Unit = { println("Scene2 ended")} },
+    new TimedScene(length = 1000) { override def onEnd(): Unit = { println("Scene3 ended")} },
+    new TimedScene(length = 1000) { override def onEnd(): Unit = { println("Scene4 ended")} }
+  )) {
+    override def onEnd(): Unit = println("Act ended")
+  }
+
   def eventHandler = {
 
-    case Render(time) =>
+    case Render(time, _) =>
       updateWorld(canvas)
       drawWorld(canvas)
       drawGameGui(canvas)
       drawMenu(canvas)
+
+      testTimedAct.update(time)
 
     case input: InputEvent =>
       val mainMenu = resource[Stage]("gui:main-menu")
@@ -44,6 +55,7 @@ object TestGame extends Game {
       input
         .mapIf(controlsInverted, invertedControls)
         .filter(mainMenu)
+        .filter(testTimedAct)
         .filter(gameGui)
         .filterGestures {
           case GesturePan(pos, delta) => println(s"Panning from $pos with amount $delta")
