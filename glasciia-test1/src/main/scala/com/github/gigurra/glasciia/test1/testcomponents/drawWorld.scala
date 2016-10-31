@@ -66,7 +66,7 @@ object drawWorld {
         font = monospaceFont,
         color = Color.GREEN,
         at = Vec2(400, 400),
-        rotate = 180 + canvas.drawTime.toFloat * 360.0f,
+        rotate = 180 + canvas.drawTime * 360L / 1000L,
         scale = 50
       )
 
@@ -143,7 +143,7 @@ object drawWorld {
       canvas.drawParticles(
         effect = effect3,
         at = mouseWorldPos,
-        angle = canvas.drawTime.toFloat * 180.0f
+        angle = canvas.drawTime * 180L / 1000L
       )
 
       canvas.drawText(
@@ -167,7 +167,7 @@ object drawWorld {
     }
   }
 
-  private def testEffectPosition(tSec: Double): Vec2[Float] = {
-    Vec2[Float](320 + ((tSec * 1000.0).toLong % 5000L) * 0.05f, 240 / 2.0f)
+  private def testEffectPosition(tMillis: Long): Vec2[Float] = {
+    Vec2[Float](320 + (tMillis % 5000L) * 0.05f, 240 / 2.0f)
   }
 }

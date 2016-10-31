@@ -2,7 +2,7 @@ package com.github.gigurra.glasciia.test1.testcomponents
 
 import com.badlogic.gdx.graphics.g2d.Animation.PlayMode
 import com.badlogic.gdx.graphics.g2d.{Batch, BitmapFont, TextureRegion}
-import com.badlogic.gdx.graphics.{Color, Cursor, Pixmap, Texture}
+import com.badlogic.gdx.graphics.{Color, Cursor, Pixmap}
 import com.badlogic.gdx.scenes.scene2d.Stage
 import com.github.gigurra.glasciia.Glasciia._
 import com.github.gigurra.glasciia._
@@ -37,8 +37,8 @@ object loadResources {
   }
 
   private def loadImages(app: Game, regions: Loader[TextureRegion]): Unit = {
-    app.addResource("animation:capguy-walk", Animation(regions("animations/capguy-walk.png"), nx = 8, ny = 1, dt = 0.1, mode = PlayMode.LOOP))
-    app.addResource("animation:capguy-walk:instance-0", app.resource[Animation]("animation:capguy-walk").newInstance(t0 = app.localAppTime))
+    app.addResource("animation:capguy-walk", Animation(regions("animations/capguy-walk.png"), nx = 8, ny = 1, dt = 100L, mode = PlayMode.LOOP))
+    app.addResource("animation:capguy-walk:instance-0", app.resource[Animation]("animation:capguy-walk").newInstance(t0 = 0L))
     app.addResource("image:test-image", regions("images/test-image.png"))
     app.addResource("image:fill-yellow", regions("square-90-percent"))
   }

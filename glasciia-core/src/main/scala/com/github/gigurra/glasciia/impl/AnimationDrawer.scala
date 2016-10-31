@@ -8,7 +8,7 @@ import com.github.gigurra.math.{Vec2, Zero}
   */
 trait AnimationDrawer { self: ContentDrawer =>
 
-  def drawTime: Double
+  def drawTime: Long
 
   def drawAnimation(animation: Animation.Instance,
                     at: Vec2[Float] = Zero.vec2f,
@@ -16,7 +16,7 @@ trait AnimationDrawer { self: ContentDrawer =>
                     rotate: Float = 0.0f,
                     normalizeScale: Boolean = true,
                     active: Boolean = true,
-                    time: Double = drawTime): Unit = {
+                    time: Long = drawTime): Unit = {
 
     val frameSize = animation.frameSize
     val normalizedScale =

@@ -1,5 +1,6 @@
 package com.github.gigurra.glasciia
 
+import com.badlogic.gdx.Gdx
 import com.github.gigurra.glasciia.impl._
 import com.github.gigurra.math.{Box2, Vec2, Zero}
 
@@ -20,13 +21,13 @@ case class Canvas(game: Game)
     with BackgroundDrawer
     with GuiDrawer {
 
-  def size: Vec2[Int] = game.size
-  def screenBounds: Box2[Int] = Box2[Int](0,0,width,height)
-  def width: Int = game.width
-  def height: Int = game.height
+  def width: Int = Gdx.graphics.getWidth
+  def height: Int = Gdx.graphics.getHeight
+  def size: Vec2[Int] = Vec2(width, height)
+  def screenBounds: Box2[Int] = Box2[Int](0, 0, width, height)
   def aspectRatio: Float = width.toFloat / height.toFloat
 
-  def drawTime: Double = _drawTimeSeconds
+  def drawTime: Long = _drawTimeMillis
 
   def screen2World(screenPos: Vec2[Int]): Vec2[Float] = screen2World(screenPos, wholeCanvasProjectionArea)
   def world2Screen(screenPos: Vec2[Float]): Vec2[Int] = world2Screen(screenPos, wholeCanvasProjectionArea)
@@ -36,9 +37,9 @@ case class Canvas(game: Game)
   /**
     * Used by time dependent drawing, e.g. animations
     */
-  protected[glasciia] def setDrawTime(now: Double = game.localAppTime): Unit = {
-    _drawTimeSeconds = now
+  protected[glasciia] def setDrawTime(now: Long = System.nanoTime / 1000000L - game.t0): Unit = {
+    _drawTimeMillis = now
   }
 
-  private var _drawTimeSeconds: Double = game.localAppTime
+  private var _drawTimeMillis: Long = 0L
 }
