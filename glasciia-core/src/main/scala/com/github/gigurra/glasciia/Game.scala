@@ -14,6 +14,7 @@ abstract class Game extends ResourceManager {
 
   def eventHandler: PartialFunction[GameEvent, Unit]
   def close(): Unit = Gdx.app.exit()
+  def time: Long = canvas.drawTime
 
   private[glasciia] def consume(ev: GameEvent): Boolean = {
     eventHandler.lift.apply(ev) match {

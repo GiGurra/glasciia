@@ -19,7 +19,7 @@ object TestGame extends Game {
 
   def eventHandler = {
 
-    case Render =>
+    case Render(time) =>
       updateWorld(canvas)
       drawWorld(canvas)
       drawGameGui(canvas)
