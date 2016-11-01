@@ -121,7 +121,14 @@ object DynamicTextureAtlas {
       region.originalHeight = source.getHeight
 
       val targetPixMap = texture.getTextureData.consumePixmap()
-      targetPixMap.drawPixmap(source, to.x, to.y)
+      val pixmapCopySettingBefore = Pixmap.getBlending
+      try {
+        Pixmap.setBlending(Pixmap.Blending.None)
+        targetPixMap.drawPixmap(source, to.x, to.y)
+      } finally {
+        Pixmap.setBlending(pixmapCopySettingBefore)
+      }
+
 
       dirty = true
 
