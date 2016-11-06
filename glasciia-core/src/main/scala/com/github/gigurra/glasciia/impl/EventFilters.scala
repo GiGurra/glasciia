@@ -56,9 +56,9 @@ trait EventFilters {
       }
     }
 
-    def filterGestures(filter: PartialFunction[GestureEvent, Unit]): InputEvent = filterGestures(GestureState.GLOBAL, filter)
+    def filterGestures(filter: PartialFunction[GestureEvent, Unit])(implicit state: GestureState): InputEvent = filterGestures(state, filter)
     def filterGestures(state: GestureState, filter: PartialFunction[GestureEvent, Unit]): InputEvent = filterGesturesIf(state, condition = true, filter)
-    def filterGesturesIf(condition: Boolean, filter: PartialFunction[GestureEvent, Unit]): InputEvent = filterGesturesIf(GestureState.GLOBAL, condition, filter)
+    def filterGesturesIf(condition: Boolean, filter: PartialFunction[GestureEvent, Unit])(implicit state: GestureState): InputEvent = filterGesturesIf(state, condition, filter)
     def filterGesturesIf(state: GestureState, condition: Boolean, filter: PartialFunction[GestureEvent, Unit]): InputEvent = filterIf(condition, state.toInputProcessor(filter))
   }
 

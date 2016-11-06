@@ -14,7 +14,18 @@ import com.github.gigurra.math.Vec2
 case class GestureState(halfTapSquareSize: Float = 20.0f,
                         tapCountInterval: Float = 0.4f,
                         longPressDuration: Float = 1.1f,
-                        maxFlingDelay: Float = 0.15f) {
+                        maxFlingDelay: Float = 0.15f,
+                        historySize: Int = 100) {
+
+
+  def toInputProcessor(mappings: PartialFunction[GestureEvent, Unit]): InputProcessor = {
+    this.mappings = mappings
+    detector
+  }
+
+  def lastTouch: Map[Int, GestureTouchDown] = _lastTouch
+
+  @volatile private var _lastTouch = Map.empty[Int, GestureTouchDown]
 
   private var mappings = PartialFunction.empty[GestureEvent, Unit]
   private val detector = new GestureDetector(halfTapSquareSize, tapCountInterval, longPressDuration, maxFlingDelay, new GestureListener {
@@ -24,7 +35,12 @@ case class GestureState(halfTapSquareSize: Float = 20.0f,
         case None => false
       }
     }
-    override def touchDown(x: Float, y: Float, pointer: Int, button: Int): Boolean = consume(GestureTouchDown(Vec2(x,y), pointer = pointer, button = button))
+    override def touchDown(x: Float, y: Float, pointer: Int, button: Int): Boolean = {
+      val event = GestureTouchDown(Vec2(x,y), pointer = pointer, button = button)
+      val out = consume(event)
+      _lastTouch += button -> event
+      out
+    }
     override def longPress(x: Float, y: Float): Boolean = consume(GestureLongPress(Vec2(x, y)))
     override def zoom(initialDistance: Float, distance: Float): Boolean = consume(GestureZoom(initialDistance = initialDistance, distance = distance))
     override def pan(x: Float, y: Float, deltaX: Float, deltaY: Float): Boolean = consume(GesturePan(pos = Vec2(x,y), delta = Vec2(deltaX, deltaY)))
@@ -34,13 +50,4 @@ case class GestureState(halfTapSquareSize: Float = 20.0f,
     override def pinch(initialPointer1: Vector2, initialPointer2: Vector2, pointer1: Vector2, pointer2: Vector2): Boolean = consume(GesturePinch(initialPointer1 = initialPointer1, initialPointer2 = initialPointer2, pointer1 = pointer1, pointer2 = pointer2))
     override def pinchStop(): Unit = consume(GesturePinchStop())
   })
-
-  def toInputProcessor(mappings: PartialFunction[GestureEvent, Unit]): InputProcessor = {
-    this.mappings = mappings
-    detector
-  }
-}
-
-object GestureState {
-  val GLOBAL = new GestureState()
 }

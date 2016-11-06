@@ -2,7 +2,7 @@ package com.github.gigurra.glasciia.test1
 
 import com.badlogic.gdx.Input.Keys
 import com.badlogic.gdx.scenes.scene2d.Stage
-import com.github.gigurra.glasciia.{Act, Game, TimedScene}
+import com.github.gigurra.glasciia.{Act, Game, GestureState, TimedScene}
 import com.github.gigurra.glasciia.Glasciia._
 import com.github.gigurra.glasciia.GameEvent._
 import com.github.gigurra.glasciia.test1.testcomponents._
@@ -12,6 +12,7 @@ import com.github.gigurra.glasciia.test1.testcomponents._
   */
 object TestGame extends Game {
 
+  implicit val gestureState = GestureState()
   val resources = loadResources(this)
   resources.reloadAfterContextLoss() // TODO: For testing only! Don't have here in production code! Intentional GPU memory leak!
   setInitValues(this)
