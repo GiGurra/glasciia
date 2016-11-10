@@ -24,7 +24,7 @@ case class Canvas(game: Game)
   def width: Int = Gdx.graphics.getWidth
   def height: Int = Gdx.graphics.getHeight
   def orientation: Orientation = if (width >= height) Orientation.Landscape else Orientation.Portrait
-  def size: Vec2[Int] = Vec2(width, height)
+  def screenSize: Vec2[Int] = Vec2(width, height)
   def screenBounds: Box2[Int] = Box2[Int](0, 0, width, height)
   def aspectRatio: Float = width.toFloat / height.toFloat
 

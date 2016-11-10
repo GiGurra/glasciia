@@ -17,10 +17,13 @@ trait Cameras {
   def cameraSize: Vec2[Float] = Vec2(camera.viewportWidth, camera.viewportHeight) * math.abs(camera.zoom)
   def cameraBounds: Box2[Float] = Box2(ll = cameraPos - cameraSize / 2.0f, size = cameraSize)
 
+  def screenSize: Vec2[Int]
   def setCameraPos(pos: Vec2[Float]): Unit = camera.position.set(pos)
   def mousePos: Vec2[Int]
 
-  def setZoom(newValue: Float, preserveMouseWorldPosition: Boolean, projectionArea: Box2[Float]): Unit = {
+  def setZoom(newValue: Float,
+              preserveMouseWorldPosition: Boolean = false,
+              projectionArea: Box2[Float] = Box2[Float](ll = Vec2[Float](0.0f, 0.0f), size = Vec2[Float](screenSize.x, screenSize.y))): Unit = {
     val mouseWorldPosBefore = screen2World(mousePos, projectionArea)
     camera.zoom = newValue
     camera.update()

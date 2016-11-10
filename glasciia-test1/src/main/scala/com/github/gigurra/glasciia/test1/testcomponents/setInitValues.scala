@@ -9,7 +9,7 @@ object setInitValues {
 
   def apply(app: Game): Unit = {
     val canvas = app.canvas
-    canvas.setCameraPos(canvas.size.toFloat / 2)
+    canvas.setCameraPos(canvas.screenSize.toFloat / 2)
   }
 
 }
