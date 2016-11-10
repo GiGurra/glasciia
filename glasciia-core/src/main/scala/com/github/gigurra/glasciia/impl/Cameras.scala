@@ -24,9 +24,11 @@ trait Cameras {
     val mouseWorldPosBefore = screen2World(mousePos, projectionArea)
     camera.zoom = newValue
     camera.update()
-    val mouseWorldPosAfter = screen2World(mousePos, projectionArea)
-    val correction = mouseWorldPosBefore - mouseWorldPosAfter
-    setCameraPos(cameraPos + correction)
+    if (preserveMouseWorldPosition) {
+      val mouseWorldPosAfter = screen2World(mousePos, projectionArea)
+      val correction = mouseWorldPosBefore - mouseWorldPosAfter
+      setCameraPos(cameraPos + correction)
+    }
   }
 
   def screen2World(screenPos: Vec2[Int], projectionArea: Box2[Float]): Vec2[Float] = {
