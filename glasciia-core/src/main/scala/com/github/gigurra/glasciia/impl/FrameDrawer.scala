@@ -20,7 +20,7 @@ trait FrameDrawer {
                 clearBuffer: Option[Color] = Some(Color.BLACK),
                 camPos: Vec2[Float] = camera.position,
                 camViewportWithoutZoom: Vec2[Float] = Vec2(camera.viewportWidth, camera.viewportHeight),
-                camZoom: Float = 1.0f,
+                camZoom: Float = camera.zoom,
                 yDown: Boolean = false,
                 setOrtho: Boolean = true,
                 useBatch: Boolean = true)(content: => Unit): Unit = {
@@ -42,7 +42,7 @@ trait FrameDrawer {
   def drawSubFrame(pixelViewport: Box2[Int],
                    camPos: Vec2[Float] = camera.position,
                    camViewportWithoutZoom: Vec2[Float] = Vec2(camera.viewportWidth, camera.viewportHeight),
-                   camZoom: Float = 1.0f,
+                   camZoom: Float = camera.zoom,
                    yDown: Boolean = false,
                    setOrtho: Boolean = true,
                    useBatch: Boolean = true)(content: => Unit): Unit = {
