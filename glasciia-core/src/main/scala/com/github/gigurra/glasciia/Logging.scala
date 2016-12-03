@@ -67,7 +67,7 @@ case class Logger(origin: AnyRef) {
   }
 
   private def timeStamp: String = {
-    val df = new java.text.SimpleDateFormat("yyyy:MM:dd-hh:mm:ss:SSS")
+    val df = new java.text.SimpleDateFormat("yyyy:MM:dd-HH:mm:ss:SSS")
     df.format(new java.util.Date())
   }
 }
