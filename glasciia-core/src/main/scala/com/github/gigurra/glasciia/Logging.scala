@@ -23,7 +23,7 @@ object Logging {
 
 case class Logger(origin: AnyRef) {
   private val cls = origin.getClass
-  @volatile private var _localLogLevel: Int = Logging.INFO
+  @volatile private var _localLogLevel: Int = Gdx.app.getLogLevel
 
   def debug(msg: => String): Unit = {
     if (level >= Logging.DEBUG) {
