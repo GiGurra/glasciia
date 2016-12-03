@@ -12,7 +12,7 @@ import com.github.gigurra.math.{Box2, Vec2}
 /**
   * Created by johan on 2016-10-08.
   */
-object loadResources {
+object loadResources extends Logging {
 
   def apply(game: Game): ResourceManager = {
     val resources = new ResourceManager
@@ -25,10 +25,9 @@ object loadResources {
     loadCursor(resources, regions)
     loadMipMaps(regions)
 
-    println()
-    println("Loaded Resources:")
+    log.info("Loaded Resources:")
     for (resource <- resources.listResources.sortBy(_.path)) {
-      println(s"  $resource")
+      log.info(s"  $resource")
     }
     resources
   }

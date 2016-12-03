@@ -5,6 +5,7 @@ import com.badlogic.gdx.graphics.g2d.{TextureAtlas, TextureRegion}
 import com.badlogic.gdx.graphics.glutils.PixmapTextureData
 import com.badlogic.gdx.graphics.{Pixmap, Texture}
 import com.github.gigurra.glasciia.Glasciia._
+import com.github.gigurra.glasciia.Logging
 import com.github.gigurra.glasciia.TextureRegionLoader.Conf
 import com.github.gigurra.glasciia.impl.DynamicTextureAtlas.{Page, Strategy, SweepStrategy}
 import com.github.gigurra.math.{Box2, Vec2, Zero}
@@ -20,14 +21,14 @@ case class DynamicTextureAtlas(conf: Conf,
                                pageSize: Vec2[Int] = Vec2[Int](2048, 2048),
                                strategy: Strategy = SweepStrategy,
                                padding: Int = 10,
-                               atlas: TextureAtlas = new TextureAtlas()) {
+                               atlas: TextureAtlas = new TextureAtlas()) extends Logging {
 
   private val pages = new ArrayBuffer[Page]()
   private val lookup = new mutable.HashMap[String, AtlasRegion]()
 
   def get(name: String): Option[AtlasRegion] = {
     lookup.get(name) match {
-      case r@Some(region) => r
+      case r @ Some(_) => r
       case None => Option(atlas.findRegion(name)) match {
         case None => None
         case r@Some(region) =>
@@ -91,7 +92,7 @@ case class DynamicTextureAtlas(conf: Conf,
     if (deleteSource)
       source.dispose()
 
-    println(s"Placing $name at ${out.bounds}")
+    log.debug(s"Placing $name at ${out.bounds}")
 
     out
   }

@@ -15,7 +15,7 @@ import ResourceManager._
 /**
   * Created by johan on 2016-10-01.
   */
-class ResourceManager {
+class ResourceManager extends Logging {
 
   def contextLossHandler: PartialFunction[Any, Seq[Texture]] = defaultContextLossHandler
 
@@ -51,7 +51,7 @@ class ResourceManager {
   def texturesReferencedBy(resource: Any): Seq[Texture] = {
     contextLossHandler.applyOrElse(resource, (_: Any) => {
       // Some warning perhaps when there exists no handler?
-      System.err.println(s"Don't know how to handle context loss for, $resource, ignoring")
+      log.error(s"Don't know how to handle context loss for, $resource, ignoring")
       Nil
     })
   }

@@ -2,7 +2,7 @@ package com.github.gigurra.glasciia.test1
 
 import com.badlogic.gdx.Input.Keys
 import com.badlogic.gdx.scenes.scene2d.Stage
-import com.github.gigurra.glasciia.{Act, Game, GestureState, TimedScene}
+import com.github.gigurra.glasciia._
 import com.github.gigurra.glasciia.Glasciia._
 import com.github.gigurra.glasciia.GameEvent._
 import com.github.gigurra.glasciia.test1.testcomponents._
@@ -10,7 +10,7 @@ import com.github.gigurra.glasciia.test1.testcomponents._
 /**
   * Created by johan on 2016-10-31.
   */
-object TestGame extends Game {
+object TestGame extends Game with Logging {
 
   implicit val gestureState = GestureState()
   val resources = loadResources(this)
@@ -19,12 +19,12 @@ object TestGame extends Game {
   printShaders(canvas.batch)
 
   val testTimedAct = new Act(Seq(
-    new TimedScene(length = 1000) { override def onEnd(): Unit = { println("Scene1 ended")} },
-    new TimedScene(length = 1000) { override def onEnd(): Unit = { println("Scene2 ended")} },
-    new TimedScene(length = 1000) { override def onEnd(): Unit = { println("Scene3 ended")} },
-    new TimedScene(length = 1000) { override def onEnd(): Unit = { println("Scene4 ended")} }
+    new TimedScene(length = 1000) { override def onEnd(): Unit = { log.info("Scene1 ended")} },
+    new TimedScene(length = 1000) { override def onEnd(): Unit = { log.info("Scene2 ended")} },
+    new TimedScene(length = 1000) { override def onEnd(): Unit = { log.info("Scene3 ended")} },
+    new TimedScene(length = 1000) { override def onEnd(): Unit = { log.info("Scene4 ended")} }
   )) {
-    override def onEnd(): Unit = println("Act ended")
+    override def onEnd(): Unit = log.info("Act ended")
   }
 
   def eventHandler = {
@@ -59,8 +59,8 @@ object TestGame extends Game {
         .filter(testTimedAct)
         .filter(gameGui)
         .filterGestures {
-          case GesturePan(pos, delta) => println(s"Panning from $pos with amount $delta")
-          case GestureFling(velocity, button) => println(s"Flinging with velocity $velocity using button $button")
+          case GesturePan(pos, delta) => log.info(s"Panning from $pos with amount $delta")
+          case GestureFling(velocity, button) => log.info(s"Flinging with velocity $velocity using button $button")
         }
         .filter {
           case MouseScrolled(amount) =>
@@ -70,7 +70,7 @@ object TestGame extends Game {
               projectionArea = canvas.wholeCanvasProjectionArea
             )
           case KeyDown(Keys.ESCAPE) => mainMenu.show()
-          case event: KeyboardEvent => println(s"KeyboardEvent propagated to world/Not consumed by gui: $event")
+          case event: KeyboardEvent => log.info(s"KeyboardEvent propagated to world/Not consumed by gui: $event")
         }
   }
 }

@@ -6,7 +6,7 @@ import com.badlogic.gdx.Gdx
   * Created by johan on 2016-12-03.
   */
 trait Logging {
-  lazy val log = Logger(this)
+  protected lazy val log = Logger(this)
 }
 
 object Logging {

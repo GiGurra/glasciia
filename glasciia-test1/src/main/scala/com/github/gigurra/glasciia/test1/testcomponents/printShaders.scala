@@ -1,19 +1,20 @@
 package com.github.gigurra.glasciia.test1.testcomponents
 
 import com.badlogic.gdx.graphics.g2d.Batch
+import com.github.gigurra.glasciia.Logging
 
 /**
   * Created by johan on 2016-10-08.
   */
-object printShaders {
+object printShaders extends Logging {
   def apply(batch: Batch): Unit = {
-    println()
-    println("VERTEX SHADER SOURCE")
-    println("--------------------")
-    println(batch.getShader.getVertexShaderSource)
-    println()
-    println("FRAGMENT SHADER SOURCE")
-    println("----------------------")
-    println(batch.getShader.getFragmentShaderSource)
+    log.info("                    ")
+    log.info("VERTEX SHADER SOURCE")
+    log.info("--------------------")
+    log.info(batch.getShader.getVertexShaderSource)
+    log.info("                    ")
+    log.info("FRAGMENT SHADER SOURCE")
+    log.info("----------------------")
+    log.info(batch.getShader.getFragmentShaderSource)
   }
 }
