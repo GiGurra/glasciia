@@ -5,6 +5,6 @@ package com.github.gigurra.glasciia
   */
 abstract class TimedScene(length: Long) extends Scene {
 
-  def timeLeft: Long = math.max(0, length - elapsed)
+  def timeLeft: Long = math.max(0, length - elapsedInScene)
   def finished: Boolean = timeLeft == 0
 }

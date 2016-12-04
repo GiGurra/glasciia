@@ -13,34 +13,27 @@ trait Scene extends InputEventHandler {
 
   def onEnd(): Unit = {}
 
-  def update(time: Long): Unit = {
-    _time = time
+  def update(elapsedInScene: Long): Unit = {
+    _elapsedInScene = elapsedInScene
     if (finished && !_endCallbackCalled) {
       _endCallbackCalled = true
       onEnd()
     }
   }
 
-  def start(t0: Long): Unit = {
+  def begin(): Unit = {
     _begun = true
-    _t0 = t0
-    _time = t0
-  }
-
-  def t0: Long = {
-    _t0
   }
 
   def begun: Boolean = {
     _begun
   }
 
-  def elapsed: Long = {
-    _time - t0
+  def elapsedInScene: Long = {
+    _elapsedInScene
   }
 
   private var _begun = false
-  private var _t0 = 0L
-  private var _time = 0L
+  private var _elapsedInScene = 0L
   private var _endCallbackCalled = false
 }

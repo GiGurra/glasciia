@@ -5,8 +5,7 @@ import com.github.gigurra.glasciia.GameEvent.InputEvent
 /**
   * Created by johan on 2016-10-31.
   */
-case class Act(scenes: Seq[Scene],
-               var sceneIndex: Int = 0) extends InputEventHandler {
+case class Act(scenes: Seq[Scene], var sceneIndex: Int = 0) extends InputEventHandler {
   require(sceneIndex >= 0, s"Cannot create scene with sceneIndex < 0")
   require(sceneIndex < scenes.length, s"Cannot create scene with sceneIndex >= scenes.length")
 
@@ -17,11 +16,14 @@ case class Act(scenes: Seq[Scene],
   def last: Scene = scenes.last
 
   def update(time: Long): Unit = {
-    checkMoveToNextScene(time)
-    currentScene.update(time)
+    if (!finished) {
+      checkStartScene(time)
+      updateScene(time)
+      checkMoveToNextScene(time)
+    }
   }
 
-  def onEnd(): Unit = { }
+  def onEnd(): Unit = {}
 
   val inputHandler = new PartialFunction[InputEvent, Unit] {
 
@@ -42,11 +44,16 @@ case class Act(scenes: Seq[Scene],
     }
   }
 
+  private def updateScene(time: Long): Unit = {
+    currentScene.update(time - currentSceneStartedAt)
+  }
+
   private def checkMoveToNextScene(time: Long): Unit = {
-    if (currentScene.finished && !finished) {
+    if (currentScene.finished) {
+
       val prevSceneIndex = sceneIndex
       sceneIndex = math.min(length - 1, sceneIndex + 1)
-      if (!currentScene.begun) currentScene.start(time)
+
       if (prevSceneIndex == length - 1) {
         _finished = true
         onEnd()
@@ -54,7 +61,15 @@ case class Act(scenes: Seq[Scene],
     }
   }
 
-  private var _finished = false
+  private def checkStartScene(time: Long): Unit = {
+    if (!currentScene.begun) {
+      currentScene.begin()
+      currentSceneStartedAt = time
+    }
+  }
+
+  private var _finished = scenes.isEmpty
+  private var currentSceneStartedAt = 0L
 }
 
 object Act {
