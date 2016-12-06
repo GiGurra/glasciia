@@ -13,6 +13,7 @@ trait ImageDrawer { self: ContentDrawer =>
                 at: Vec2[Float] = Zero.vec2f,
                 scale: Vec2[Float] = One.vec2f,
                 rotate: Float = 0.0f,
+                rotatePoint: Vec2[Float] = Zero.vec2f,
                 normalizeScale: Boolean = true): Unit = {
 
     val frameSize = image.size
@@ -22,7 +23,7 @@ trait ImageDrawer { self: ContentDrawer =>
       else
         scale
 
-    draw(at, normalizedScale, rotate) {
+    draw(at, normalizedScale, rotate, rotatePoint) {
       batch.draw(image, 0.0f, 0.0f)
     }
   }
