@@ -2,11 +2,13 @@ package com.github.gigurra.glasciia
 
 import com.badlogic.gdx.Gdx
 
+import scala.collection.concurrent.TrieMap
+
 /**
   * Created by johan on 2016-12-03.
   */
 trait Logging {
-  protected lazy val log = Logger(this)
+  protected lazy val log: Logger = Logger.getLogger(this.getClass)
 }
 
 object Logging {
@@ -21,8 +23,7 @@ object Logging {
   }
 }
 
-case class Logger(origin: AnyRef) {
-  private val cls = origin.getClass
+class Logger(cls: Class[_]) {
   @volatile private var _localLogLevel: Int = Gdx.app.getLogLevel
 
   def debug(msg: => String): Unit = {
@@ -69,5 +70,14 @@ case class Logger(origin: AnyRef) {
   private def timeStamp: String = {
     val df = new java.text.SimpleDateFormat("yyyy:MM:dd-HH:mm:ss:SSS")
     df.format(new java.util.Date())
+  }
+}
+
+object Logger {
+
+  private val loggers = new TrieMap[Class[_], Logger]
+
+  def getLogger(cls: Class[_]): Logger = {
+    loggers.getOrElseUpdate(cls, new Logger(cls))
   }
 }
