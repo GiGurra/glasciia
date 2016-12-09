@@ -42,7 +42,7 @@ object Transform {
     IDENTITY
   }
 
-  def apply(at: Vec2[Float],
+  def apply(at: Vec2[Float] = Zero.vec2f,
             angle: Float = 0.0f,
             scale: Vec2[Float] = Zero.vec2f): Transform = {
     new Transform(new Matrix4(new Vector3(at.x, at.y, 0.0f), new Quaternion(gdxZAxis, angle), new Vector3(scale.x, scale.y, 1.0f)))
