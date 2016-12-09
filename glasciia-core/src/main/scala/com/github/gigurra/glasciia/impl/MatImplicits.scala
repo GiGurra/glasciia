@@ -3,6 +3,7 @@ package com.github.gigurra.glasciia.impl
 import com.badlogic.gdx.math.{Matrix4, Vector3}
 import com.github.gigurra.math.{Vec2, Vec3, Vec4}
 import MatrixWithFunctions.MatrixWithFunctions
+import com.github.gigurra.glasciia.Transform
 
 import scala.language.implicitConversions
 
@@ -12,6 +13,8 @@ import scala.language.implicitConversions
 trait MatImplicits {
   implicit def getFunctions(m: Matrix4): MatrixWithFunctions = new MatrixWithFunctions(m)
   implicit def getFunctions(m: Matrix4Stack): MatrixWithFunctions = new MatrixWithFunctions(m.current)
+  implicit def m2Transform(m: Matrix4): Transform = new Transform(m)
+  implicit def s2Transform(s: Matrix4Stack): Transform = new Transform(s.current)
 }
 
 object MatImplicits extends MatImplicits
