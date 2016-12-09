@@ -1,7 +1,7 @@
 package com.github.gigurra.glasciia.impl
 
 import com.badlogic.gdx.graphics.g2d.TextureRegion
-import com.github.gigurra.glasciia.MultiLayer
+import com.github.gigurra.glasciia.{MultiLayer, Transform}
 import com.github.gigurra.math.{Box2, Vec2}
 
 /**
@@ -22,7 +22,7 @@ trait BackgroundDrawer { self: ImageDrawer =>
 
       val translatedPieceBounds = Box2(ll = translatedPiecePos, size = piece.bounds.size)
       if (cameraBounds.overlaps(translatedPieceBounds)) {
-        drawImage(piece.image, at = translatedPiecePos, scale = piece.bounds.size)
+        drawImage(piece.image, Transform(at = translatedPiecePos, scale = piece.bounds.size))
       }
     }
   }

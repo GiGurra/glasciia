@@ -14,7 +14,6 @@ trait FrameDrawer {
   def batch: Batch
   def screenBounds: Box2[Int]
   def camera: OrthographicCamera
-  def transform: Matrix4Stack
 
   def drawFrame(pixelViewport: Box2[Int] = screenBounds,
                 clearBuffer: Option[Color] = Some(Color.BLACK),
@@ -24,10 +23,12 @@ trait FrameDrawer {
                 yDown: Boolean = false,
                 setOrtho: Boolean = true,
                 useBatch: Boolean = true)(content: => Unit): Unit = {
+
     clearBuffer foreach { color =>
       gl.glClearColor(color.r, color.g, color.b, color.a)
       gl.glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT)
     }
+
     drawSubFrame(
       pixelViewport = pixelViewport,
       camPos = camPos,
@@ -46,24 +47,29 @@ trait FrameDrawer {
                    yDown: Boolean = false,
                    setOrtho: Boolean = true,
                    useBatch: Boolean = true)(content: => Unit): Unit = {
+
     if (setOrtho)
       camera.setToOrtho(yDown, camViewportWithoutZoom.x, camViewportWithoutZoom.y)
+
     camera.zoom = camZoom
     camera.position.set(camPos)
     camera.update()
+
     HdpiUtils.glViewport(
       pixelViewport.ll.x,
       pixelViewport.ll.y,
       pixelViewport.width,
       pixelViewport.height
     )
+
     batch.setProjectionMatrix(camera.combined)
-    transform.pushPop {
-      if (useBatch)
-        batch.begin()
-      content
-      if (useBatch)
-        batch.end()
-    }
+
+    if (useBatch)
+      batch.begin()
+
+    content
+
+    if (useBatch)
+      batch.end()
   }
 }

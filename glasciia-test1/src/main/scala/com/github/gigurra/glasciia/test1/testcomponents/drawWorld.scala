@@ -47,43 +47,54 @@ object drawWorld {
         text = "A",
         font = monospaceFont,
         color = Color.GREEN,
-        at = Vec2(140, 140),
-        rotate = 45,
-        scale = 50
+        transform = Transform(
+          at = Vec2(140.0f, 140.0f),
+          angle = 45.0f,
+          scale = Vec2(50, 50)
+        )
       )
 
       canvas.drawText(
         text = "B",
         font = monospaceFont,
         color = Color.GREEN,
-        at = Vec2(240, 240),
-        rotate = -45,
-        scale = 50
+        transform =
+          Transform(
+            at = Vec2(240.0f, 240.0f),
+            angle = -45.0f,
+            scale = Vec2(50, 50)
+          )
       )
 
       canvas.drawText(
         text = "CDEFG",
         font = monospaceFont,
         color = Color.GREEN,
-        at = Vec2(400, 400),
-        rotate = 180 + canvas.drawTime * 360L / 1000L,
-        scale = 50
+        transform = Transform(
+          at = Vec2(400, 400),
+          angle = 180 + canvas.drawTime * 360L / 1000L,
+          scale = Vec2(50, 50)
+        )
       )
 
       canvas.drawText(
         text = "UL",
         font = monospaceFont,
         color = Color.RED,
-        at = Vec2(0, 480),
-        scale = 50
+        transform = Transform(
+          at = Vec2(0, 480),
+          scale = Vec2(50, 50)
+        )
       )
 
       canvas.drawText(
         text = "LL",
         font = monospaceFont,
         color = Color.GREEN,
-        at = Vec2(0, 50),
-        scale = 50
+        transform = Transform(
+          at = Vec2(0, 50),
+          scale = Vec2(50, 50)
+        )
       )
 
       if (controlsInverted) {
@@ -91,8 +102,10 @@ object drawWorld {
           text = "HAHA - CONTROLS INVERTED",
           font = monospaceFont,
           color = new Color(Random.nextFloat, Random.nextFloat, Random.nextFloat, 1.0f),
-          at = Vec2(10, 80),
-          scale = 40
+          transform = Transform(
+            at = Vec2(10, 80),
+            scale = Vec2(40, 40)
+          )
         )
       }
 
@@ -100,34 +113,44 @@ object drawWorld {
         text = "UR",
         font = monospaceFont,
         color = Color.BLUE,
-        at = Vec2(640 - 50 * 2 * monospaceFont.spaceWidth(), 480),
-        scale = 50
+        transform = Transform(
+          at = Vec2(640 - 50 * 2 * monospaceFont.spaceWidth(), 480),
+          scale = Vec2(50, 50)
+        )
       )
 
       canvas.drawText(
         text = "LR",
         font = monospaceFont,
         color = Color.BLACK,
-        at = Vec2(640 - 50 * 2 * monospaceFont.spaceWidth(), 50),
-        scale = 50
+        transform = Transform(
+          at = Vec2(640 - 50 * 2 * monospaceFont.spaceWidth(), 50),
+          scale = Vec2(50, 50)
+        )
       )
 
       canvas.drawAnimation(
         animation = walkingDudeAnimation,
-        at = Vec2(400, 100),
-        scale = Vec2(120.0f, 200.0f)
+        transform = Transform(
+          at = Vec2(400.0f, 100.0f),
+          scale = Vec2(120.0f, 200.0f)
+        )
       )
 
       canvas.drawImage(
         image = testImage,
-        at = Vec2(100, 300),
-        scale = Vec2(160.0f, 120.0f)
+        Transform(
+          at = Vec2(100, 300),
+          scale = Vec2(160.0f, 120.0f)
+        )
       )
 
       canvas.drawImage(
         image = fillYellowTextureRegion,
-        at = canvas.cameraPos - canvas.cameraSize / 2.0f,
-        scale = canvas.cameraSize
+        transform = Transform(
+          at = canvas.cameraPos - canvas.cameraSize / 2.0f,
+          scale = canvas.cameraSize
+        )
       )
 
       canvas.drawParticles(
@@ -151,8 +174,10 @@ object drawWorld {
         font = monospaceFont,
         color = Color.WHITE,
         anchor = Anchor.CC,
-        scale = 25,
-        at = cameraPos
+        transform = Transform(
+          at = cameraPos,
+          scale = Vec2(25, 25)
+        )
       )
 
       canvas.drawText(
@@ -160,10 +185,11 @@ object drawWorld {
         font = monospaceFontMasked,
         color = Color.WHITE,
         anchor = Anchor.CC,
-        scale = 25,
-        at = cameraPos - Vec2(0.0f, 50.0f)
+        transform = Transform(
+          at = cameraPos - Vec2(0.0f, 50.0f),
+          scale = Vec2(25, 25)
+        )
       )
-
     }
   }
 

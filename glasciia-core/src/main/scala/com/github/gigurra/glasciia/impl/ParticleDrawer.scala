@@ -16,7 +16,7 @@ trait ParticleDrawer { self: ContentDrawer =>
 
   def drawParticles(effect: ParticleSource, at: Vec2[Float]): Unit = {
     effect.setPosition(at.x, at.y)
-    draw() {
+    draw {
       effect.draw(batch, Gdx.graphics.getDeltaTime)
     }
   }

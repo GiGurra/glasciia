@@ -1,7 +1,6 @@
 package com.github.gigurra.glasciia.impl
 
-import com.github.gigurra.glasciia.Animation
-import com.github.gigurra.math.{Vec2, Zero}
+import com.github.gigurra.glasciia.{Animation, Transform}
 
 /**
   * Created by johan on 2016-10-01.
@@ -11,22 +10,19 @@ trait AnimationDrawer { self: ContentDrawer =>
   def drawTime: Long
 
   def drawAnimation(animation: Animation.Instance,
-                    at: Vec2[Float] = Zero.vec2f,
-                    scale: Vec2[Float] = Zero.vec2f,
-                    rotate: Float = 0.0f,
-                    rotatePoint: Vec2[Float] = Zero.vec2f,
+                    transform: Transform,
                     normalizeScale: Boolean = true,
                     active: Boolean = true,
                     time: Long = drawTime): Unit = {
 
     val frameSize = animation.frameSize
-    val normalizedScale =
+    val normalizedTransform =
       if (normalizeScale)
-        Vec2(scale.x / frameSize.x, scale.y / frameSize.y)
+        transform.scale(1.0f / frameSize.x, 1.0f / frameSize.y)
       else
-        scale
+        transform
 
-    draw(at, normalizedScale, rotate, rotatePoint) {
+    draw(normalizedTransform) {
       batch.draw(animation.currentFrame(time, active), 0.0f, 0.0f)
     }
   }
