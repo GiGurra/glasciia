@@ -47,11 +47,11 @@ object drawWorld {
         text = "A",
         font = monospaceFont,
         color = Color.GREEN,
-        transform = Transform(
-          at = Vec2(140.0f, 140.0f),
-          angle = 45.0f,
-          scale = Vec2(50, 50)
-        )
+        transform =
+          Transform.
+            translate(Vec2(140.0f, 140.0f))
+            .rotate(45.0f)
+            .scale(50, 50)
       )
 
       canvas.drawText(

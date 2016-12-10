@@ -69,4 +69,7 @@ object Transform {
     }
   }
 
+  implicit def toBuilder(co: Transform.type): TransformBuilder = {
+    new TransformBuilder(new Matrix4())
+  }
 }
