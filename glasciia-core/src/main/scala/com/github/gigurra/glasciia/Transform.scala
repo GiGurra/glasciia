@@ -19,20 +19,20 @@ case class Transform(private val impl: Matrix4) {
 
   def *(v: Vec2[Float]): Vec2[Float] = {
     val gdxVec = new Vector3(v.x, v.y, 0.0f)
-    gdxVec.mul4x3(data)
+    gdxVec.mul(impl)
     Vec2(gdxVec.x, gdxVec.y)
   }
 
   def *(v: Vec3[Float]): Vec3[Float] = {
     val gdxVec = new Vector3(v.x, v.y, v.z)
-    gdxVec.mul4x3(data)
+    gdxVec.mul(impl)
     Vec3(gdxVec.x, gdxVec.y, gdxVec.z)
   }
 
   def *(v: Vec4[Float]): Vec4[Float] = {
     val wNormalized = v.normalizeByW
     val gdxVec = new Vector3(wNormalized.x, wNormalized.y, wNormalized.z)
-    gdxVec.mul4x3(data)
+    gdxVec.mul(impl)
     Vec4(gdxVec.x, gdxVec.y, gdxVec.z, 1.0f)
   }
 
