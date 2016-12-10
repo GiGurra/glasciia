@@ -98,7 +98,7 @@ class Logger(cls: Class[_]) {
   }
 
   def level: Int = {
-    math.min(globalLevel, localLevel)
+    localLevel
   }
 
   def setLocalLevel(newLevel: Int): Unit = {
