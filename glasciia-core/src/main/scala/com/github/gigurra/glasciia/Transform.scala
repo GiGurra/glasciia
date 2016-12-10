@@ -62,6 +62,10 @@ object Transform {
     IDENTITY
   }
 
+  def apply(data: Array[Float]): Transform = {
+    new Transform(new Matrix4(data))
+  }
+
   def apply(at: Vec2[Float] = Zero.vec2f,
             angle: Float = 0.0f,
             scale: Vec2[Float] = Vec2One): Transform = {
