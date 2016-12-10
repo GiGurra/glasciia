@@ -18,22 +18,25 @@ case class Transform(private val impl: Matrix4) {
   final def scaleZ: Float = impl.getScaleZ
 
   def *(v: Vec2[Float]): Vec2[Float] = {
-    val gdxVec = new Vector3(v.x, v.y, 0.0f)
-    gdxVec.mul(impl)
-    Vec2(gdxVec.x, gdxVec.y)
+    Vec2(
+      v.x * data(Matrix4.M00) + v.y * data(Matrix4.M01) + data(Matrix4.M03),
+      v.x * data(Matrix4.M10) + v.y * data(Matrix4.M11) + data(Matrix4.M13))
   }
 
   def *(v: Vec3[Float]): Vec3[Float] = {
-    val gdxVec = new Vector3(v.x, v.y, v.z)
-    gdxVec.mul(impl)
-    Vec3(gdxVec.x, gdxVec.y, gdxVec.z)
+    Vec3(
+      v.x * data(Matrix4.M00) + v.y * data(Matrix4.M01) + v.z * data(Matrix4.M02) + data(Matrix4.M03),
+      v.x * data(Matrix4.M10) + v.y * data(Matrix4.M11) + v.z * data(Matrix4.M12) + data(Matrix4.M13),
+      v.x * data(Matrix4.M20) + v.y * data(Matrix4.M21) + v.z * data(Matrix4.M22) + data(Matrix4.M23))
   }
 
   def *(v: Vec4[Float]): Vec4[Float] = {
-    val wNormalized = v.normalizeByW
-    val gdxVec = new Vector3(wNormalized.x, wNormalized.y, wNormalized.z)
-    gdxVec.mul(impl)
-    Vec4(gdxVec.x, gdxVec.y, gdxVec.z, 1.0f)
+    val vv: Vec4[Float] = v.normalizeByW
+    Vec4(
+      vv.x * data(Matrix4.M00) + vv.y * data(Matrix4.M01) + vv.z * data(Matrix4.M02) + data(Matrix4.M03),
+      vv.x * data(Matrix4.M10) + vv.y * data(Matrix4.M11) + vv.z * data(Matrix4.M12) + data(Matrix4.M13),
+      vv.x * data(Matrix4.M20) + vv.y * data(Matrix4.M21) + vv.z * data(Matrix4.M22) + data(Matrix4.M23),
+      1.0f)
   }
 
   override def hashCode(): Int = {
