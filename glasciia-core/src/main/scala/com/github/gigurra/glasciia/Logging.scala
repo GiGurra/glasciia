@@ -12,43 +12,85 @@ trait Logging {
 }
 
 object Logging {
+
   import com.badlogic.gdx.Application
+
   val NONE = Application.LOG_NONE
   val ERROR = Application.LOG_ERROR
   val INFO = Application.LOG_INFO
   val DEBUG = Application.LOG_DEBUG
 
   def setGlobalLevel(level: Int): Unit = {
-    Gdx.app.setLogLevel(level)
+    backend.setLogLevel(level)
+  }
+
+  // Below are mostly used for tests
+  def overrideBackend(backend: Backend): Unit = {
+    this.backend = backend
+  }
+
+  @volatile private[glasciia] var backend: Backend = GdxLoggingBackend
+
+  trait Backend {
+    def setLogLevel(level: Int): Unit
+    def error(s: String, msg: String): Unit
+    def error(s: String, msg: String, exc: Throwable): Unit
+    def log(s: String, msg: String): Unit
+    def debug(s: String, msg: String): Unit
+    def globalLogLevel: Int
+  }
+
+  object GdxLoggingBackend extends Backend {
+    override def error(s: String, msg: String, exc: Throwable): Unit = Gdx.app.error(s, msg, exc)
+    override def error(s: String, msg: String): Unit = Gdx.app.error(s, msg)
+    override def log(s: String, msg: String): Unit = Gdx.app.log(s, msg)
+    override def debug(s: String, msg: String): Unit = Gdx.app.log(s, msg)
+    override def globalLogLevel: Int = Gdx.app.getLogLevel
+    override def setLogLevel(level: Int): Unit = Gdx.app.setLogLevel(level)
+  }
+
+  object TestLoggingBackend extends Backend {
+
+    @volatile private var _globalLogLevel: Int = INFO
+
+    override def error(s: String, msg: String, exc: Throwable): Unit = {
+      System.err.println(s + ": " + msg)
+      exc.printStackTrace(System.err)
+    }
+    override def error(s: String, msg: String): Unit = System.err.println(s + ": " + msg)
+    override def log(s: String, msg: String): Unit = System.out.println(s + ": " + msg)
+    override def debug(s: String, msg: String): Unit = System.out.println(s + ": " + msg)
+    override def globalLogLevel: Int = _globalLogLevel
+    override def setLogLevel(level: Int): Unit = _globalLogLevel = level
   }
 }
 
 class Logger(cls: Class[_]) {
-  @volatile private var _localLogLevel: Int = Gdx.app.getLogLevel
+  @volatile private var _localLogLevel: Int = Logging.INFO
 
   def debug(msg: => String): Unit = {
     if (level >= Logging.DEBUG) {
-      Gdx.app.debug(prefix("DEBUG"), msg)
+      Logging.backend.debug(prefix("DEBUG"), msg)
     }
   }
 
   def info(msg: => String): Unit = {
     if (level >= Logging.INFO) {
-      Gdx.app.log(prefix("INFO"), msg)
+      Logging.backend.log(prefix("INFO"), msg)
     }
   }
 
   def error(msg: => String, source: Option[Throwable] = None): Unit = {
     if (level >= Logging.ERROR) {
       source match {
-        case Some(exc) => Gdx.app.error(prefix("ERROR"), msg, exc)
-        case None => Gdx.app.error(prefix("ERROR"), msg)
+        case Some(exc) => Logging.backend.error(prefix("ERROR"), msg, exc)
+        case None => Logging.backend.error(prefix("ERROR"), msg)
       }
     }
   }
 
   def globalLevel: Int = {
-    Gdx.app.getLogLevel
+    Logging.backend.globalLogLevel
   }
 
   def localLevel: Int = {
