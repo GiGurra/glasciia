@@ -16,7 +16,7 @@ trait PolygonDrawer { self: ContentDrawer =>
                   normalizeScale: Boolean = false): Unit = {
 
     val frameSize = polygon.regionSize
-    val normalizedTransform =
+    val normalizedTransform: Transform =
       if (normalizeScale)
         transform.scale(1.0f / frameSize.x, 1.0f / frameSize.y)
       else

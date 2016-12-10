@@ -16,7 +16,7 @@ trait AnimationDrawer { self: ContentDrawer =>
                     time: Long = drawTime): Unit = {
 
     val frameSize = animation.frameSize
-    val normalizedTransform =
+    val normalizedTransform: Transform =
       if (normalizeScale)
         transform.scale(1.0f / frameSize.x, 1.0f / frameSize.y)
       else

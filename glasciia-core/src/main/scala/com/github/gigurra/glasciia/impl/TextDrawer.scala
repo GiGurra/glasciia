@@ -20,7 +20,7 @@ trait TextDrawer { self: ContentDrawer =>
                anchor: Anchor = Anchor.UL,
                wrap: Float = 0.0f): Unit = {
 
-    val normalizedTransform =
+    val normalizedTransform: Transform =
       if (normalizeFontScale)
         transform.scale(1.0f / font.size, 1.0f / font.size)
       else

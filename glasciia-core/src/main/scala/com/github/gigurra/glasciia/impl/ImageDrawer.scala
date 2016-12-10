@@ -16,7 +16,7 @@ trait ImageDrawer { self: ContentDrawer =>
                 normalizeScale: Boolean = true): Unit = {
 
     val frameSize = image.size
-    val normalizedTransform =
+    val normalizedTransform: Transform =
       if (normalizeScale)
         transform.scale(1.0f / frameSize.x, 1.0f / frameSize.y)
       else
