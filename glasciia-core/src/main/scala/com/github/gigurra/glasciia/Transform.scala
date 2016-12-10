@@ -13,6 +13,9 @@ import com.github.gigurra.math.{Vec2, Vec3, Vec4, Zero}
 case class Transform(private val impl: Matrix4) {
 
   final def data: Array[Float] = impl.`val`
+  final def scaleX: Float = impl.getScaleX
+  final def scaleY: Float = impl.getScaleY
+  final def scaleZ: Float = impl.getScaleZ
 
   def *(v: Vec2[Float]): Vec2[Float] = {
     val gdxVec = new Vector3(v.x, v.y, 0.0f)
