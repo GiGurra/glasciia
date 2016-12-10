@@ -1,5 +1,7 @@
 package com.github.gigurra.glasciia
 
+import java.util
+
 import com.badlogic.gdx.math.{Matrix4, Quaternion, Vector3}
 import com.github.gigurra.glasciia.impl.MatrixWithFunctions.MatrixWithFunctions
 
@@ -26,6 +28,17 @@ case class Transform(private val m: Matrix4) { // Private because it is sucky li
     val out = new Matrix4(m)
     f(out)
     new Transform(out)
+  }
+
+  override def hashCode(): Int = {
+    util.Arrays.hashCode(m.`val`)
+  }
+
+  override def equals(obj: scala.Any): Boolean = {
+    obj match {
+      case otherTransform: Transform => util.Arrays.equals(otherTransform.m.`val`, m.`val`)
+      case _ => false
+    }
   }
 }
 
