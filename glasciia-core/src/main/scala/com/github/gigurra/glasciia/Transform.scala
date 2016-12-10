@@ -32,6 +32,8 @@ case class Transform(private val m: Matrix4) { // Private because it is sucky li
 object Transform {
   val IDENTITY: Transform = new Transform(new Matrix4())
   val Z_AXIS: Vec3[Float] = new Vec3[Float](0.0f, 0.0f, 1.0f)
+
+  private val Vec2One = Vec2[Float](1.0f, 1.0f)
   private val gdxZAxis = new Vector3(0.0f, 0.0f, 1.0f)
 
   implicit def getFunctions(t: Transform): MatrixWithFunctions = new MatrixWithFunctions(t.m)
@@ -44,7 +46,7 @@ object Transform {
 
   def apply(at: Vec2[Float] = Zero.vec2f,
             angle: Float = 0.0f,
-            scale: Vec2[Float] = Zero.vec2f): Transform = {
+            scale: Vec2[Float] = Vec2One): Transform = {
     new Transform(new Matrix4(new Vector3(at.x, at.y, 0.0f), new Quaternion(gdxZAxis, angle), new Vector3(scale.x, scale.y, 1.0f)))
   }
 }
