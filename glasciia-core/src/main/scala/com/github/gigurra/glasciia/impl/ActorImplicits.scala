@@ -6,16 +6,34 @@ import com.badlogic.gdx.scenes.scene2d.utils.{ClickListener, FocusListener}
 import com.github.gigurra.glasciia.GameEvent
 import com.github.gigurra.glasciia.GameEvent.{CharTyped, KeyDown, KeyUp, KeyboardEvent}
 
-import scala.language.{implicitConversions, reflectiveCalls}
+trait CanFireEvents[-T] {
+  def fire(t: T, event: InputEvent): Unit
+}
+
+object CanFireEvents {
+  implicit val actorFirer: CanFireEvents[Actor] = new CanFireEvents[Actor] {
+    override def fire(actor: Actor, event: InputEvent): Unit = actor.fire(event)
+  }
+}
+
+trait CanAddEventListener[-T] {
+  def addListener(t: T, l: EventListener): Unit
+}
+
+object CanAddEventListener {
+  implicit val actorCanAddListener: CanAddEventListener[Actor] = new CanAddEventListener[Actor] {
+    def addListener(t: Actor, l: EventListener): Unit = t.addListener(l)
+  }
+  implicit val stageCanAddListener: CanAddEventListener[Stage] = new CanAddEventListener[Stage] {
+    def addListener(t: Stage, l: EventListener): Unit = t.addListener(l)
+  }
+}
 
 /**
   * Created by johan on 2016-10-09.
   */
 trait ActorImplicits {
 
-  type CanAddListener = { def addListener(l: EventListener): Boolean }
-  type CanFireEvents = { def fire (event: Event): Boolean }
-  type CanFireAndReceiveEvents = CanAddListener with CanFireEvents
   type Emitter = Actor
 
   implicit class canTakeKeyboardFocus[Subject <: Actor](self: Subject) {
@@ -25,29 +43,31 @@ trait ActorImplicits {
     }
   }
 
-  implicit class canFireEvents[Shooter <: CanFireEvents](self: Shooter) {
+  implicit class canFireEvents[Shooter : CanFireEvents](self: Shooter) {
 
     def click(): Shooter = {
+      val eventFirer = implicitly[CanFireEvents[Shooter]]
+
       val event1 = new InputEvent()
       event1.setType(InputEvent.Type.touchDown)
-      self.fire(event1)
+      eventFirer.fire(self, event1)
 
       val event2 = new InputEvent()
       event2.setType(InputEvent.Type.touchUp)
-      self.fire(event2)
+      eventFirer.fire(self, event2)
 
       self
     }
   }
 
-  implicit class canFireAndReceiveEvents[Subject <: CanFireAndReceiveEvents](subject: Subject) {
+  implicit class canFireAndReceiveEvents[Subject : CanFireEvents : CanAddEventListener](subject: Subject) {
 
     def mapKeyDownToClick(vKey: Int, consume: Boolean = true): InputListener = {
       subject.on({ case KeyDown(`vKey`) => subject.click()}, consume = consume)
     }
   }
 
-  implicit class canConsumeEvents[Receiver <: CanAddListener](self: Receiver) {
+  implicit class canConsumeEvents[Receiver : CanAddEventListener](self: Receiver) {
     def on[R](f: PartialFunction[GameEvent.InputEvent, R], consume: Boolean = true): InputListener = addAndReturnListener(keyListener(f, consume))
 
     def onClick(f: (Receiver, Float, Float) => Unit): InputListener = addAndReturnListener(clickListener((x, y) => f(self, x,y)))
@@ -73,7 +93,7 @@ trait ActorImplicits {
     })
 
     private def addAndReturnListener[T <: EventListener](listener: T): T ={
-      self.addListener(listener)
+      implicitly[CanAddEventListener[Receiver]].addListener(self, listener)
       listener
     }
   }

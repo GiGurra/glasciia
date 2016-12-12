@@ -28,6 +28,8 @@ object createMainMenu {
     val exitBtn = new TextButton("exit", skin).fontScale(fontScale)
     val menuButtons = Seq(startBtn, optionsBtn, exitBtn)
 
+    canConsumeEvents(startBtn).onClick(println("hello"))
+
     startBtn.onClick(stage.hide())
     exitBtn.onClick(app.close())
     optionsBtn.onClick(resources.add("controls-inverted", !resources[Boolean]("controls-inverted", default = false)))
