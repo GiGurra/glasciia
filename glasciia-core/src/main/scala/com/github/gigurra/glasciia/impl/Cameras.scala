@@ -13,17 +13,17 @@ trait Cameras {
   val camera = new OrthographicCamera
 
   def zoom: Float = camera.zoom
-  def cameraPos: Vec2[Float] = Vec2(camera.position.x, camera.position.y)
-  def cameraSize: Vec2[Float] = Vec2(camera.viewportWidth, camera.viewportHeight) * math.abs(camera.zoom)
-  def cameraBounds: Box2[Float] = Box2(ll = cameraPos - cameraSize / 2.0f, size = cameraSize)
+  def cameraPos: Vec2 = Vec2(camera.position.x, camera.position.y)
+  def cameraSize: Vec2 = Vec2(camera.viewportWidth, camera.viewportHeight) * math.abs(camera.zoom)
+  def cameraBounds: Box2 = Box2(ll = cameraPos - cameraSize / 2.0f, size = cameraSize)
 
-  def screenSize: Vec2[Int]
-  def setCameraPos(pos: Vec2[Float]): Unit = camera.position.set(pos)
-  def mousePos: Vec2[Int]
+  def screenSize: Vec2
+  def setCameraPos(pos: Vec2): Unit = camera.position.set(pos)
+  def mousePos: Vec2
 
   def setZoom(newValue: Float,
               preserveMouseWorldPosition: Boolean = false,
-              projectionArea: Box2[Float] = Box2[Float](ll = Vec2[Float](0.0f, 0.0f), size = Vec2[Float](screenSize.x, screenSize.y))): Unit = {
+              projectionArea: Box2 = Box2(ll = Vec2(0.0f, 0.0f), size = Vec2(screenSize.x, screenSize.y))): Unit = {
     val mouseWorldPosBefore = screen2World(mousePos, projectionArea)
     camera.zoom = newValue
     camera.update()
@@ -34,15 +34,15 @@ trait Cameras {
     }
   }
 
-  def screen2World(screenPos: Vec2[Int], projectionArea: Box2[Float]): Vec2[Float] = {
+  def screen2World(screenPos: Vec2, projectionArea: Box2): Vec2 = {
     val out = new Vector3(screenPos.x, screenPos.y, 0.0f)
     camera.unproject(out, projectionArea.ll.x, projectionArea.ll.y, projectionArea.width, projectionArea.height)
-    Vec2[Float](out.x, out.y)
+    Vec2(out.x, out.y)
   }
 
-  def world2Screen(screenPos: Vec2[Float], projectionArea: Box2[Float]): Vec2[Int] = {
+  def world2Screen(screenPos: Vec2, projectionArea: Box2): Vec2 = {
     val out = new Vector3(screenPos.x, screenPos.y, 0.0f)
     camera.project(out, projectionArea.ll.x, projectionArea.ll.y, projectionArea.width, projectionArea.height)
-    Vec2[Int](out.x.toInt, out.y.toInt)
+    Vec2(out.x.toInt, out.y.toInt)
   }
 }

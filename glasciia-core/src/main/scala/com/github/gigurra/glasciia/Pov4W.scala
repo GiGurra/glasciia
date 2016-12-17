@@ -15,7 +15,7 @@ case class Pov4W(left: Int = Keys.LEFT,
 
   private def value(dir: Int): Int = if (checkFn(dir)) 1 else 0
 
-  def dir: Vec2[Int] = Vec2(
+  def dir: Vec2 = Vec2(
     x = value(right) - value(left),
     y = value(up) - value(down)
   )

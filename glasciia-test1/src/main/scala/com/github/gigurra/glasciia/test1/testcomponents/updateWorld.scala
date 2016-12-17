@@ -15,8 +15,8 @@ object updateWorld {
     val mainMenu = resources[Stage]("gui:main-menu")
     if (mainMenu.hidden) {
       val speed = if (Gdx.input.isKeyPressed(Keys.SHIFT_LEFT) || Gdx.input.isKeyPressed(Keys.SHIFT_RIGHT)) 200.0f else 100.0f
-      val dr = Pov4W().dir.toFloat * Gdx.graphics.getDeltaTime * speed
-      canvas.camera.position.set((canvas.camera.position : Vec2[Float]) + dr)
+      val dr = Pov4W().dir * Gdx.graphics.getDeltaTime * speed
+      canvas.camera.position.set((canvas.camera.position : Vec2) + dr)
     }
   }
 }

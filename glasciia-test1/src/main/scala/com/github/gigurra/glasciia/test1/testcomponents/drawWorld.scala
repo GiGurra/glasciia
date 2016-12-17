@@ -36,7 +36,7 @@ object drawWorld {
       clearBuffer = Some(Color.DARK_GRAY),
       camPos = cameraPos,
       yDown = false,
-      camViewportWithoutZoom = Vec2[Float](canvas.width, canvas.height) / camScale,
+      camViewportWithoutZoom = Vec2(canvas.width, canvas.height) / camScale,
       setOrtho = true,
       useBatch = true
     ) {
@@ -193,7 +193,7 @@ object drawWorld {
     }
   }
 
-  private def testEffectPosition(tMillis: Long): Vec2[Float] = {
-    Vec2[Float](320 + (tMillis % 5000L) * 0.05f, 240 / 2.0f)
+  private def testEffectPosition(tMillis: Long): Vec2 = {
+    Vec2(320 + (tMillis % 5000L) * 0.05f, 240 / 2.0f)
   }
 }

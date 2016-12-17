@@ -95,11 +95,11 @@ trait EventFilters {
         case KeyUp(vKey)      => inputProcessor.keyUp(vKey)
       }
       case msEvent: MouseEvent => msEvent match {
-        case MouseMove(pos)           => inputProcessor.mouseMoved(pos.x, pos.y)
+        case MouseMove(pos)           => inputProcessor.mouseMoved(pos.x.toInt, pos.y.toInt)
         case MouseScrolled(amount)    => inputProcessor.scrolled(amount)
-        case TouchDown(pos, ptr, btn) => inputProcessor.touchDown(pos.x, pos.y, ptr, btn)
-        case TouchUp(pos, ptr, btn)   => inputProcessor.touchUp(pos.x, pos.y, ptr, btn)
-        case TouchDrag(pos, ptr)      => inputProcessor.touchDragged(pos.x, pos.y, ptr)
+        case TouchDown(pos, ptr, btn) => inputProcessor.touchDown(pos.x.toInt, pos.y.toInt, ptr, btn)
+        case TouchUp(pos, ptr, btn)   => inputProcessor.touchUp(pos.x.toInt, pos.y.toInt, ptr, btn)
+        case TouchDrag(pos, ptr)      => inputProcessor.touchDragged(pos.x.toInt, pos.y.toInt, ptr)
       }
       case clEvent: ControllerEvent => false // TODO: Some kind of logging? Ignored: Needs to be mapped to something the gdx gui can understand..
       case ConsumedEvent => false

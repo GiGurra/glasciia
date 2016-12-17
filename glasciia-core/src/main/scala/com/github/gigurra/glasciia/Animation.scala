@@ -12,13 +12,13 @@ import com.github.gigurra.math.Vec2
   * Created by johan on 2016-10-02.
   */
 case class Animation(animation: GdxAnimation,
-                     frameSize: Vec2[Int]) {
+                     frameSize: Vec2) {
 
   def dt: Long = (animation.getFrameDuration.toDouble * 1000.0).toLong
   def newInstance(t0: Long): Animation.Instance = new Animation.Instance(this, t0)
-  def size: Vec2[Int] = frameSize
-  def width: Int = size.x
-  def height: Int = size.y
+  def size: Vec2 = frameSize
+  def width: Float = size.x
+  def height: Float = size.y
 }
 
 object Animation {

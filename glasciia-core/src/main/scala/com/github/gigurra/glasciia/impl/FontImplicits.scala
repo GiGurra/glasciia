@@ -5,7 +5,7 @@ import com.badlogic.gdx.graphics.g2d.{BitmapFont, BitmapFontCache, GlyphLayout}
 import com.badlogic.gdx.utils.Align
 import com.github.gigurra.glasciia.Font
 import com.github.gigurra.glasciia.Glasciia._
-import com.github.gigurra.math.{Vec2, Zero}
+import com.github.gigurra.math.Vec2
 
 import scala.language.implicitConversions
 
@@ -19,7 +19,7 @@ trait FontImplicits {
     def size: Float = bitmapFont.getCapHeight
 
     def preload(str: CharSequence,
-                at: Vec2[Float] = Zero.vec2f,
+                at: Vec2 = Vec2.zero,
                 align: Int = Align.left,
                 targetWidth: Float = 0.0f,
                 wrap: Boolean = false,

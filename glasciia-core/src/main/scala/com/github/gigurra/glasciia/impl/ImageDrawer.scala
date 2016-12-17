@@ -1,7 +1,7 @@
 package com.github.gigurra.glasciia.impl
 
 import com.badlogic.gdx.graphics.g2d.TextureRegion
-import com.github.gigurra.math.{Vec2, Zero}
+import com.github.gigurra.math.Vec2
 import com.github.gigurra.glasciia.Glasciia._
 import com.github.gigurra.glasciia.Transform
 
@@ -12,7 +12,7 @@ trait ImageDrawer { self: ContentDrawer =>
 
   def drawImage(image: TextureRegion,
                 transform: Transform,
-                rotatePoint: Vec2[Float] = Zero.vec2f,
+                rotatePoint: Vec2 = Vec2.zero,
                 normalizeScale: Boolean = true): Unit = {
 
     val frameSize = image.size

@@ -2,7 +2,7 @@ package com.github.gigurra.glasciia
 
 import com.badlogic.gdx.Gdx
 import com.github.gigurra.glasciia.impl._
-import com.github.gigurra.math.{Box2, Vec2, Zero}
+import com.github.gigurra.math.{Box2, Vec2}
 
 /**
   * Created by johan on 2016-09-29.
@@ -24,16 +24,16 @@ case class Canvas(game: Game)
   def width: Int = Gdx.graphics.getWidth
   def height: Int = Gdx.graphics.getHeight
   def orientation: Orientation = if (width >= height) Orientation.Landscape else Orientation.Portrait
-  def screenSize: Vec2[Int] = Vec2(width, height)
-  def screenBounds: Box2[Int] = Box2[Int](0, 0, width, height)
+  def screenSize: Vec2 = Vec2(width, height)
+  def screenBounds: Box2 = Box2(0, 0, width, height)
   def aspectRatio: Float = width.toFloat / height.toFloat
 
   def drawTime: Long = _drawTimeMillis
 
-  def screen2World(screenPos: Vec2[Int]): Vec2[Float] = screen2World(screenPos, wholeCanvasProjectionArea)
-  def world2Screen(screenPos: Vec2[Float]): Vec2[Int] = world2Screen(screenPos, wholeCanvasProjectionArea)
+  def screen2World(screenPos: Vec2): Vec2 = screen2World(screenPos, wholeCanvasProjectionArea)
+  def world2Screen(screenPos: Vec2): Vec2 = world2Screen(screenPos, wholeCanvasProjectionArea)
 
-  def wholeCanvasProjectionArea: Box2[Float] = Box2[Float](ll = Zero.vec2f, size = Vec2[Float](width, height))
+  def wholeCanvasProjectionArea: Box2 = Box2(ll = Vec2.zero, size = Vec2(width, height))
 
   /**
     * Used by time dependent drawing, e.g. animations

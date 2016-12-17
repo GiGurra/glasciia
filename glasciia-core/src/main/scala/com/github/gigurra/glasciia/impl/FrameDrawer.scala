@@ -12,13 +12,13 @@ import com.github.gigurra.math.{Box2, Vec2}
 trait FrameDrawer {
 
   def batch: Batch
-  def screenBounds: Box2[Int]
+  def screenBounds: Box2
   def camera: OrthographicCamera
 
-  def drawFrame(pixelViewport: Box2[Int] = screenBounds,
+  def drawFrame(pixelViewport: Box2 = screenBounds,
                 clearBuffer: Option[Color] = Some(Color.BLACK),
-                camPos: Vec2[Float] = camera.position,
-                camViewportWithoutZoom: Vec2[Float] = Vec2(camera.viewportWidth, camera.viewportHeight),
+                camPos: Vec2 = camera.position,
+                camViewportWithoutZoom: Vec2 = Vec2(camera.viewportWidth, camera.viewportHeight),
                 camZoom: Float = camera.zoom,
                 yDown: Boolean = false,
                 setOrtho: Boolean = true,
@@ -40,9 +40,9 @@ trait FrameDrawer {
     )(content)
   }
 
-  def drawSubFrame(pixelViewport: Box2[Int],
-                   camPos: Vec2[Float] = camera.position,
-                   camViewportWithoutZoom: Vec2[Float] = Vec2(camera.viewportWidth, camera.viewportHeight),
+  def drawSubFrame(pixelViewport: Box2,
+                   camPos: Vec2 = camera.position,
+                   camViewportWithoutZoom: Vec2 = Vec2(camera.viewportWidth, camera.viewportHeight),
                    camZoom: Float = camera.zoom,
                    yDown: Boolean = false,
                    setOrtho: Boolean = true,
@@ -56,10 +56,10 @@ trait FrameDrawer {
     camera.update()
 
     HdpiUtils.glViewport(
-      pixelViewport.ll.x,
-      pixelViewport.ll.y,
-      pixelViewport.width,
-      pixelViewport.height
+      pixelViewport.ll.x.toInt,
+      pixelViewport.ll.y.toInt,
+      pixelViewport.width.toInt,
+      pixelViewport.height.toInt
     )
 
     batch.setProjectionMatrix(camera.combined)

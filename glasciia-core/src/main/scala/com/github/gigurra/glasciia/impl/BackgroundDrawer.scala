@@ -9,8 +9,8 @@ import com.github.gigurra.math.{Box2, Vec2}
   */
 trait BackgroundDrawer { self: ImageDrawer =>
 
-  def cameraPos: Vec2[Float]
-  def cameraBounds: Box2[Float]
+  def cameraPos: Vec2
+  def cameraBounds: Box2
 
   def drawBackGround(backGround: MultiLayer[TextureRegion]): Unit = {
     for {

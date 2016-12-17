@@ -9,12 +9,12 @@ import com.github.gigurra.math.Vec2
   */
 trait ParticleDrawer { self: ContentDrawer =>
 
-  def drawParticles(effect: ParticleSource, at: Vec2[Float], angle: Float): Unit = {
+  def drawParticles(effect: ParticleSource, at: Vec2, angle: Float): Unit = {
     effect.setAngle(angle)
     drawParticles(effect, at)
   }
 
-  def drawParticles(effect: ParticleSource, at: Vec2[Float]): Unit = {
+  def drawParticles(effect: ParticleSource, at: Vec2): Unit = {
     effect.setPosition(at.x, at.y)
     draw {
       effect.draw(batch, Gdx.graphics.getDeltaTime)

@@ -18,9 +18,9 @@ class ChangingRegionDrawable(fRegion: => TextureRegion) extends GdxScene2dDrawab
 
   def region: TextureRegion = fRegion
 
-  def width: Int = region.getRegionWidth
-  def height: Int = region.getRegionHeight
-  def size: Vec2[Int] = Vec2(region.getRegionWidth, region.getRegionHeight)
+  def width: Float = region.getRegionWidth
+  def height: Float = region.getRegionHeight
+  def size: Vec2 = Vec2(region.getRegionWidth, region.getRegionHeight)
 
   def u: Float = region.getU
   def u2: Float = region.getU2

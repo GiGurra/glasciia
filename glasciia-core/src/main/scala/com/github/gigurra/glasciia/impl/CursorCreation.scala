@@ -11,7 +11,7 @@ import com.github.gigurra.math.Vec2
   */
 trait CursorCreation {
 
-  def createCursor(imgFile: FileHandle, xHotspot: Int = 0, yHotSpot: Int = 0, resizeTo: Vec2[Int] = Vec2(32,32)): Cursor = {
+  def createCursor(imgFile: FileHandle, xHotspot: Int = 0, yHotSpot: Int = 0, resizeTo: Vec2 = Vec2(32,32)): Cursor = {
     createCursor(resizePixmap(new Pixmap(imgFile), resizeTo, deleteSource = true, newFormat = Some(Pixmap.Format.RGBA8888)), xHotspot, yHotSpot)
   }
 

@@ -12,7 +12,7 @@ import scala.language.implicitConversions
 trait ImageImplicits {
 
   implicit class TextureSizeImplicits(texture: Texture) {
-    def size: Vec2[Int] = Vec2(width, height)
+    def size: Vec2 = Vec2(width, height)
     def width: Int = texture.getWidth
     def height: Int = texture.getHeight
     def u: Float = 0.0f
@@ -32,7 +32,7 @@ trait ImageImplicits {
   }
 
   implicit class PixMapSizeImplicits(pixmap: Pixmap) {
-    def size: Vec2[Int] = Vec2(width, height)
+    def size: Vec2 = Vec2(width, height)
     def width: Int = pixmap.getWidth
     def height: Int = pixmap.getHeight
     def u: Float = 0.0f
@@ -44,13 +44,13 @@ trait ImageImplicits {
   }
 
   implicit class TextureRegionSizeImplicits(region: TextureRegion) {
-    def size: Vec2[Int] = Vec2(width, height)
+    def size: Vec2 = Vec2(width, height)
     def width: Int = region.getRegionWidth
     def height: Int = region.getRegionHeight
     def x: Int = region.getRegionX
     def y: Int = region.getRegionY
-    def pos: Vec2[Int] = Vec2(x, y)
-    def bounds: Box2[Int] = Box2(ll = pos, size = size)
+    def pos: Vec2 = Vec2(x, y)
+    def bounds: Box2 = Box2(ll = pos, size = size)
     def u: Float = region.getU
     def u2: Float = region.getU2
     def v: Float = region.getV
@@ -69,13 +69,13 @@ trait ImageImplicits {
 
   implicit class PolygonRegionSizeImplicits(polygon: PolygonRegion) {
     def region: TextureRegion = polygon.getRegion
-    def regionSize: Vec2[Int] = Vec2(regionWidth, regionHeight)
+    def regionSize: Vec2 = Vec2(regionWidth, regionHeight)
     def regionWidth: Int = region.getRegionWidth
     def regionHeight: Int = region.getRegionHeight
     def regionX: Int = region.getRegionX
     def regionY: Int = region.getRegionY
-    def regionPos: Vec2[Int] = Vec2(regionX, regionY)
-    def regionBounds: Box2[Int] = Box2(ll = regionPos, size = regionSize)
+    def regionPos: Vec2 = Vec2(regionX, regionY)
+    def regionBounds: Box2 = Box2(ll = regionPos, size = regionSize)
     def regionU: Float = region.getU
     def regionU2: Float = region.getU2
     def regionV: Float = region.getV
