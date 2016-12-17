@@ -9,7 +9,6 @@ object Glasciia
   extends GLCStyle
     with ColorImplicits
     with VecImplicits
-    with MatImplicits
     with EventFilters
     with FileReadImplicits
     with ParticleSourceImplicits
@@ -18,5 +17,4 @@ object Glasciia
     with GuiImplicits
     with ImageImplicits
     with FontImplicits {
-
 }
