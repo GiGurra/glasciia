@@ -23,8 +23,8 @@ trait EventFilters {
       }
     }
 
-    def fork(mappings: PartialFunction[InputEvent, Seq[InputEvent]]): Seq[InputEvent] = {
-      mappings.applyOrElse(event, (_: Any) => Seq(event))
+    def fork(mappings: PartialFunction[InputEvent, Vector[InputEvent]]): Vector[InputEvent] = {
+      mappings.applyOrElse(event, (_: Any) => Vector(event))
     }
 
     def foreach(filter: PartialFunction[InputEvent, Unit]): Unit = returnEarlyIfConsumed {

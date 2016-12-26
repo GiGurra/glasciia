@@ -26,7 +26,7 @@ object createMainMenu {
     val startBtn = new TextButton("start", skin).fontScale(fontScale)
     val optionsBtn = new TextButton("options", skin).fontScale(fontScale)
     val exitBtn = new TextButton("exit", skin).fontScale(fontScale)
-    val menuButtons = Seq(startBtn, optionsBtn, exitBtn)
+    val menuButtons = Vector(startBtn, optionsBtn, exitBtn)
 
     canConsumeEvents(startBtn).onClick(println("hello"))
 

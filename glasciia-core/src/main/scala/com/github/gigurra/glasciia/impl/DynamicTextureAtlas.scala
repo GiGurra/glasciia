@@ -110,7 +110,7 @@ object DynamicTextureAtlas {
              val texture: Texture,
              val byName: mutable.HashMap[String, AtlasRegion] = new mutable.HashMap[String, AtlasRegion],
              val bounds: mutable.ArrayBuffer[Box2] = new mutable.ArrayBuffer[Box2],
-             var boundsSortedByTop: Seq[Box2] = Nil,
+             var boundsSortedByTop: Vector[Box2] = Vector.empty,
              var dirty: Boolean = false) {
 
     def copyIn(name: String, source: Pixmap, to: Vec2, upload: Boolean): AtlasRegion = {
@@ -138,7 +138,7 @@ object DynamicTextureAtlas {
 
       byName += name -> region
       bounds += itemBounds
-      boundsSortedByTop = bounds.sortBy(_.top)
+      boundsSortedByTop = bounds.sortBy(_.top).toVector
 
       region
     }

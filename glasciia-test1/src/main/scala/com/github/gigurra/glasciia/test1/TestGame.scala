@@ -18,7 +18,7 @@ object TestGame extends Game with Logging {
   setInitValues(this)
   printShaders(canvas.batch)
 
-  val testTimedAct = new Act(Seq(
+  val testTimedAct = new Act(Vector(
     new TimedScene(length = 1000) { override def onEnd(): Unit = { log.info("Scene1 ended")} },
     new TimedScene(length = 1000) { override def onEnd(): Unit = { log.info("Scene2 ended")} },
     new TimedScene(length = 1000) { override def onEnd(): Unit = { log.info("Scene3 ended")} },

@@ -8,8 +8,8 @@ import scala.collection.mutable
   * @param layers
   *               In draw order, i.e. [Furthest away ... Closest]
   */
-case class MultiLayer[T](layers: Seq[Layer[T]])
-case class Layer[T](translationScale: Float, camZero: Vec2, pieces: Seq[Piece[T]])
+case class MultiLayer[T](layers: Vector[Layer[T]])
+case class Layer[T](translationScale: Float, camZero: Vec2, pieces: Vector[Piece[T]])
 case class Piece[T](bounds: Box2, image: T)
 
 object MultiLayer {
@@ -29,7 +29,7 @@ object MultiLayer {
         layers += lb.build()
         this
       }
-      def build(): MultiLayer[T] = new MultiLayer(layers)
+      def build(): MultiLayer[T] = new MultiLayer(layers.toVector)
     }
 
     class LayerBuilder[T](camZero: Vec2, translationScale: Float, pieces: mutable.Buffer[Piece[T]] = mutable.Buffer.empty[Piece[T]]) {
@@ -37,7 +37,7 @@ object MultiLayer {
         pieces += Piece[T](bounds, image)
         this
       }
-      def build(): Layer[T] = Layer[T](translationScale, camZero, pieces)
+      def build(): Layer[T] = Layer[T](translationScale, camZero, pieces.toVector)
     }
   }
 

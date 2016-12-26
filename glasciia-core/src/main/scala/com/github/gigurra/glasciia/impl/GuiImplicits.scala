@@ -62,10 +62,10 @@ trait GuiImplicits extends ActorImplicits {
   }
 
   implicit class StageImplicitOps(stage: Stage) {
-    def actors: Seq[Actor] = stage.getActors.toSeq
+    def actors: Vector[Actor] = stage.getActors.toVector
     def show(): Unit = actors.foreach(_.show())
     def hide(): Unit = actors.foreach(_.hide())
-    def hidden: Boolean = actors.headOption.fold(true)(!_.visible)
+    def hidden: Boolean = stage.getActors.headOption.fold(true)(!_.visible)
     def visible: Boolean = !hidden
   }
 

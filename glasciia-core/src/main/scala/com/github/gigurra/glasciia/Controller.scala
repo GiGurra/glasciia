@@ -6,7 +6,7 @@ package com.github.gigurra.glasciia
 trait Controller {
   def index: Int
   def name: String
-  def axes: Seq[Axis]
-  def buttons: Seq[Button]
+  def axes: Vector[Axis]
+  def buttons: Vector[Button]
   def metadata: Any
 }

@@ -11,7 +11,7 @@ import com.badlogic.gdx.graphics.g2d.freetype.FreeTypeFontGenerator.FreeTypeFont
 object Font {
 
   val DEFAULT_MASK_CHAR: Char = 0x2022
-  val DEFAULT_EXTRA_CHARACTERS = Seq(DEFAULT_MASK_CHAR).mkString
+  val DEFAULT_EXTRA_CHARACTERS = Vector(DEFAULT_MASK_CHAR).mkString
 
   /**
    * See https://github.com/libgdx/libgdx/wiki/Gdx-freetype

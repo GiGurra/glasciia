@@ -17,7 +17,7 @@ import ResourceManager._
   */
 class ResourceManager extends Logging {
 
-  def contextLossHandler: PartialFunction[Any, Seq[Texture]] = defaultContextLossHandler
+  def contextLossHandler: PartialFunction[Any, Vector[Texture]] = defaultContextLossHandler
 
   def add[T : Manifest : ExplicitTypeRequired](path: String, ctor: => T, closer: T => Unit = (x: T) => ())(implicit a: T =:= T): Unit = {
     val resource = ctor
@@ -44,15 +44,15 @@ class ResourceManager extends Logging {
     }
   }
 
-  def listResources: Seq[Resource] = {
-    resources.values.toArray[Resource]
+  def listResources: Vector[Resource] = {
+    resources.values.toVector
   }
 
-  def texturesReferencedBy(resource: Any): Seq[Texture] = {
+  def texturesReferencedBy(resource: Any): Vector[Texture] = {
     contextLossHandler.applyOrElse(resource, (_: Any) => {
       // Some warning perhaps when there exists no handler?
       log.error(s"Don't know how to handle context loss for, $resource, ignoring")
-      Nil
+      Vector.empty
     })
   }
 
@@ -76,30 +76,30 @@ class ResourceManager extends Logging {
   // Private
   import scala.collection.JavaConversions._
 
-  private val defaultContextLossHandler: PartialFunction[Any, Seq[Texture]] = {
+  private val defaultContextLossHandler: PartialFunction[Any, Vector[Texture]] = {
     case x: Resource => texturesReferencedBy(x.data)
-    case x: Texture => Seq(x)
-    case x: TextureRegion => Seq(x.getTexture)
-    case x: GdxAnimation => x.getKeyFrames.map(_.getTexture)
+    case x: Texture => Vector(x)
+    case x: TextureRegion => Vector(x.getTexture)
+    case x: GdxAnimation => x.getKeyFrames.map(_.getTexture).toVector
     case x: Animation => texturesReferencedBy(x.animation : GdxAnimation)
     case x: Animation.Instance => texturesReferencedBy(x.animation : Animation)
-    case x: TextureAtlas => x.getTextures.toSeq
-    case x: InMemoryLoader[_] => x.explicitlyAdded.values.toSeq.flatMap(texturesReferencedBy) ++ texturesReferencedBy(x.loader)
+    case x: TextureAtlas => x.getTextures.toVector
+    case x: InMemoryLoader[_] => x.explicitlyAdded.values.toVector.flatMap(texturesReferencedBy) ++ texturesReferencedBy(x.loader)
     case x: AtlasTextureRegionLoader => texturesReferencedBy(x.atlas)
-    case x: DynamicTextureAtlas => x.getTextures.toSeq
-    case x: NinePatch => Seq(x.getTexture)
-    case x: ParticleSource => x.getEmitters.flatMap(texturesReferencedBy).toSeq
-    case x: ParticleEmitter => Seq(x.getSprite.getTexture)
-    case x: ParticleEffect => x.getEmitters.flatMap(texturesReferencedBy).toSeq
-    case x: BitmapFont => x.getRegions.map(_.getTexture).toSeq
+    case x: DynamicTextureAtlas => x.getTextures.toVector
+    case x: NinePatch => Vector(x.getTexture)
+    case x: ParticleSource => x.getEmitters.flatMap(texturesReferencedBy).toVector
+    case x: ParticleEmitter => Vector(x.getSprite.getTexture)
+    case x: ParticleEffect => x.getEmitters.flatMap(texturesReferencedBy).toVector
+    case x: BitmapFont => x.getRegions.map(_.getTexture).toVector
     case x: MultiLayer[_] => x.layers.flatMap(texturesReferencedBy)
     case x: Layer[_] => x.pieces.flatMap(texturesReferencedBy)
     case x: Piece[_] => texturesReferencedBy(x.image)
-    case x: Cursor => Seq.empty // Cursors don't exist on touch devices where context loss can occur. No factor
+    case x: Cursor => Vector.empty // Cursors don't exist on touch devices where context loss can occur. No factor
     // To handle skins, actors, guis, you should let them depend on resources in this ResourceManager, and not allocate any free floating textures of their own
-    case x: Stage => Seq.empty
-    case x: Actor => Seq.empty
-    case x: Skin => Seq.empty
+    case x: Stage => Vector.empty
+    case x: Actor => Vector.empty
+    case x: Skin => Vector.empty
   }
 
   private def doGetResource(path: String): Option[Any] = {
