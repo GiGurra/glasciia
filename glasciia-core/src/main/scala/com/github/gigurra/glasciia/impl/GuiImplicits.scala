@@ -5,7 +5,6 @@ import com.badlogic.gdx.scenes.scene2d.ui.{Cell, Label, Skin, Table, TextButton,
 import com.badlogic.gdx.scenes.scene2d.utils.Drawable
 import com.badlogic.gdx.scenes.scene2d.{Actor, Stage}
 
-import scala.collection.JavaConversions._
 import scala.language.implicitConversions
 import scala.reflect.ClassTag
 
@@ -92,11 +91,17 @@ object GuiImplicitsImpl {
   }
 
   implicit class StageImplicitOps(val stage: Stage) extends AnyVal {
-    def actors: Vector[Actor] = stage.getActors.toVector
-    def show(): Unit = actors.foreach(_.show())
-    def hide(): Unit = actors.foreach(_.hide())
-    def hidden: Boolean = stage.getActors.headOption.fold(true)(!_.visible)
-    def visible: Boolean = !hidden
+    import scala.collection.JavaConverters._
+    def show(): Unit = stage.getActors.asScala.foreach(_.show())
+    def hide(): Unit = stage.getActors.asScala.foreach(_.hide())
+    def hidden: Boolean = !visible
+    def visible: Boolean = {
+      if (stage.getActors.size > 0) {
+        stage.getActors.first().isVisible
+      } else {
+        false
+      }
+    }
   }
 
   implicit class TextButtonImplicitsOps(val button: TextButton) extends AnyVal {

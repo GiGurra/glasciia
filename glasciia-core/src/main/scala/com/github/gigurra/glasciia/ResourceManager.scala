@@ -74,7 +74,7 @@ class ResourceManager extends Logging {
 
   /////////////////////////////////////////////
   // Private
-  import scala.collection.JavaConversions._
+  import scala.collection.JavaConverters._
 
   private val defaultContextLossHandler: PartialFunction[Any, Vector[Texture]] = {
     case x: Resource => texturesReferencedBy(x.data)
@@ -83,15 +83,15 @@ class ResourceManager extends Logging {
     case x: GdxAnimation[_] => x.getKeyFrames.flatMap(texturesReferencedBy).toVector
     case x: Animation => texturesReferencedBy(x.animation)
     case x: Animation.Instance => texturesReferencedBy(x.animation : Animation)
-    case x: TextureAtlas => x.getTextures.toVector
+    case x: TextureAtlas => x.getTextures.asScala.toVector
     case x: InMemoryLoader[_] => x.explicitlyAdded.values.toVector.flatMap(texturesReferencedBy) ++ texturesReferencedBy(x.loader)
     case x: AtlasTextureRegionLoader => texturesReferencedBy(x.atlas)
-    case x: DynamicTextureAtlas => x.getTextures.toVector
+    case x: DynamicTextureAtlas => x.getTextures.asScala.toVector
     case x: NinePatch => Vector(x.getTexture)
-    case x: ParticleSource => x.getEmitters.flatMap(texturesReferencedBy).toVector
+    case x: ParticleSource => x.getEmitters.asScala.flatMap(texturesReferencedBy).toVector
     case x: ParticleEmitter => Vector(x.getSprite.getTexture)
-    case x: ParticleEffect => x.getEmitters.flatMap(texturesReferencedBy).toVector
-    case x: BitmapFont => x.getRegions.map(_.getTexture).toVector
+    case x: ParticleEffect => x.getEmitters.asScala.flatMap(texturesReferencedBy).toVector
+    case x: BitmapFont => x.getRegions.asScala.map(_.getTexture).toVector
     case x: MultiLayer[_] => x.layers.flatMap(texturesReferencedBy)
     case x: Layer[_] => x.pieces.flatMap(texturesReferencedBy)
     case x: Piece[_] => texturesReferencedBy(x.image)
