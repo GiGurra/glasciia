@@ -19,21 +19,21 @@ class ResourceManager extends Logging {
 
   def contextLossHandler: PartialFunction[Any, Vector[Texture]] = defaultContextLossHandler
 
-  def add[T : Manifest : ExplicitTypeRequired](path: String, ctor: => T, closer: T => Unit = (x: T) => ())(implicit a: T =:= T): Unit = {
+  def add[T : Manifest : ExplicitTypeRequired](path: AnyRef, ctor: => T, closer: T => Unit = (_: T) => ())(implicit a: T =:= T): Unit = {
     val resource = ctor
     resources.put(path, Resource(path, resource, () => closer(resource), implicitly[Manifest[T]])).foreach(_.close())
   }
 
-  def get[T: Manifest : ExplicitTypeRequired](path: String): Option[T] = doGetResource(path).map {
+  def get[T: Manifest : ExplicitTypeRequired](path: AnyRef): Option[T] = doGetResource(path).map {
     case resource: T => resource
     case resource => throw new ClassCastException(s"Resource of incorrect type (exp: ${implicitly[Manifest[T]]}, actual: ${resource.getClass}")
   }
 
-  def apply[T : Manifest : ExplicitTypeRequired](path: String): T = {
-    apply[T](path, default = throw new NoSuchElementException(s"No resource stored on path '$path'"))
+  def apply[T : Manifest : ExplicitTypeRequired](path: AnyRef): T = {
+    apply[T](AnyRef, default = throw new NoSuchElementException(s"No resource stored on path '$path'"))
   }
 
-  def apply[T : Manifest : ExplicitTypeRequired](path: String, default: => T, addDefault: Boolean = true): T = {
+  def apply[T : Manifest : ExplicitTypeRequired](path: AnyRef, default: => T, addDefault: Boolean = true): T = {
     get[T](path) match {
       case Some(resource) => resource
       case None =>
@@ -95,22 +95,22 @@ class ResourceManager extends Logging {
     case x: MultiLayer[_] => x.layers.flatMap(texturesReferencedBy)
     case x: Layer[_] => x.pieces.flatMap(texturesReferencedBy)
     case x: Piece[_] => texturesReferencedBy(x.image)
-    case x: Cursor => Vector.empty // Cursors don't exist on touch devices where context loss can occur. No factor
+    case _: Cursor => Vector.empty // Cursors don't exist on touch devices where context loss can occur. No factor
     // To handle skins, actors, guis, you should let them depend on resources in this ResourceManager, and not allocate any free floating textures of their own
-    case x: Stage => Vector.empty
-    case x: Actor => Vector.empty
-    case x: Skin => Vector.empty
+    case _: Stage => Vector.empty
+    case _: Actor => Vector.empty
+    case _: Skin => Vector.empty
   }
 
-  private def doGetResource(path: String): Option[Any] = {
+  private def doGetResource(path: AnyRef): Option[Any] = {
     resources.get(path).map(_.data)
   }
 
-  private val resources = new scala.collection.concurrent.TrieMap[String, Resource]
+  private val resources = new scala.collection.concurrent.TrieMap[AnyRef, Resource]
 }
 
 object ResourceManager {
-  case class Resource(path: String, data: Any, closer: () => Unit, manifest: Manifest[_]) {
+  case class Resource(path: AnyRef, data: Any, closer: () => Unit, manifest: Manifest[_]) {
     def close(): Unit = closer()
     def class_ : Class[_] = manifest.runtimeClass
     override def toString: String = {
@@ -118,7 +118,7 @@ object ResourceManager {
         val simpleName = m.runtimeClass.getSimpleName
         m.typeArguments match {
           case Nil => simpleName
-          case typeArgs => s"$simpleName[${m.typeArguments.map(toStringManifest).mkString(", ")}]"
+          case _ => s"$simpleName[${m.typeArguments.map(toStringManifest).mkString(", ")}]"
         }
       }
       s"$path: ${toStringManifest(manifest)}"
