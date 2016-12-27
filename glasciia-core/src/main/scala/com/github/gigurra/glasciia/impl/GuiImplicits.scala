@@ -13,6 +13,36 @@ import scala.reflect.ClassTag
   * Created by johan on 2016-10-02.
   */
 trait GuiImplicits extends ActorImplicits with StageImplicits {
+  import GuiImplicitsImpl._
+
+  implicit def toSkinImplicitOps(skin: Skin): SkinImplicitOps = {
+    new SkinImplicitOps(skin)
+  }
+
+  implicit def toTableImplicitsOps(table: Table): TableImplicitsOps = {
+    new TableImplicitsOps(table)
+  }
+
+  implicit def toActorImplicitsOps(actor: Actor): ActorImplicitsOps = {
+    new ActorImplicitsOps(actor)
+  }
+
+  implicit def toStageImplicitOps(stage: Stage): StageImplicitOps = {
+    new StageImplicitOps(stage)
+  }
+
+  implicit def toTextButtonImplicitsOps(button: TextButton): TextButtonImplicitsOps = {
+    new TextButtonImplicitsOps(button)
+  }
+
+  implicit def toLabelImplicitsOps(label: Label): LabelImplicitsOps = {
+    new LabelImplicitsOps(label)
+  }
+}
+
+object GuiImplicits extends GuiImplicits
+
+object GuiImplicitsImpl {
 
   class skinOps[SelfType](self: SelfType, val skin: Skin) {
 
@@ -54,14 +84,14 @@ trait GuiImplicits extends ActorImplicits with StageImplicits {
     }
   }
 
-  implicit class ActorImplicitsOps(actor: Actor) {
+  implicit class ActorImplicitsOps(val actor: Actor) extends AnyVal {
     def show(): Unit = actor.setVisible(true)
     def hide(): Unit = actor.setVisible(false)
     def hidden: Boolean = !actor.isVisible
     def visible: Boolean = !hidden
   }
 
-  implicit class StageImplicitOps(stage: Stage) {
+  implicit class StageImplicitOps(val stage: Stage) extends AnyVal {
     def actors: Vector[Actor] = stage.getActors.toVector
     def show(): Unit = actors.foreach(_.show())
     def hide(): Unit = actors.foreach(_.hide())
@@ -69,19 +99,17 @@ trait GuiImplicits extends ActorImplicits with StageImplicits {
     def visible: Boolean = !hidden
   }
 
-  implicit class TextButtonImplicitsOps(button: TextButton) {
+  implicit class TextButtonImplicitsOps(val button: TextButton) extends AnyVal {
     def fontScale(value: Float): TextButton = {
       button.getLabel.setFontScale(value)
       button
     }
   }
 
-  implicit class LabelImplicitsOps(label: Label) {
+  implicit class LabelImplicitsOps(val label: Label) extends AnyVal {
     def fontScale(value: Float): Label = {
       label.setFontScale(value)
       label
     }
   }
 }
-
-object GuiImplicits extends GuiImplicits
