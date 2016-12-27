@@ -5,84 +5,78 @@ import com.badlogic.gdx.scenes.scene2d.utils.FocusListener.FocusEvent
 import com.badlogic.gdx.scenes.scene2d.utils.{ClickListener, FocusListener}
 import com.github.gigurra.glasciia.GameEvent
 import com.github.gigurra.glasciia.GameEvent.{CharTyped, KeyDown, KeyUp, KeyboardEvent}
-
-trait CanFireEvents[-T] {
-  def fire(t: T, event: InputEvent): Unit
-}
-
-object CanFireEvents {
-  implicit val actorFirer: CanFireEvents[Actor] = new CanFireEvents[Actor] {
-    override def fire(actor: Actor, event: InputEvent): Unit = actor.fire(event)
-  }
-}
-
-trait CanAddEventListener[-T] {
-  def addListener(t: T, l: EventListener): Unit
-}
-
-object CanAddEventListener {
-  implicit val actorCanAddListener: CanAddEventListener[Actor] = new CanAddEventListener[Actor] {
-    def addListener(t: Actor, l: EventListener): Unit = t.addListener(l)
-  }
-  implicit val stageCanAddListener: CanAddEventListener[Stage] = new CanAddEventListener[Stage] {
-    def addListener(t: Stage, l: EventListener): Unit = t.addListener(l)
-  }
-}
-
+import scala.language.implicitConversions
 /**
   * Created by johan on 2016-10-09.
   */
 trait ActorImplicits {
 
-  type Emitter = Actor
+  implicit def actorCanTakeKeyboardFocus[T <: Actor](self: T): ActorImplicitsImpl.canTakeKeyboardFocus[T] = {
+    new ActorImplicitsImpl.canTakeKeyboardFocus(self)
+  }
 
-  implicit class canTakeKeyboardFocus[Subject <: Actor](self: Subject) {
+  implicit def actorCanFireEvents[T <: Actor](self: T): ActorImplicitsImpl.canFireEvents[T] = {
+    new ActorImplicitsImpl.canFireEvents(self)
+  }
+
+  implicit def actorCanFireAndReceiveEvents[T <: Actor](self: T): ActorImplicitsImpl.canFireAndReceiveEvents[T] = {
+    new ActorImplicitsImpl.canFireAndReceiveEvents(self)
+  }
+
+  implicit def actorCanConsumeEvents[T <: Actor](self: T): ActorImplicitsImpl.canConsumeEvents[T] = {
+    new ActorImplicitsImpl.canConsumeEvents(self)
+  }
+}
+
+object ActorImplicits extends ActorImplicits
+
+object ActorImplicitsImpl {
+
+  implicit class canTakeKeyboardFocus[T <: Actor](val self: T) extends AnyVal {
 
     def setKeyFocus(): Unit = {
       self.getStage.setKeyboardFocus(self)
     }
   }
 
-  implicit class canFireEvents[Shooter : CanFireEvents](self: Shooter) {
+  implicit class canFireEvents[T <: Actor](val self: T) extends AnyVal {
 
-    def click(): Shooter = {
-      val eventFirer = implicitly[CanFireEvents[Shooter]]
-
+    def click(): Actor = {
       val event1 = new InputEvent()
       event1.setType(InputEvent.Type.touchDown)
-      eventFirer.fire(self, event1)
+      self.fire(event1)
 
       val event2 = new InputEvent()
       event2.setType(InputEvent.Type.touchUp)
-      eventFirer.fire(self, event2)
+      self.fire(event2)
 
       self
     }
   }
 
-  implicit class canFireAndReceiveEvents[Subject : CanFireEvents : CanAddEventListener](subject: Subject) {
+  implicit class canFireAndReceiveEvents[T <: Actor](val self: T) extends AnyVal {
 
     def mapKeyDownToClick(vKey: Int, consume: Boolean = true): InputListener = {
-      subject.on({ case KeyDown(`vKey`) => subject.click()}, consume = consume)
+      self.on({ case KeyDown(`vKey`) => self.click()}, consume = consume)
     }
   }
 
-  implicit class canConsumeEvents[Receiver : CanAddEventListener](self: Receiver) {
+  implicit class canConsumeEvents[T <: Actor] (val self: T) extends AnyVal {
     def on[R](f: PartialFunction[GameEvent.InputEvent, R], consume: Boolean = true): InputListener = addAndReturnListener(keyListener(f, consume))
 
-    def onClick(f: (Receiver, Float, Float) => Unit): InputListener = addAndReturnListener(clickListener((x, y) => f(self, x,y)))
-    def onClick(f: (Float, Float) => Unit): InputListener = onClick((_: Receiver, x: Float, y: Float) => f(x,y))
-    def onClick(f: (Receiver => Unit)): InputListener = onClick((receiver: Receiver, _: Float, _: Float) => f(receiver))
+    def onClick(f: (Actor, Float, Float) => Unit): InputListener = addAndReturnListener(clickListener((x, y) => f(self, x,y)))
+    def onClick(f: (Float, Float) => Unit): InputListener = onClick((_: Actor, x: Float, y: Float) => f(x,y))
+    def onClick(f: (Actor => Unit)): InputListener = onClick((receiver: Actor, _: Float, _: Float) => f(receiver))
     def onClick(f: => Unit): InputListener = onClick((_: Float, _: Float) => f)
 
-    def onKeyFocusChange(f: (Receiver, Emitter, Boolean) => Unit): FocusListener = addAndReturnListener(focusListener((emitter, newState) => f(self, emitter, newState)))
-    def onKeyFocusChange(f: (Receiver, Boolean) => Unit): FocusListener = addAndReturnListener(focusListener((emitter, newState) => f(self, newState)))
-    def onKeyFocusChange(f: Boolean => Unit): FocusListener = addAndReturnListener(focusListener((emitter, newState) => f(newState)))
-    def onKeyFocusGained(f: (Receiver, Emitter) => Unit): FocusListener = onKeyFocusChange((self, emitter, newState) => if (newState) f(self, emitter))
-    def onKeyFocusGained(f: Receiver => Unit): FocusListener = onKeyFocusGained({ (a, _) => f(a) }: (Receiver, Emitter) => Unit)
+    def onKeyFocusChange(f: (T, Actor, Boolean) => Unit): FocusListener = addAndReturnListener(focusListener((emitter, newState) => f(self, emitter, newState)))
+    def onKeyFocusChange(f: (T, Boolean) => Unit): FocusListener = addAndReturnListener(focusListener((_, newState) => f(self, newState)))
+    def onKeyFocusChange(f: Boolean => Unit): FocusListener = addAndReturnListener(focusListener((_, newState) => f(newState)))
+    def onKeyFocusGained(f: (T, Actor) => Unit): FocusListener = onKeyFocusChange((self, emitter, newState) => if (newState) f(self, emitter))
+    def onKeyFocusGained(f: T => Unit): FocusListener = onKeyFocusGained({ (a, _) => f(a) }: (T, Actor) => Unit)
     def onKeyFocusGained(f: => Unit): FocusListener = onKeyFocusGained(_ => f)
-    def onKeyFocusLost(f: (Receiver, Emitter) => Unit): FocusListener = onKeyFocusChange((self, emitter, newState) => if (!newState) f(self, emitter))
-    def onKeyFocusLost(f: Receiver => Unit): FocusListener = onKeyFocusLost({ (a, _) => f(a) }: (Receiver, Emitter) => Unit)
+    def onKeyFocusLost(f: (T, Actor) => Unit): FocusListener = onKeyFocusChange((self, emitter, newState) => if (!newState) f(self, emitter))
+    def onKeyFocusLost(f: T => Unit): FocusListener = onKeyFocusLost({ (a, _) => f(a) }: (T, Actor) => Unit)
     def onKeyFocusLost(f: => Unit): FocusListener = onKeyFocusLost(_ => f)
 
     def blockInputEventPropagation(): InputListener = addAndReturnListener(new InputListener{
@@ -92,14 +86,14 @@ trait ActorImplicits {
       }
     })
 
-    private def addAndReturnListener[T <: EventListener](listener: T): T ={
-      implicitly[CanAddEventListener[Receiver]].addListener(self, listener)
+    private def addAndReturnListener[L <: EventListener](listener: L): L ={
+      self.addListener(listener)
       listener
     }
   }
 
-  private def focusListener(f: (Emitter, Boolean) => Unit): FocusListener = new FocusListener {
-    override def keyboardFocusChanged(event: FocusEvent, emitter: Emitter, focused: Boolean): Unit = {
+  private def focusListener(f: (Actor, Boolean) => Unit): FocusListener = new FocusListener {
+    override def keyboardFocusChanged(event: FocusEvent, emitter: Actor, focused: Boolean): Unit = {
       f(emitter, focused)
     }
   }
@@ -109,17 +103,16 @@ trait ActorImplicits {
   }
 
   private def keyListener[R](f: PartialFunction[KeyboardEvent, R], consume: Boolean): InputListener = new InputListener {
-    override def keyDown(event: InputEvent, keycode: Int): Boolean = tryConsume(f, KeyDown(keycode)) && consume
-    override def keyUp(event: InputEvent, keycode: Int): Boolean = tryConsume(f, KeyUp(keycode)) && consume
-    override def keyTyped(event: InputEvent, character: Char): Boolean = tryConsume(f, CharTyped(character)) && consume
+    private val lifted: (GameEvent.KeyboardEvent) => Option[R] = f.lift
+    override def keyDown(event: InputEvent, keycode: Int): Boolean = tryConsume(lifted, KeyDown(keycode)) && consume
+    override def keyUp(event: InputEvent, keycode: Int): Boolean = tryConsume(lifted, KeyUp(keycode)) && consume
+    override def keyTyped(event: InputEvent, character: Char): Boolean = tryConsume(lifted, CharTyped(character)) && consume
   }
 
-  private def tryConsume[Event, R](f: PartialFunction[Event, R], event: Event): Boolean = {
-    f.lift.apply(event) match {
+  private def tryConsume[R](lifted: (GameEvent.KeyboardEvent) => Option[R], event: GameEvent.KeyboardEvent): Boolean = {
+    lifted.apply(event) match {
       case Some(_) => true
       case None => false
     }
   }
 }
-
-object ActorImplicits extends ActorImplicits

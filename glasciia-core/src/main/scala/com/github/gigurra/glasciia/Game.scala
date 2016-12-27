@@ -15,8 +15,10 @@ abstract class Game {
   def close(): Unit = Gdx.app.exit()
   def time: Long = canvas.drawTime
 
+  private lazy val liftedEventHandler = eventHandler.lift
+
   private[glasciia] def consume(ev: GameEvent): Boolean = {
-    eventHandler.lift.apply(ev) match {
+    liftedEventHandler.apply(ev) match {
       case Some(_) => true
       case None => false
     }

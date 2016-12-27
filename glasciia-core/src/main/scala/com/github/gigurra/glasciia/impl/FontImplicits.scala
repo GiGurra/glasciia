@@ -13,8 +13,16 @@ import scala.language.implicitConversions
   * Created by johan on 2016-10-03.
   */
 trait FontImplicits {
+  implicit def toFontImplicits(font: BitmapFont): FontImplicitsImpl.FontImplicitOps = {
+    new FontImplicitsImpl.FontImplicitOps(font)
+  }
+}
 
-  implicit class FontImplicitOps(bitmapFont: BitmapFont) {
+object FontImplicits extends FontImplicits
+
+object FontImplicitsImpl {
+
+  implicit class FontImplicitOps(val bitmapFont: BitmapFont) extends AnyVal {
 
     def size: Float = bitmapFont.getCapHeight
 
@@ -56,5 +64,3 @@ trait FontImplicits {
   }
 
 }
-
-object FontImplicits extends FontImplicits

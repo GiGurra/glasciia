@@ -13,8 +13,26 @@ import scala.language.implicitConversions
   */
 trait EventFilters {
 
+  implicit def toFilterableEvent(event: InputEvent): EventFiltersImpl.FilterableInputEvent = {
+    new EventFiltersImpl.FilterableInputEvent(event)
+  }
+
+  implicit def stage2Filter(stage: Stage): PartialFunction[InputEvent, Unit] = {
+    if (stage.visible) {
+      EventFiltersImpl.inputProcessor2Filter(stage)
+    } else {
+      PartialFunction.empty
+    }
+  }
+
+}
+
+object EventFilters extends EventFilters
+
+object EventFiltersImpl {
+
   // Used for custom controllers and remapping of controls
-  implicit class FilterableInputEvent(event: InputEvent) {
+  implicit class FilterableInputEvent(val event: InputEvent) extends AnyVal {
 
     private def returnEarlyIfConsumed(next: => InputEvent): InputEvent = {
       event match {
@@ -62,14 +80,6 @@ trait EventFilters {
     def filterGesturesIf(state: GestureState, condition: Boolean, filter: PartialFunction[GestureEvent, Unit]): InputEvent = filterIf(condition, state.toInputProcessor(filter))
   }
 
-  implicit def stage2Filter(stage: Stage): PartialFunction[InputEvent, Unit] = {
-    if (stage.visible) {
-      inputProcessor2Filter(stage)
-    } else {
-      PartialFunction.empty
-    }
-  }
-
   implicit def inputProcessor2Filter(inputProcessor: InputProcessor): PartialFunction[InputEvent, Unit] = new PartialFunction[InputEvent, Unit] {
 
     override def isDefinedAt(x: InputEvent): Boolean = throw new RuntimeException(s"Cannot make preemptive check if event will be consumed by $inputProcessor")
@@ -107,5 +117,3 @@ trait EventFilters {
     }
   }
 }
-
-object EventFilters extends EventFilters

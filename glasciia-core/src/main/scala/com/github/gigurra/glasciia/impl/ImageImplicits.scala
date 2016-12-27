@@ -10,8 +10,30 @@ import scala.language.implicitConversions
   * Created by johan on 2016-10-03.
   */
 trait ImageImplicits {
+  import ImageImplicitsImpl._
 
-  implicit class TextureSizeImplicits(texture: Texture) {
+  implicit def img2TextureSizeImplicits(texture: Texture): TextureSizeImplicits = {
+    new TextureSizeImplicits(texture)
+  }
+
+  implicit def img2PixMapSizeImplicits(pixmap: Pixmap): PixMapSizeImplicits = {
+    new PixMapSizeImplicits(pixmap)
+  }
+
+  implicit def img2TextureRegionSizeImplicits(region: TextureRegion): TextureRegionSizeImplicits = {
+    new TextureRegionSizeImplicits(region)
+  }
+
+  implicit def img2PolygonRegionSizeImplicits(polygon: PolygonRegion): PolygonRegionSizeImplicits = {
+    new PolygonRegionSizeImplicits(polygon)
+  }
+}
+
+object ImageImplicits extends ImageImplicits
+
+object ImageImplicitsImpl {
+
+  implicit class TextureSizeImplicits(val texture: Texture) extends AnyVal {
     def size: Vec2 = Vec2(width, height)
     def width: Int = texture.getWidth
     def height: Int = texture.getHeight
@@ -31,7 +53,7 @@ trait ImageImplicits {
     }
   }
 
-  implicit class PixMapSizeImplicits(pixmap: Pixmap) {
+  implicit class PixMapSizeImplicits(val pixmap: Pixmap) extends AnyVal {
     def size: Vec2 = Vec2(width, height)
     def width: Int = pixmap.getWidth
     def height: Int = pixmap.getHeight
@@ -43,7 +65,7 @@ trait ImageImplicits {
     def vvSize: Float = v2 - v
   }
 
-  implicit class TextureRegionSizeImplicits(region: TextureRegion) {
+  implicit class TextureRegionSizeImplicits(val region: TextureRegion) extends AnyVal {
     def size: Vec2 = Vec2(width, height)
     def width: Int = region.getRegionWidth
     def height: Int = region.getRegionHeight
@@ -67,7 +89,7 @@ trait ImageImplicits {
     }
   }
 
-  implicit class PolygonRegionSizeImplicits(polygon: PolygonRegion) {
+  implicit class PolygonRegionSizeImplicits(val polygon: PolygonRegion) extends AnyVal {
     def region: TextureRegion = polygon.getRegion
     def regionSize: Vec2 = Vec2(regionWidth, regionHeight)
     def regionWidth: Int = region.getRegionWidth
@@ -84,5 +106,3 @@ trait ImageImplicits {
     def regionVVSize: Float = regionV2 - regionV
   }
 }
-
-object ImageImplicits extends ImageImplicits

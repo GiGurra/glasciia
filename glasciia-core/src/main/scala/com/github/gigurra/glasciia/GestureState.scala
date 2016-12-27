@@ -17,7 +17,6 @@ case class GestureState(halfTapSquareSize: Float = 20.0f,
                         maxFlingDelay: Float = 0.15f,
                         historySize: Int = 100) {
 
-
   def toInputProcessor(mappings: PartialFunction[GestureEvent, Unit]): InputProcessor = {
     this.mappings = mappings
     detector
@@ -29,8 +28,9 @@ case class GestureState(halfTapSquareSize: Float = 20.0f,
 
   private var mappings = PartialFunction.empty[GestureEvent, Unit]
   private val detector = new GestureDetector(halfTapSquareSize, tapCountInterval, longPressDuration, maxFlingDelay, new GestureListener {
+    private val liftedMappings = mappings.lift
     def consume(event: GestureEvent): Boolean = {
-      mappings.lift.apply(event) match {
+      liftedMappings.apply(event) match {
         case Some(_) => true
         case None => false
       }

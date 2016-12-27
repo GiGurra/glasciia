@@ -28,7 +28,7 @@ object createMainMenu {
     val exitBtn = new TextButton("exit", skin).fontScale(fontScale)
     val menuButtons = Vector(startBtn, optionsBtn, exitBtn)
 
-    canConsumeEvents(startBtn).onClick(println("hello"))
+    startBtn.onClick(println("hello"))
 
     startBtn.onClick(stage.hide())
     exitBtn.onClick(app.close())
@@ -40,6 +40,7 @@ object createMainMenu {
         case KeyDown(Keys.DOWN) => go(+1)
         case KeyDown(Keys.UP)   => go(-1)
       }
+
       btn.onKeyFocusGained(_.setStyle(menu.style[TextButtonStyle]("default:keyboard-focus")))
       btn.onKeyFocusLost(_.setStyle(menu.style[TextButtonStyle]))
       btn.mapKeyDownToClick(Keys.ENTER)

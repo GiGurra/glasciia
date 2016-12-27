@@ -12,7 +12,7 @@ import scala.reflect.ClassTag
 /**
   * Created by johan on 2016-10-02.
   */
-trait GuiImplicits extends ActorImplicits {
+trait GuiImplicits extends ActorImplicits with StageImplicits {
 
   class skinOps[SelfType](self: SelfType, val skin: Skin) {
 
