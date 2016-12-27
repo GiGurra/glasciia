@@ -26,7 +26,7 @@ object loadResources extends Logging {
     loadMipMaps(regions)
 
     log.info("Loaded Resources:")
-    for (resource <- resources.listResources.sortBy(_.path)) {
+    for (resource <- resources.listResources.sortBy(_.path.toString)) {
       log.info(s"  $resource")
     }
     resources
