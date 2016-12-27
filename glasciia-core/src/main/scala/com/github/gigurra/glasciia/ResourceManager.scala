@@ -30,7 +30,7 @@ class ResourceManager extends Logging {
   }
 
   def apply[T : Manifest : ExplicitTypeRequired](path: AnyRef): T = {
-    apply[T](AnyRef, default = throw new NoSuchElementException(s"No resource stored on path '$path'"))
+    apply[T](path, default = throw new NoSuchElementException(s"No resource stored on path '$path'"))
   }
 
   def apply[T : Manifest : ExplicitTypeRequired](path: AnyRef, default: => T, addDefault: Boolean = true): T = {
