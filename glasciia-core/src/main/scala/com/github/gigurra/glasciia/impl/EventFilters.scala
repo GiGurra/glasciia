@@ -85,16 +85,14 @@ object EventFiltersImpl {
     override def isDefinedAt(x: InputEvent): Boolean = throw new RuntimeException(s"Cannot make preemptive check if event will be consumed by $inputProcessor")
 
     override def applyOrElse[A1 <: InputEvent, B1 >: Unit](event: A1, default: (A1) => B1): B1 = {
-      tryApply(event) match {
-        case true =>
-        case false => default(event)
+      if (!tryApply(event)) {
+        default(event)
       }
     }
 
     override def apply(event: InputEvent): Unit = {
-      tryApply(event) match {
-        case true =>
-        case false => throw new IllegalArgumentException(s"$inputProcessor did not consume $event")
+      if (!tryApply(event)) {
+        throw new IllegalArgumentException(s"$inputProcessor did not consume $event")
       }
     }
 
@@ -111,7 +109,7 @@ object EventFiltersImpl {
         case TouchUp(pos, ptr, btn)   => inputProcessor.touchUp(pos.x.toInt, pos.y.toInt, ptr, btn)
         case TouchDrag(pos, ptr)      => inputProcessor.touchDragged(pos.x.toInt, pos.y.toInt, ptr)
       }
-      case clEvent: ControllerEvent => false // TODO: Some kind of logging? Ignored: Needs to be mapped to something the gdx gui can understand..
+      case _: ControllerEvent => false // TODO: Some kind of logging? Ignored: Needs to be mapped to something the gdx gui can understand..
       case ConsumedEvent => false
       case _ => false
     }
