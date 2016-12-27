@@ -11,7 +11,7 @@ import com.github.gigurra.math.Vec2
 /**
   * Created by johan on 2016-10-02.
   */
-case class Animation(animation: GdxAnimation,
+case class Animation(animation: GdxAnimation[TextureRegion],
                      frameSize: Vec2) {
 
   def dt: Long = (animation.getFrameDuration.toDouble * 1000.0).toLong
@@ -23,7 +23,7 @@ case class Animation(animation: GdxAnimation,
 
 object Animation {
   import scala.language.implicitConversions
-  implicit def animToGdxAnim(animation: Animation): GdxAnimation = animation.animation
+  implicit def animToGdxAnim(animation: Animation): GdxAnimation[TextureRegion] = animation.animation
 
   def fromFile(source: FileHandle,
                nx: Int,
@@ -85,6 +85,6 @@ object Animation {
   object Instance {
     import scala.language.implicitConversions
     implicit def instance2anim(instance: Instance): Animation = instance.animation
-    implicit def instance2GdxAnim(instance: Instance): GdxAnimation = instance.animation.animation
+    implicit def instance2GdxAnim(instance: Instance): GdxAnimation[TextureRegion] = instance.animation.animation
   }
 }

@@ -80,8 +80,8 @@ class ResourceManager extends Logging {
     case x: Resource => texturesReferencedBy(x.data)
     case x: Texture => Vector(x)
     case x: TextureRegion => Vector(x.getTexture)
-    case x: GdxAnimation => x.getKeyFrames.map(_.getTexture).toVector
-    case x: Animation => texturesReferencedBy(x.animation : GdxAnimation)
+    case x: GdxAnimation[_] => x.getKeyFrames.flatMap(texturesReferencedBy).toVector
+    case x: Animation => texturesReferencedBy(x.animation)
     case x: Animation.Instance => texturesReferencedBy(x.animation : Animation)
     case x: TextureAtlas => x.getTextures.toVector
     case x: InMemoryLoader[_] => x.explicitlyAdded.values.toVector.flatMap(texturesReferencedBy) ++ texturesReferencedBy(x.loader)
@@ -111,7 +111,7 @@ class ResourceManager extends Logging {
 
 object ResourceManager {
   case class Resource(path: String, data: Any, closer: () => Unit, manifest: Manifest[_]) {
-    def close() = closer()
+    def close(): Unit = closer()
     def class_ : Class[_] = manifest.runtimeClass
     override def toString: String = {
       def toStringManifest(m: Manifest[_]): String = {
