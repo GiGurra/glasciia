@@ -11,5 +11,5 @@ trait GlasciiaUnitTest {
     * Created by johan on 2016-12-10.
     */
   GdxNativesLoader.load()
-  Logging.overrideBackend(Logging.TestLoggingBackend)
+  Logging.overrideBackend(Logging.SystemOutErrBackend)
 }

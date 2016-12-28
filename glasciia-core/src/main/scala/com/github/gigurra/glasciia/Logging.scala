@@ -21,15 +21,18 @@ object Logging {
   val DEBUG = Application.LOG_DEBUG
 
   def setGlobalLevel(level: Int): Unit = {
-    backend.setLogLevel(level)
+    backends.foreach(_.setLogLevel(level))
   }
 
-  // Below are mostly used for tests
   def overrideBackend(backend: Backend): Unit = {
-    this.backend = backend
+    this.backends = Vector(backend)
   }
 
-  @volatile private[glasciia] var backend: Backend = GdxLoggingBackend
+  def addBackend(backend: Backend): Unit = {
+    this.backends :+= backend
+  }
+
+  @volatile private[glasciia] var backends: Vector[Backend] = Vector(GdxLoggingBackend)
 
   trait Backend {
     def setLogLevel(level: Int): Unit
@@ -49,7 +52,35 @@ object Logging {
     override def setLogLevel(level: Int): Unit = Gdx.app.setLogLevel(level)
   }
 
-  object TestLoggingBackend extends Backend {
+  object SystemOutBackend extends Backend {
+    @volatile private var _globalLogLevel: Int = INFO
+
+    override def error(s: String, msg: String, exc: Throwable): Unit = {
+      System.out.println(s + ": " + msg)
+      exc.printStackTrace(System.out)
+    }
+    override def error(s: String, msg: String): Unit = System.out.println(s + ": " + msg)
+    override def log(s: String, msg: String): Unit = System.out.println(s + ": " + msg)
+    override def debug(s: String, msg: String): Unit = System.out.println(s + ": " + msg)
+    override def globalLogLevel: Int = _globalLogLevel
+    override def setLogLevel(level: Int): Unit = _globalLogLevel = level
+  }
+
+  object SystemErrBackend extends Backend {
+    @volatile private var _globalLogLevel: Int = INFO
+
+    override def error(s: String, msg: String, exc: Throwable): Unit = {
+      System.err.println(s + ": " + msg)
+      exc.printStackTrace(System.err)
+    }
+    override def error(s: String, msg: String): Unit = System.err.println(s + ": " + msg)
+    override def log(s: String, msg: String): Unit = System.err.println(s + ": " + msg)
+    override def debug(s: String, msg: String): Unit = System.err.println(s + ": " + msg)
+    override def globalLogLevel: Int = _globalLogLevel
+    override def setLogLevel(level: Int): Unit = _globalLogLevel = level
+  }
+
+  object SystemOutErrBackend extends Backend {
 
     @volatile private var _globalLogLevel: Int = INFO
 
@@ -66,43 +97,35 @@ object Logging {
 }
 
 class Logger(cls: Class[_]) {
-  @volatile private var _localLogLevel: Int = Logging.INFO
+  @volatile private var _level: Int = Logging.INFO
 
   def debug(msg: => String): Unit = {
     if (level >= Logging.DEBUG) {
-      Logging.backend.debug(prefix("DEBUG"), msg)
+      Logging.backends.foreach(_.debug(prefix("DEBUG"), msg))
     }
   }
 
   def info(msg: => String): Unit = {
     if (level >= Logging.INFO) {
-      Logging.backend.log(prefix("INFO"), msg)
+      Logging.backends.foreach(_.log(prefix("INFO"), msg))
     }
   }
 
   def error(msg: => String, source: Option[Throwable] = None): Unit = {
     if (level >= Logging.ERROR) {
       source match {
-        case Some(exc) => Logging.backend.error(prefix("ERROR"), msg, exc)
-        case None => Logging.backend.error(prefix("ERROR"), msg)
+        case Some(exc)  => Logging.backends.foreach(_.error(prefix("ERROR"), msg, exc))
+        case None       => Logging.backends.foreach(_.error(prefix("ERROR"), msg))
       }
     }
   }
 
-  def globalLevel: Int = {
-    Logging.backend.globalLogLevel
-  }
-
-  def localLevel: Int = {
-    _localLogLevel
-  }
-
   def level: Int = {
-    localLevel
+    _level
   }
 
-  def setLocalLevel(newLevel: Int): Unit = {
-    _localLogLevel = newLevel
+  def setLevel(newLevel: Int): Unit = {
+    _level = newLevel
   }
 
   private def prefix(level: String): String = {
