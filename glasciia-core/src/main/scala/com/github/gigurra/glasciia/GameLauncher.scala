@@ -61,62 +61,25 @@ class GameLauncher(impl: GameLauncherIfc) extends ApplicationListener with Input
   }
 
   override def touchDown(screenX: Int, screenY: Int, pointer: Int, button: Int): Boolean = {
-    val out = game.consume(TouchDown(Vec2(screenX, screenY), pointer, button))
-    impl.onTouchDown()
-    out
+    game.consume(TouchDown(Vec2(screenX, screenY), pointer, button))
   }
 
   override def touchUp(screenX: Int, screenY: Int, pointer: Int, button: Int): Boolean = {
-    val out = game.consume(TouchUp(Vec2(screenX, screenY), pointer, button))
-    impl.onTouchUp(game.canvas.isTouched)
-    out
+    game.consume(TouchUp(Vec2(screenX, screenY), pointer, button))
   }
 
   override def touchDragged(screenX: Int, screenY: Int, pointer: Int): Boolean = {
-    val out = game.consume(TouchDrag(Vec2(screenX, screenY), pointer))
-    impl.onTouchDrag()
-    out
+    game.consume(TouchDrag(Vec2(screenX, screenY), pointer))
   }
 
 }
 
 object GameLauncher {
-  def apply(launchFcn: => Game): GameLauncher = apply(new GameLauncherAdapter { override def launch(): Game = launchFcn })
+  def apply(launchFcn: => Game): GameLauncher = apply(new GameLauncherIfc { override def launch(): Game = launchFcn })
   def apply(javaIfc: GameLauncherIfc): GameLauncher = new GameLauncher(javaIfc)
   implicit def game2Launcher(f: => Game): GameLauncher = apply(f)
 }
 
 trait GameLauncherIfc {
-
-  /**
-    * Used for lazy creation of the Game object. Will be called from the GL thread only
-    */
   def launch(): Game
-
-  /**
-    * Used to solve IOS issues with slow input rates
-    * - IOS 10 requires the app to call GLKView.display after every touchdrag event
-    * and have it in paused mode between a touchDown and touchUp
-    */
-  def onTouchDown(): Unit
-
-  /**
-    * Used to solve IOS issues with slow input rates
-    * - IOS 10 requires the app to call GLKView.display after every touchdrag event
-    * and have it in paused mode between a touchDown and touchUp
-    */
-  def onTouchDrag(): Unit
-
-  /**
-    * Used to solve IOS issues with slow input rates
-    * - IOS 10 requires the app to call GLKView.display after every touchdrag event
-    * and have it in paused mode between a touchDown and touchUp
-    */
-  def onTouchUp(stillTouched: Boolean): Unit
-}
-
-abstract class GameLauncherAdapter extends GameLauncherIfc {
-  override def onTouchDown(): Unit = {}
-  override def onTouchDrag(): Unit = {}
-  override def onTouchUp(stillTouched: Boolean): Unit = {}
 }
