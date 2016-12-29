@@ -1,6 +1,6 @@
 lazy val commonSettings = Seq(
   organization := "com.github.gigurra",
-  version := "0.5.1-SNAPSHOT",
+  version := "0.5.2-SNAPSHOT",
   scalaVersion := "2.11.8",
   scalacOptions ++= Seq("-feature", "-unchecked", "-deprecation"),
   scalacOptions += "-target:jvm-1.6",
@@ -11,7 +11,7 @@ lazy val commonSettings = Seq(
 
 lazy val glasciia_core = module("core").settings(
   libraryDependencies ++= Seq(
-    "com.github.gigurra"    %%  "libgurra"              % "0.4.0-SNAPSHOT",
+    "com.github.gigurra"    %%  "libgurra"              % "0.5.0-SNAPSHOT",
     "com.badlogicgames.gdx" %   "gdx"                   % "1.9.5",
     "com.badlogicgames.gdx" %   "gdx-freetype"          % "1.9.5"
   )
