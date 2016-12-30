@@ -87,6 +87,16 @@ object Transform {
       this
     }
 
+    final def set(from: TransformBuilder): TransformBuilder = {
+      m.set(from.m)
+      this
+    }
+
+    final def set(from: Transform): TransformBuilder = {
+      m.set(from.impl)
+      this
+    }
+
     final def rotate(degrees: Float, axis: Vec3 = Z_AXIS): TransformBuilder = {
       m.rotateDegrees(axis.x, axis.y, axis.z, degrees)
       this
