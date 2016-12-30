@@ -54,7 +54,9 @@ public class ParticleSource implements Disposable {
         Array<CollidingParticleEmitter> emitters = getEmitters();
         for (int i = 0; i < emitters.size; i++) {
             ParticleEmitter.ScaledNumericValue val = emitters.get(i).getAngle();
-            val.setHigh(val.getHighMin() + deltaDegrees, val.getHighMax() + deltaDegrees);
+            if (!val.isRelative()) {
+                val.setHigh(val.getHighMin() + deltaDegrees, val.getHighMax() + deltaDegrees);
+            }
             val.setLow(val.getLowMin() + deltaDegrees, val.getLowMax() + deltaDegrees);
         }
         return this;
