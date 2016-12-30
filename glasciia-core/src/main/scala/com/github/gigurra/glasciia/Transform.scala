@@ -107,8 +107,8 @@ object Transform {
 
     final def preTranslate(x: Float = 0.0f, y: Float = 0.0f, z: Float = 0.0f): TransformBuilder = {
       m.values(12) += x
-      m.values(13) += x
-      m.values(14) += x
+      m.values(13) += y
+      m.values(14) += z
       this
     }
 
