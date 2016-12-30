@@ -1251,6 +1251,91 @@ public class SpriteBatcher implements Batch {
         vertexIndex = idx;
     }
 
+    public void drawRepeat (TextureRegion region, float width, float height, Affine2 transform, int repeatCount, Vector2 repeatOffset) {
+        if (!drawing) throw new IllegalStateException("SpriteBatcher.begin must be called before draw.");
+        if (6 * repeatCount > triangles.length) throw new IllegalArgumentException("drawRepeat batch is too large");
+        if (SPRITE_SIZE * repeatCount > vertices.length) throw new IllegalArgumentException("drawRepeat batch is too large");
+
+        final short[] triangles = this.triangles;
+        final float[] vertices = this.vertices;
+
+        Texture texture = region.texture;
+        if (texture != lastTexture)
+            switchTexture(texture);
+        else if (triangleIndex + 6 * repeatCount > triangles.length || vertexIndex + SPRITE_SIZE * repeatCount > vertices.length) //
+            flush();
+
+
+        float u = region.u;
+        float v = region.v2;
+        float u2 = region.u2;
+        float v2 = region.v;
+        float color = this.color;
+
+        // construct corner points
+        Vector2 ll = new Vector2();
+        Vector2 lr = new Vector2();
+        Vector2 ur = new Vector2();
+        Vector2 ul = new Vector2();
+        for (int iRepeat = 0; iRepeat < repeatCount; iRepeat++) {
+
+            ll.x = iRepeat * repeatOffset.x;
+            ll.y = iRepeat * repeatOffset.y;
+
+            lr.x = ll.x + width;
+            lr.y = ll.y;
+
+            ul.x = ll.x;
+            ul.y = ll.y + height;
+
+            ur.x = ll.x + width;
+            ur.y = ll.y + height;
+
+            transform.applyTo(ll);
+            transform.applyTo(lr);
+            transform.applyTo(ur);
+            transform.applyTo(ul);
+
+            int triangleIndex = this.triangleIndex;
+            final int startVertex = vertexIndex / VERTEX_SIZE;
+            triangles[triangleIndex++] = (short)startVertex;
+            triangles[triangleIndex++] = (short)(startVertex + 1);
+            triangles[triangleIndex++] = (short)(startVertex + 2);
+            triangles[triangleIndex++] = (short)(startVertex + 2);
+            triangles[triangleIndex++] = (short)(startVertex + 3);
+            triangles[triangleIndex++] = (short)startVertex;
+            this.triangleIndex = triangleIndex;
+
+            int idx = vertexIndex;
+            vertices[idx++] = ll.x;
+            vertices[idx++] = ll.y;
+            vertices[idx++] = color;
+            vertices[idx++] = u;
+            vertices[idx++] = v;
+
+            vertices[idx++] = ul.x;
+            vertices[idx++] = ul.y;
+            vertices[idx++] = color;
+            vertices[idx++] = u;
+            vertices[idx++] = v2;
+
+            vertices[idx++] = ur.x;
+            vertices[idx++] = ur.y;
+            vertices[idx++] = color;
+            vertices[idx++] = u2;
+            vertices[idx++] = v2;
+
+            vertices[idx++] = lr.x;
+            vertices[idx++] = lr.y;
+            vertices[idx++] = color;
+            vertices[idx++] = u2;
+            vertices[idx++] = v;
+            this.vertexIndex = idx;
+
+        }
+
+    }
+
     @Override
     public void flush () {
         if (vertexIndex == 0) return;

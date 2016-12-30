@@ -150,6 +150,20 @@ object drawWorld {
             .translate(-0.5f, -0.5f)
       )
 
+      canvas.drawImageRepeated(
+        image = testImage,
+        transform =
+          Transform
+            .translate(Gdx.graphics.getFrameId % 320)
+            .translate(Vec2(100, 300))
+            .scale(1.0f, 1.0f)
+            .rotate(Gdx.graphics.getFrameId % 320)
+            .scale(Vec2(160.0f, 120.0f))
+            .translate(-0.5f, -0.5f),
+        count = 10,
+        delta = Vec2(0.25f, 0.0f)
+      )
+
       canvas.drawImage(
         image = testImage,
         transform =
