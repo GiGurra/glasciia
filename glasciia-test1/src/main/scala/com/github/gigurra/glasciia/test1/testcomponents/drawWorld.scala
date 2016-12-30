@@ -1,5 +1,6 @@
 package com.github.gigurra.glasciia.test1.testcomponents
 
+import com.badlogic.gdx.Gdx
 import com.badlogic.gdx.graphics.Color
 import com.badlogic.gdx.graphics.g2d.{BitmapFont, TextureRegion}
 import com.github.gigurra.glasciia._
@@ -139,12 +140,28 @@ object drawWorld {
 
       canvas.drawImage(
         image = testImage,
-        Transform(
-          at = Vec2(100, 300),
-          scale = Vec2(160.0f, 120.0f)
-        )
+        transform =
+          Transform
+            .translate(Gdx.graphics.getFrameId % 320)
+            .translate(Vec2(100, 300))
+            .scale(1.0f, 1.0f)
+            .rotate(Gdx.graphics.getFrameId % 320)
+            .scale(Vec2(160.0f, 120.0f))
+            .translate(-0.5f, -0.5f)
       )
 
+      canvas.drawImage(
+        image = testImage,
+        transform =
+          Transform
+            .translate(Gdx.graphics.getFrameId % 320)
+            .translate(Vec2(100, 300))
+            .scale(1.0f, 1.0f)
+            .rotate(Gdx.graphics.getFrameId % 320)
+            .scale(Vec2(160.0f, 120.0f))
+            .translate(-0.5f, -0.5f)
+      )
+/*
       canvas.drawImage(
         image = fillYellowTextureRegion,
         transform = Transform(
@@ -152,7 +169,7 @@ object drawWorld {
           scale = canvas.cameraSize
         )
       )
-
+*/
       canvas.drawParticles(
         effect = effect1,
         at = testEffectPosition(canvas.drawTime)

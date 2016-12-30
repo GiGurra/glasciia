@@ -1,6 +1,6 @@
 package com.github.gigurra.glasciia.impl
 
-import com.badlogic.gdx.graphics.g2d.PolygonSpriteBatch
+import com.badlogic.gdx.graphics.g2d.SpriteBatcher
 import com.github.gigurra.glasciia.Transform
 import com.badlogic.gdx.math.Matrix4
 
@@ -9,16 +9,34 @@ import com.badlogic.gdx.math.Matrix4
   */
 trait ContentDrawer {
 
-  private val tmp = new Matrix4
+  private val newMatrix = new Matrix4
 
-  def batch: PolygonSpriteBatch
+  def batch: SpriteBatcher
 
-  def draw(transform: Transform)(content: => Unit): Unit = {
-    batch.setTransformMatrix(tmp.set(transform.data))
+  final def draw(transform: Transform)(content: => Unit): Unit = {
+
+    val transformMatrixChanged = !fastEq(transform.data, batch.getTransformMatrix.`val`)
+
+    if (transformMatrixChanged) {
+      // TODO: Log bad API usage
+      batch.setTransformMatrix(newMatrix.set(transform.data))
+    }
+
     content
   }
 
-  def draw(content: => Unit): Unit = {
+  final def draw(content: => Unit): Unit = {
     draw(Transform.IDENTITY)(content)
+  }
+
+  private def fastEq(ar1: Array[Float], ar2: Array[Float]): Boolean = {
+    var i = 0
+    while (i < 16) {
+      if (ar1(i) != ar2(i)) {
+        return false
+      }
+      i += 1
+    }
+    true
   }
 }

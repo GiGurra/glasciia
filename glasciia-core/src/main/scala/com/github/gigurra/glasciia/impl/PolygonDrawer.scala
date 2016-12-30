@@ -1,29 +1,27 @@
 package com.github.gigurra.glasciia.impl
 
 import com.badlogic.gdx.graphics.g2d.PolygonRegion
-import com.github.gigurra.glasciia.Glasciia._
+import com.badlogic.gdx.math.Affine2
 import com.github.gigurra.glasciia.Transform
-import com.github.gigurra.math.Vec2
 
 /**
   * Created by johan on 2016-10-01.
   */
 trait PolygonDrawer { self: ContentDrawer =>
 
-  def drawPolygon(polygon: PolygonRegion,
-                  transform: Transform,
-                  rotatePoint: Vec2 = Vec2.zero,
-                  normalizeScale: Boolean = false): Unit = {
+  private val affine = new Affine2
 
-    val frameSize = polygon.regionSize
-    val normalizedTransform: Transform =
-      if (normalizeScale)
-        transform.scale(1.0f / frameSize.x, 1.0f / frameSize.y)
-      else
-        transform
+  final def drawPolygon(polygon: PolygonRegion, transform: Transform): Unit = {
 
-    draw(normalizedTransform) {
-      batch.draw(polygon, 0.0f, 0.0f)
-    }
+    val other = transform.data
+
+    affine.m00 = other(0)
+    affine.m01 = other(4)
+    affine.m02 = other(12)
+    affine.m10 = other(1)
+    affine.m11 = other(5)
+    affine.m12 = other(13)
+
+    draw(batch.draw(polygon, affine))
   }
 }
