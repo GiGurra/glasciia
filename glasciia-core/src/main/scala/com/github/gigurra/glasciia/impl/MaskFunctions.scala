@@ -25,17 +25,13 @@ trait MaskFunctions { self: Canvas =>
 
   final def drawInsideMask(content: => Unit): Unit = {
     withDepthTest(use = true, write = true, GL_EQUAL) {
-      useColorMaskFalse {
-        content
-      }
+      content
     }
   }
 
   final def drawOutsideMask(content: => Unit): Unit = {
     withDepthTest(use = true, write = true, GL_NOTEQUAL) {
-      useColorMaskFalse {
-        content
-      }
+      content
     }
   }
 
