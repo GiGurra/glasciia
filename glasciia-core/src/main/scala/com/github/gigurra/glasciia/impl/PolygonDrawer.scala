@@ -7,11 +7,12 @@ import com.github.gigurra.glasciia.Transform
 /**
   * Created by johan on 2016-10-01.
   */
-trait PolygonDrawer { self: ContentDrawer =>
+trait PolygonDrawer extends ZOffset { self: ContentDrawer =>
 
   private val affine = new Affine2
 
-  final def drawPolygon(polygon: PolygonRegion, transform: Transform): Unit = {
+  final def drawPolygon(polygon: PolygonRegion,
+                        transform: Transform): Unit = {
 
     val other = transform.data
 
@@ -22,6 +23,6 @@ trait PolygonDrawer { self: ContentDrawer =>
     affine.m11 = other(5)
     affine.m12 = other(13)
 
-    draw(batch.draw(polygon, affine))
+    draw(zTransform(transform))(batch.draw(polygon, affine))
   }
 }

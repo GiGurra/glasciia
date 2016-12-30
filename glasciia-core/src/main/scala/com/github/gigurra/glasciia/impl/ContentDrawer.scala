@@ -25,10 +25,6 @@ trait ContentDrawer {
     content
   }
 
-  final def draw(content: => Unit): Unit = {
-    draw(Transform.IDENTITY)(content)
-  }
-
   private def fastEq(ar1: Array[Float], ar2: Array[Float]): Boolean = {
     var i = 0
     while (i < 16) {

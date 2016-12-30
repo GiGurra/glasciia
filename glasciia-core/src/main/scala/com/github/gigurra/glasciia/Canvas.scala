@@ -19,7 +19,9 @@ case class Canvas(game: Game)
     with ParticleDrawer
     with MouseFunctions
     with BackgroundDrawer
-    with GuiDrawer {
+    with GuiDrawer
+    with DepthFunctions
+    with ColorFunctions {
 
   def width: Int = Gdx.graphics.getWidth
   def height: Int = Gdx.graphics.getHeight

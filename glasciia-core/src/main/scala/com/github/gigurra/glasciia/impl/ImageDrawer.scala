@@ -8,18 +8,18 @@ import com.github.gigurra.math.Vec2
 /**
   * Created by johan on 2016-10-01.
   */
-trait ImageDrawer { self: ContentDrawer =>
+trait ImageDrawer extends ZOffset { self: ContentDrawer =>
 
   private val affine = new Affine2
 
   final def drawImage(image: TextureRegion, transform: Transform): Unit = {
     updateTransform(transform)
-    draw(batch.draw(image, 1.0f, 1.0f, affine))
+    draw(zTransform(transform))(batch.draw(image, 1.0f, 1.0f, affine))
   }
 
   final def drawImageRepeated(image: TextureRegion, transform: Transform, count: Int, delta: Vec2): Unit = {
     updateTransform(transform)
-    draw(batch.drawRepeat(image, 1.0f, 1.0f, affine, count, new Vector2(delta.x, delta.y)))
+    draw(zTransform(transform))(batch.drawRepeat(image, 1.0f, 1.0f, affine, count, new Vector2(delta.x, delta.y)))
   }
 
   private final def updateTransform(transform: Transform): Unit = {

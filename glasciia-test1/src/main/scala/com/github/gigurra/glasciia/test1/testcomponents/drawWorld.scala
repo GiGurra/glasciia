@@ -130,13 +130,39 @@ object drawWorld {
         )
       )
 
+      canvas.setDepthTest(use = true, write = true, func = GL_ALWAYS)
+
       canvas.drawAnimation(
         animation = walkingDudeAnimation,
         transform = Transform(
           at = Vec2(400.0f, 100.0f),
           scale = Vec2(120.0f, 200.0f)
-        )
+        ).translate(z = -0.25f)
       )
+
+      canvas.useColorMaskFalse {
+        canvas.drawAnimation(
+          animation = walkingDudeAnimation,
+          transform = Transform(
+            at = Vec2(400.0f, 100.0f),
+            scale = Vec2(120.0f, 200.0f)
+          ).translate(y = -0.5f, z = -0.35f)
+        )
+      }
+
+      canvas.setDepthTest(use = true, write = true, func = GL_EQUAL)
+
+      canvas.batch.setColor(Color.YELLOW)
+      canvas.drawAnimation(
+        animation = walkingDudeAnimation,
+        transform = Transform(
+          at = Vec2(400.0f, 100.0f),
+          scale = Vec2(120.0f, 200.0f)
+        ).translate(z = -0.25f)
+      )
+
+      canvas.setDepthTest(use = true, write = true, func = GL_LEQUAL)
+      canvas.batch.setColor(Color.WHITE)
 
       canvas.drawImage(
         image = testImage,
@@ -147,22 +173,25 @@ object drawWorld {
             .scale(1.0f, 1.0f)
             .rotate(Gdx.graphics.getFrameId % 320)
             .scale(Vec2(160.0f, 120.0f))
-            .translate(-0.5f, -0.5f)
+            .translate(-0.5f, -0.5f, -0.5f)
       )
 
       canvas.drawImageRepeated(
         image = testImage,
         transform =
           Transform
-            .translate(Gdx.graphics.getFrameId % 320)
+            .translate(Gdx.graphics.getFrameId % 360)
             .translate(Vec2(100, 300))
             .scale(1.0f, 1.0f)
-            .rotate(Gdx.graphics.getFrameId % 320)
+            .rotate(-Gdx.graphics.getFrameId % 360)
             .scale(Vec2(160.0f, 120.0f))
-            .translate(-0.5f, -0.5f),
+            .translate(-0.5f, -0.5f, -0.5f),
         count = 10,
         delta = Vec2(0.25f, 0.0f)
       )
+
+      canvas.batch.flush()
+      canvas.resetDepthTest()
 
       canvas.drawImage(
         image = testImage,
@@ -173,9 +202,9 @@ object drawWorld {
             .scale(1.0f, 1.0f)
             .rotate(Gdx.graphics.getFrameId % 320)
             .scale(Vec2(160.0f, 120.0f))
-            .translate(-0.5f, -0.5f)
+            .translate(-0.5f, -0.5f, -0.5f)
       )
-/*
+
       canvas.drawImage(
         image = fillYellowTextureRegion,
         transform = Transform(
@@ -183,7 +212,7 @@ object drawWorld {
           scale = canvas.cameraSize
         )
       )
-*/
+
       canvas.drawParticles(
         effect = effect1,
         at = testEffectPosition(canvas.drawTime)

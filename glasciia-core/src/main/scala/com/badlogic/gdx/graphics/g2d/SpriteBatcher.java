@@ -73,7 +73,7 @@ import com.badlogic.gdx.utils.NumberUtils;
  * @author mzechner
  * @author Stefan Bachmann
  * @author Nathan Sweet */
-public class SpriteBatcher implements Batch {
+public final class SpriteBatcher implements Batch {
     private Mesh mesh;
 
     private final float[] vertices;
@@ -90,6 +90,15 @@ public class SpriteBatcher implements Batch {
     private boolean blendingDisabled;
     private int blendSrcFunc = GL20.GL_SRC_ALPHA;
     private int blendDstFunc = GL20.GL_ONE_MINUS_SRC_ALPHA;
+
+    private boolean depthTestEnabled = false;
+    private boolean depthWriteEnabled = true;
+    private int depthFunc = GL20.GL_LEQUAL;
+
+    private boolean redMask = true;
+    private boolean greenMask = true;
+    private boolean blueMask = true;
+    private boolean alphaMask = true;
 
     private final ShaderProgram shader;
     private ShaderProgram customShader;
@@ -168,7 +177,8 @@ public class SpriteBatcher implements Batch {
         if (drawing) throw new IllegalStateException("SpriteBatcher.end must be called before begin.");
         renderCalls = 0;
 
-        Gdx.gl.glDepthMask(false);
+        setupDepthTest(depthTestEnabled, depthWriteEnabled, depthFunc, true);
+        setupColorMasks(redMask, greenMask, blueMask, alphaMask, true);
         if (customShader != null)
             customShader.begin();
         else
@@ -186,13 +196,90 @@ public class SpriteBatcher implements Batch {
         drawing = false;
 
         GL20 gl = Gdx.gl;
-        gl.glDepthMask(true);
+        setupColorMasks(true, true, true, true, true);
+        setupDepthTest(false, true, GL20.GL_LEQUAL, true);
         if (isBlendingEnabled()) gl.glDisable(GL20.GL_BLEND);
 
         if (customShader != null)
             customShader.end();
         else
             shader.end();
+    }
+
+    public void setupDepthTest(boolean test, boolean write, int func) {
+        setupDepthTest(test, write, func, false);
+    }
+
+    public boolean getDepthWrite() {
+        return this.depthWriteEnabled;
+    }
+
+    public boolean getDepthTest() {
+        return this.depthTestEnabled;
+    }
+
+    public int getDepthFunc() {
+        return this.depthFunc;
+    }
+
+    public boolean getRedMask() {
+        return this.redMask;
+    }
+
+    public boolean getGreenMask() {
+        return this.greenMask;
+    }
+
+    public boolean getBlueMask() {
+        return this.blueMask;
+    }
+
+    public boolean getAlphaMask() {
+        return this.alphaMask;
+    }
+
+    public void setupDepthTest(boolean test, boolean write, int func, boolean force) {
+        if (force ||
+                test != this.depthTestEnabled ||
+                write != this.depthWriteEnabled ||
+                func != this.depthFunc) {
+
+            flush();
+
+            this.depthTestEnabled = test;
+            this.depthWriteEnabled = write;
+            this.depthFunc = func;
+
+            if (depthTestEnabled) {
+                Gdx.gl.glEnable(GL20.GL_DEPTH_TEST);
+            } else {
+                Gdx.gl.glDisable(GL20.GL_DEPTH_TEST);
+            }
+            Gdx.gl.glDepthMask(depthWriteEnabled);
+            Gdx.gl.glDepthFunc(depthFunc);
+        }
+    }
+
+    public void setupColorMasks(boolean red, boolean green, boolean blue, boolean alpha) {
+        setupColorMasks(red, green, blue, alpha, false);
+    }
+
+    public void setupColorMasks(boolean red, boolean green, boolean blue, boolean alpha, boolean force) {
+        if (force ||
+                red != this.redMask ||
+                green != this.greenMask ||
+                blue != this.blueMask ||
+                alpha != this.alphaMask) {
+
+            flush();
+
+            this.redMask = red;
+            this.greenMask = green;
+            this.blueMask = blue;
+            this.alphaMask = alpha;
+
+            Gdx.gl.glColorMask(redMask, greenMask, blueMask, alphaMask);
+        }
     }
 
     @Override

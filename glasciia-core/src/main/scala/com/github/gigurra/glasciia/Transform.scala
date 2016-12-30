@@ -17,6 +17,7 @@ case class Transform(private val impl: Mat4Mutable) {
   final def scaleX: Float = impl.getScaleX
   final def scaleY: Float = impl.getScaleY
   final def scaleZ: Float = impl.getScaleZ
+  final def zTranslation: Float = impl.values(14)
 
   def *(v: Vec2): Vec2 = {
     Vec2(
@@ -91,6 +92,7 @@ object Transform {
     def mul(m2: Array[Float]): TransformBuilder = mutate(m1 => Matrix4.mul(m1.values, m2))
     def mul(m2: Mat4Mutable): TransformBuilder = mutate(_.mul(m2))
     def mul(m2: Transform): TransformBuilder = mul(m2.data)
+    def setIdentity(): TransformBuilder = mutate(_.setIdentity())
 
     private def mutate(f: Mat4Mutable => Unit): TransformBuilder = {
       f(m)
