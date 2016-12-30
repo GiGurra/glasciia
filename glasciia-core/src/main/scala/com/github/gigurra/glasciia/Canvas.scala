@@ -21,7 +21,8 @@ case class Canvas(game: Game)
     with BackgroundDrawer
     with GuiDrawer
     with DepthFunctions
-    with ColorFunctions {
+    with ColorFunctions
+    with MaskFunctions {
 
   def width: Int = Gdx.graphics.getWidth
   def height: Int = Gdx.graphics.getHeight
