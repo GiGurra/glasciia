@@ -17,6 +17,7 @@ class GameLauncher[R <: Resources](impl: GameLauncherIfc[R])
   private var game: Game = null.asInstanceOf[Game]
   private var loadingScreen: Game = null.asInstanceOf[Game]
   private var resources: R = null.asInstanceOf[R]
+  private var firstFrame: Boolean = true
 
   override def create(): Unit = {
     log.info("Loading..")
@@ -39,9 +40,12 @@ class GameLauncher[R <: Resources](impl: GameLauncherIfc[R])
   }
 
   override def render(): Unit = {
-    checkFinishedLoading()
+    if (!firstFrame) {
+      checkFinishedLoading()
+    }
     game.canvas.setDrawTime()
     game.consume(Render(game.time, game.canvas))
+    firstFrame = false
   }
 
   override def resume(): Unit = {
