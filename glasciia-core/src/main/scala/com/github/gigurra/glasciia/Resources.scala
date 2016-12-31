@@ -34,13 +34,16 @@ abstract class Resources extends ResourceManager {
     val startTime = System.currentTimeMillis()
     def elapsed: Long = System.currentTimeMillis() - startTime
 
-    while(!finished && elapsed < maxTimeMillis) {
-      if (loadTasks.nonEmpty) {
-        loadTasks.dequeue().run()
-      } else {
-        _loadSomeFinished = loadSome()
-      }
+    if (!finished) {
+      do {
+        if (loadTasks.nonEmpty) {
+          loadTasks.dequeue().run()
+        } else {
+          _loadSomeFinished = loadSome()
+        }
+      } while(!finished && elapsed < maxTimeMillis)
     }
+
     _loadSomeFinished
   }
 
