@@ -23,22 +23,18 @@ class GameLauncher[R <: Resources](impl: GameLauncherIfc[R])
     loadingScreen = impl.loadingScreen()
     game = loadingScreen
     resources = impl.resources()
-    checkFinishedLoading()
     Gdx.input.setInputProcessor(this)
   }
 
   override def resize(width: Int, height: Int): Unit = {
-    checkFinishedLoading()
     game.consume(Resize(game.time, game.canvas, Vec2(width, height)))
   }
 
   override def dispose(): Unit = {
-    checkFinishedLoading()
     game.consume(Exit(game.time, game.canvas))
   }
 
   override def pause(): Unit = {
-    checkFinishedLoading()
     game.consume(Pause(game.time, game.canvas))
   }
 
@@ -49,47 +45,38 @@ class GameLauncher[R <: Resources](impl: GameLauncherIfc[R])
   }
 
   override def resume(): Unit = {
-    checkFinishedLoading()
     game.consume(Resume(game.time, game.canvas))
   }
 
   override def keyTyped(character: Char): Boolean = {
-    checkFinishedLoading()
     game.consume(CharTyped(character))
   }
 
   override def keyDown(keycode: Int): Boolean = {
-    checkFinishedLoading()
     game.consume(KeyDown(keycode))
   }
 
   override def keyUp(keycode: Int): Boolean = {
-    checkFinishedLoading()
     game.consume(KeyUp(keycode))
   }
 
   override def mouseMoved(screenX: Int, screenY: Int): Boolean = {
-    checkFinishedLoading()
     game.consume(MouseMove(Vec2(screenX, screenY)))
   }
 
   override def scrolled(amount: Int): Boolean = {
-    checkFinishedLoading()
     game.consume(MouseScrolled(amount))
   }
 
   override def touchDown(screenX: Int, screenY: Int, pointer: Int, button: Int): Boolean = {
-    checkFinishedLoading()
     game.consume(TouchDown(Vec2(screenX, screenY), pointer, button))
   }
 
   override def touchUp(screenX: Int, screenY: Int, pointer: Int, button: Int): Boolean = {
-    checkFinishedLoading()
     game.consume(TouchUp(Vec2(screenX, screenY), pointer, button))
   }
 
   override def touchDragged(screenX: Int, screenY: Int, pointer: Int): Boolean = {
-    checkFinishedLoading()
     game.consume(TouchDrag(Vec2(screenX, screenY), pointer))
   }
 

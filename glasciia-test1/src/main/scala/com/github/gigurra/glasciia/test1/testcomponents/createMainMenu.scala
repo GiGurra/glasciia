@@ -1,5 +1,6 @@
 package com.github.gigurra.glasciia.test1.testcomponents
 
+import com.badlogic.gdx.Gdx
 import com.badlogic.gdx.Input.Keys
 import com.badlogic.gdx.graphics.g2d.TextureRegion
 import com.badlogic.gdx.scenes.scene2d.Stage
@@ -14,8 +15,7 @@ import com.github.gigurra.glasciia.Glasciia._
   */
 object createMainMenu {
 
-  def apply(app: Game,
-            resources: ResourceManager,
+  def apply(resources: ResourceManager,
             regions: InMemoryLoader[TextureRegion]): Stage = {
     val (stage, menu) = RootGui()
     val skin = menu.debug(true).skin
@@ -31,7 +31,7 @@ object createMainMenu {
     startBtn.onClick(println("hello"))
 
     startBtn.onClick(stage.hide())
-    exitBtn.onClick(app.close())
+    exitBtn.onClick(Gdx.app.exit())
     optionsBtn.onClick(resources.add("controls-inverted", !resources[Boolean]("controls-inverted", default = false)))
 
     for ((btn, i) <- menuButtons.zipWithIndex) {

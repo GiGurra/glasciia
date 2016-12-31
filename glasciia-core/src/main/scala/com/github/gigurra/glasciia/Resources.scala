@@ -6,31 +6,46 @@ import com.badlogic.gdx.files.FileHandle
 import com.github.gigurra.lang.FixErasure
 import com.github.gigurra.glasciia.Glasciia._
 
+import scala.collection.mutable
 import scala.collection.mutable.ArrayBuffer
 
 /**
   * Created by johan on 2016-12-31.
   */
-abstract class Resources {
+abstract class Resources extends ResourceManager {
 
-  private var _finished: Boolean = false
+  private var _loadSomeFinished: Boolean = false
+  private val loadTasks: mutable.Queue[Runnable] = new mutable.Queue[Runnable]
 
   /**
     * @return true if done
     */
-  protected def loadSome(): Boolean
+  protected def loadSome(): Boolean = true
+  protected def addLoadTask(task: Runnable): Unit = {
+    loadTasks.enqueue(task)
+  }
+  protected def addLoadTask(f: => Unit): Unit = {
+    addLoadTask(new Runnable {
+      override def run(): Unit = f
+    })
+  }
 
   final def load(maxTimeMillis: Long): Boolean ={
     val startTime = System.currentTimeMillis()
     def elapsed: Long = System.currentTimeMillis() - startTime
-    while(!_finished && elapsed < maxTimeMillis) {
-      _finished = loadSome()
+
+    while(!finished && elapsed < maxTimeMillis) {
+      if (loadTasks.nonEmpty) {
+        loadTasks.dequeue().run()
+      } else {
+        _loadSomeFinished = loadSome()
+      }
     }
-    _finished
+    _loadSomeFinished
   }
 
   final def finished: Boolean = {
-    _finished
+    loadTasks.isEmpty && _loadSomeFinished
   }
 }
 
@@ -42,7 +57,7 @@ object Resources {
       /**
         * @return true if done
         */
-      override protected def loadSome() = ???
+      override protected def loadSome(): Boolean = true
     }
   }
 
