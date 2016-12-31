@@ -5,11 +5,11 @@ import com.github.gigurra.glasciia.Transform
 /**
   * Created by johan on 2016-12-30.
   */
-trait ZOffset {
+trait ZTranslationExtraction {
 
   private val tempZTransform = new Transform(Mat4Mutable())
 
-  protected final def zTransform(transform: Transform): Transform = {
+  protected final def extractZTranslation(transform: Transform): Transform = {
     if (transform.zTranslation == 0.0f) {
       Transform.IDENTITY
     }

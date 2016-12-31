@@ -7,7 +7,7 @@ import com.github.gigurra.glasciia.Transform
 /**
   * Created by johan on 2016-10-01.
   */
-trait PolygonDrawer extends ZOffset { self: ContentDrawer =>
+trait PolygonDrawer extends ZTranslationExtraction { self: ContentDrawer =>
 
   private val affine = new Affine2
 
@@ -23,6 +23,6 @@ trait PolygonDrawer extends ZOffset { self: ContentDrawer =>
     affine.m11 = other(5)
     affine.m12 = other(13)
 
-    draw(zTransform(transform))(batch.draw(polygon, affine))
+    draw(extractZTranslation(transform))(batch.draw(polygon, affine))
   }
 }

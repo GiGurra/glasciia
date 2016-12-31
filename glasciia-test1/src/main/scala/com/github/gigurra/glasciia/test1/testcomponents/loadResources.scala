@@ -91,6 +91,16 @@ object loadResources extends Logging {
       fillPixMap.fill()
       StaticImage.fromPixMap(fillPixMap)
     })
+    out.add("circle-texture", {
+      val fillPixMap = new Pixmap(101, 101, Pixmap.Format.RGBA8888)
+      Pixmap.setBlending(Pixmap.Blending.None)
+      fillPixMap.setColor(Color.WHITE.scaleAlpha(0.0f))
+      fillPixMap.fill()
+      fillPixMap.setColor(Color.WHITE)
+      fillPixMap.fillCircle(50, 50, 50)
+      Pixmap.setBlending(Pixmap.Blending.SourceOver)
+      StaticImage.fromPixMap(fillPixMap)
+    })
     out.add("square-90-percent", {
       val out = new Pixmap(400, 400, Pixmap.Format.RGBA8888)
       out.setColor(Color.YELLOW.scaleAlpha(0.9f))

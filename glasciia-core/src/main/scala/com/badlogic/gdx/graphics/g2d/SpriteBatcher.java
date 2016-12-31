@@ -1359,6 +1359,8 @@ public final class SpriteBatcher implements Batch {
         float v2 = region.v;
         float color = this.color;
 
+        final boolean identityTransform = isIdentity(transform);
+
         // construct corner points
         Vector2 ll = new Vector2();
         Vector2 lr = new Vector2();
@@ -1378,10 +1380,12 @@ public final class SpriteBatcher implements Batch {
             ur.x = ll.x + width;
             ur.y = ll.y + height;
 
-            transform.applyTo(ll);
-            transform.applyTo(lr);
-            transform.applyTo(ur);
-            transform.applyTo(ul);
+            if (!identityTransform) {
+                transform.applyTo(ll);
+                transform.applyTo(lr);
+                transform.applyTo(ur);
+                transform.applyTo(ul);
+            }
 
             int triangleIndex = this.triangleIndex;
             final int startVertex = vertexIndex / VERTEX_SIZE;
@@ -1421,6 +1425,109 @@ public final class SpriteBatcher implements Batch {
 
         }
 
+    }
+    
+    public void drawRepeat (TextureRegion region, Affine2 transform, float[] source) {
+        
+        final int repeatCount = source.length / 8;
+        
+        if (!drawing) throw new IllegalStateException("SpriteBatcher.begin must be called before draw.");
+        if (6 * repeatCount > triangles.length) throw new IllegalArgumentException("drawRepeat batch is too large");
+        if (SPRITE_SIZE * repeatCount > vertices.length) throw new IllegalArgumentException("drawRepeat batch is too large");
+
+        final short[] triangles = this.triangles;
+        final float[] vertices = this.vertices;
+
+        Texture texture = region.texture;
+        if (texture != lastTexture)
+            switchTexture(texture);
+        else if (triangleIndex + 6 * repeatCount > triangles.length || vertexIndex + SPRITE_SIZE * repeatCount > vertices.length) //
+            flush();
+
+
+        float u = region.u;
+        float v = region.v2;
+        float u2 = region.u2;
+        float v2 = region.v;
+        float color = this.color;
+
+        int iSrc = 0;
+        final boolean identityTransform = isIdentity(transform);
+        
+        // construct corner points
+        Vector2 ll = new Vector2();
+        Vector2 lr = new Vector2();
+        Vector2 ur = new Vector2();
+        Vector2 ul = new Vector2();
+
+        for (int iRepeat = 0; iRepeat < repeatCount; iRepeat++) {
+
+            ll.x = source[iSrc++];
+            ll.y = source[iSrc++];
+
+            ul.x = source[iSrc++];
+            ul.y = source[iSrc++];
+
+            ur.x = source[iSrc++];
+            ur.y = source[iSrc++];
+
+            lr.x = source[iSrc++];
+            lr.y = source[iSrc++];
+
+            if (!identityTransform) {
+                transform.applyTo(ll);
+                transform.applyTo(lr);
+                transform.applyTo(ur);
+                transform.applyTo(ul);
+            }
+
+            int triangleIndex = this.triangleIndex;
+            final int startVertex = vertexIndex / VERTEX_SIZE;
+            triangles[triangleIndex++] = (short)startVertex;
+            triangles[triangleIndex++] = (short)(startVertex + 1);
+            triangles[triangleIndex++] = (short)(startVertex + 2);
+            triangles[triangleIndex++] = (short)(startVertex + 2);
+            triangles[triangleIndex++] = (short)(startVertex + 3);
+            triangles[triangleIndex++] = (short)startVertex;
+            this.triangleIndex = triangleIndex;
+
+            int idx = vertexIndex;
+            vertices[idx++] = ll.x;
+            vertices[idx++] = ll.y;
+            vertices[idx++] = color;
+            vertices[idx++] = u;
+            vertices[idx++] = v;
+
+            vertices[idx++] = ul.x;
+            vertices[idx++] = ul.y;
+            vertices[idx++] = color;
+            vertices[idx++] = u;
+            vertices[idx++] = v2;
+
+            vertices[idx++] = ur.x;
+            vertices[idx++] = ur.y;
+            vertices[idx++] = color;
+            vertices[idx++] = u2;
+            vertices[idx++] = v2;
+
+            vertices[idx++] = lr.x;
+            vertices[idx++] = lr.y;
+            vertices[idx++] = color;
+            vertices[idx++] = u2;
+            vertices[idx++] = v;
+            this.vertexIndex = idx;
+
+        }
+
+    }
+
+    private final boolean isIdentity(Affine2 transform) {
+        return transform.m00 == 1.0f &&
+                transform.m01 == 0.0f &&
+                transform.m02 == 0.0f &&
+                transform.m10 == 0.0f &&
+                transform.m11 == 1.0f &&
+                transform.m12 == 0.0f;
     }
 
     @Override

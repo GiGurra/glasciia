@@ -30,6 +30,9 @@ object drawWorld {
     val background = resources[MultiLayer[TextureRegion]]("background-0")
     val mouseWorldPos = canvas.screen2World(canvas.mousePos)
     val cameraPos = canvas.cameraPos
+    val textureLoader = resources[InMemoryLoader[TextureRegion]]("texture-loader")
+    val circleImage = textureLoader("circle-texture")
+    val fillImage = textureLoader("filled-texture")
 
     val camScale = 0.5f * (1.0f + math.min(canvas.width / 640.0f, canvas.height / 480.0f))
     canvas.drawFrame(
@@ -129,6 +132,27 @@ object drawWorld {
           scale = Vec2(50, 50)
         )
       )
+
+      val preparedLines = PrepareLinePolygon(
+        points = Vector(
+          Vec2(0.0f, 0.0f),
+          Vec2(0.0f, 1.0f),
+          Vec2(0.5f, 1.0f),
+          Vec2(1.0f, 1.0f),
+          Vec2(1.0f, 0.0f)
+        ),
+        width = 0.2f,
+        lineImage = fillImage,
+        cornerImage = Some(circleImage),
+        transform = Transform(
+          at = Vec2(500.0f, 100.0f),
+          angle = 45.0f,
+          scale = Vec2(100.0f, 100.0f)
+        ),
+        closed = true
+      )
+
+      canvas.drawImageRepeated(preparedLines)
 
       canvas.setDepthTest(use = true, write = true, func = GL_ALWAYS)
 
