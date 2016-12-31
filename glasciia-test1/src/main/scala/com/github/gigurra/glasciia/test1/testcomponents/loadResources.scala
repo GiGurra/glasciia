@@ -84,13 +84,10 @@ object loadResources extends Logging {
 
   private def createTextureRegionLoader(resources: ResourceManager): InMemoryLoader[TextureRegion] = {
     val out = TextureRegionLoader.newDefault()()
+    resources.add("filled-texture", out("images/filled-texture.png"))
+    out.add("filled-texture", out("images/filled-texture.png"))
     resources.add("texture-loader", out)
-    out.add("filled-texture", {
-      val fillPixMap = new Pixmap(1, 1, Pixmap.Format.RGBA8888)
-      fillPixMap.setColor(Color.WHITE)
-      fillPixMap.fill()
-      StaticImage.fromPixMap(fillPixMap)
-    })
+
     out.add("circle-texture", {
       val fillPixMap = new Pixmap(101, 101, Pixmap.Format.RGBA8888)
       Pixmap.setBlending(Pixmap.Blending.None)
