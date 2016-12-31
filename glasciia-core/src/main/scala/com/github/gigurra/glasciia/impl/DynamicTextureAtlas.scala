@@ -113,34 +113,9 @@ object DynamicTextureAtlas {
              var boundsSortedByTop: Vector[Box2] = Vector.empty,
              var dirty: Boolean = false) {
 
-    private val singlePixelUV = 1.0f / texture.width.toFloat
-    private val halfPixelUV = singlePixelUV / 2.0f
-    private val quarterPixelUV = halfPixelUV / 2.0f
-
     def copyIn(name: String, source: Pixmap, to: Vec2, upload: Boolean): AtlasRegion = {
-      val region = new AtlasRegion(texture, to.x.toInt, to.y.toInt, source.width, source.height)
 
-      // Override libgdx crappy hacks. Gdx sets the UV values to the outer edges of the pixels
-      // But we want the UV values to always hit center pixels.
-      // Gdx also has a special hack for 1x1 textures which, for some reason,
-      // sets it to 0.25 into the pixel >P.
-      // If we call set region again with the same value for a 1x1-region, it will be
-      // fixed and set to center pixel. For other values, half a pixel offset works
-      if (source.width == 1 && source.height == 1) {
-        region.setRegion(
-          region.getU,
-          region.getV,
-          region.getU2,
-          region.getV2
-        )
-      } else {
-        region.setRegion(
-          region.getU + quarterPixelUV,
-          region.getV + quarterPixelUV,
-          region.getU2 - quarterPixelUV,
-          region.getV2 - quarterPixelUV
-        )
-      }
+      val region = new AtlasRegion(texture, to.x.toInt, to.y.toInt, source.width, source.height)
 
       val itemBounds = region.bounds
       region.name = name
@@ -152,6 +127,9 @@ object DynamicTextureAtlas {
       val pixmapCopySettingBefore = Pixmap.getBlending
       try {
         Pixmap.setBlending(Pixmap.Blending.None)
+        // UV coordinates are apparently interpreted differently depending on device... Better just draw the image again outside
+        // to double up on the border
+        targetPixMap.drawPixmap(source, 0, 0, source.width, source.height, math.max(0, to.x.toInt-1), math.max(0, to.y.toInt-1), source.width+2, source.height+2)
         targetPixMap.drawPixmap(source, to.x.toInt, to.y.toInt)
       } finally {
         Pixmap.setBlending(pixmapCopySettingBefore)
