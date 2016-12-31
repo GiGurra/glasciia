@@ -8,7 +8,7 @@ import org.scalatest.OneInstancePerTest
 import org.scalatest.WordSpec
 import scala.language.reflectiveCalls
 
-class ResourceLoaderSpec extends WordSpec
+class ResourcesSpec extends WordSpec
   with MockitoSugar
   with Matchers
   with OneInstancePerTest {
