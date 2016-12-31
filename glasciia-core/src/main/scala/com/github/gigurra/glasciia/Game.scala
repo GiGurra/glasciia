@@ -24,3 +24,35 @@ abstract class Game {
     }
   }
 }
+
+/**
+  * An empty game, for example for loading screens without an implementation
+  */
+class EmptyGame extends Game {
+  override def eventHandler: PartialFunction[GameEvent, Unit] = {
+    case _ =>
+  }
+}
+
+class EmptyLoadingScreen extends Game {
+  override def eventHandler: PartialFunction[GameEvent, Unit] = {
+    case _ =>
+  }
+}
+
+object Game {
+
+  /**
+    * Creates a new empty game, for example for loading screens without an implementation
+    */
+  def apply(): Game = {
+    new EmptyGame
+  }
+
+  /**
+    * Creates a new empty game, for example for loading screens without an implementation
+    */
+  def empty(): Game = {
+    new EmptyGame
+  }
+}

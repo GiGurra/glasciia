@@ -10,7 +10,7 @@ import com.github.gigurra.glasciia.test1.testcomponents._
 /**
   * Created by johan on 2016-10-31.
   */
-object TestGame extends Game with Logging {
+class TestGame extends Game with Logging {
 
   implicit val gestureState = GestureState()
   val resources = loadResources(this)
