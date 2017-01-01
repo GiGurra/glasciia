@@ -11,7 +11,7 @@ import com.badlogic.gdx.utils.viewport.ScalingViewport
 /**
   * Created by johan on 2016-10-08.
   */
-class RootGui(skin: Skin = new Skin) extends Gui {
+class RootGui(protected val skin: Skin = new Skin) extends Gui {
   val stage: Stage = new Stage(new ScalingViewport(Scaling.stretch, Gdx.graphics.getWidth, Gdx.graphics.getHeight, new OrthographicCamera))
   protected val rootTable: Table = new Table(skin)
   rootTable.setFillParent(true)
