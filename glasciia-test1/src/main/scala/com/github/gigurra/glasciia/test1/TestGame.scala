@@ -33,7 +33,11 @@ class TestGame(resources: TestGameResources) extends Game with Logging {
     "game-gui" -> resources[GameWorldGui]("gui:game-world")
   )
   resources[MainMenu]("gui:main-menu").startSignal.connect {
-    gui.setActive("game-gui")
+    gui.transition(
+      to = "game-gui",
+      transitionTime = 1000L,
+      transition = new SwipeGuiTransition()
+    )
   }
 
   def getMainMenuTransform: Transform = {

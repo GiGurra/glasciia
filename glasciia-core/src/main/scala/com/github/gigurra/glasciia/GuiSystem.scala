@@ -44,10 +44,26 @@ case class GuiSystem(guis: Map[String, Gui], private var _active: String) {
   def draw(canvas: Canvas,
            dt: Float = Gdx.graphics.getDeltaTime,
            screenFitting: Scale = Scale.ONE,
-           transform: Option[Transform] = None): Unit = {
+           transform: Transform = Transform.IDENTITY): Unit = {
 
     transition match {
-      case Some(t) => t.draw(canvas, dt, screenFitting, transform, transitionElapsed, transitionTotalTime, transitionFrom, transitionTo)
+      case Some(t) =>
+        t.draw(
+          canvas = canvas,
+          dt = dt,
+          screenFitting = screenFitting,
+          transform = transform,
+          elapsed = transitionElapsed,
+          transitionTime = transitionTotalTime,
+          from = transitionFrom,
+          to = transitionTo
+        )
+
+        if (transitionElapsed >= transitionTotalTime) {
+          t.finish()
+          transition = None
+        }
+
       case None => canvas.drawGui(
         stage = activeGui,
         dt = dt,
@@ -93,7 +109,7 @@ object GuiSystem {
     def draw(canvas: Canvas,
              dt: Float,
              screenFitting: Scale,
-             transform: Option[Transform],
+             transform: Transform,
              elapsed: Long,
              transitionTime: Long,
              from: Gui,
