@@ -36,7 +36,11 @@ class TestGame(resources: TestGameResources) extends Game with Logging {
     gui.transition(
       to = "game-gui",
       transitionTime = 1000L,
-      transition = new SwipeGuiTransition()
+      transition = new RotateGuiTransition(
+        ccw = false,
+        angleRange = 180.0f,
+        relativeLocation = Vec2(0.5f, 1.0f)
+      )
     )
   }
 
