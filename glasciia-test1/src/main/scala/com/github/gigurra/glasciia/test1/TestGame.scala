@@ -87,7 +87,12 @@ class TestGame(resources: TestGameResources) extends Game with Logging {
               preserveMouseWorldPosition = true, // Supreme commander style!
               projectionArea = canvas.wholeCanvasProjectionArea
             )
-          case KeyDown(Keys.ESCAPE) => gui.setActive("main-menu")
+          case KeyDown(Keys.ESCAPE) =>
+            gui.transition(
+              to = "main-menu",
+              transitionTime = 1000L,
+              transition = new SwipeGuiTransition(direction = -Vec2(1.0f, 0.0f))
+            )
           case event: KeyboardEvent => log.info(s"KeyboardEvent propagated to world/Not consumed by gui: $event")
         }
   }

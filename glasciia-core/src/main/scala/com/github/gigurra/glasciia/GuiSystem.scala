@@ -8,7 +8,7 @@ import scala.language.implicitConversions
 /**
   * Created by johan on 2017-01-01.
   */
-case class GuiSystem(guis: Map[String, Gui], private var _active: String) {
+case class GuiSystem(guis: Map[String, Gui], private var _active: String) extends Gui {
 
   require(guis.contains(activeName), s"gui $activeName is not part of GuiSystem $this")
 
@@ -64,8 +64,8 @@ case class GuiSystem(guis: Map[String, Gui], private var _active: String) {
           transition = None
         }
 
-      case None => canvas.drawGui(
-        stage = activeGui,
+      case None => activeGui.draw(
+        canvas = canvas,
         dt = dt,
         screenFitting = screenFitting,
         transform = transform
@@ -73,7 +73,7 @@ case class GuiSystem(guis: Map[String, Gui], private var _active: String) {
     }
   }
 
-  def inputHandler: PartialFunction[InputEvent, Unit] = {
+  override def inputHandler: PartialFunction[InputEvent, Unit] = {
     transition match {
       case Some(t) => t.inputHandler(transitionElapsed, transitionTotalTime, transitionFrom, transitionTo)
       case None => activeGui

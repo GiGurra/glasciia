@@ -22,15 +22,15 @@ class SwipeGuiTransition(direction: Vec2 = Vec2(1.0f, 0.0f),
 
     val factor: Float = interpolator.apply(elapsed.toFloat / transitionTime.toFloat)
 
-    canvas.drawGui(
-      stage = from,
+    from.draw(
+      canvas = canvas,
       dt = dt,
       screenFitting = screenFitting,
       transform = transform.preTranslate(factor * direction *|* screenWorldSize)
     )
 
-    canvas.drawGui(
-      stage = to,
+    to.draw(
+      canvas = canvas,
       dt = dt,
       screenFitting = screenFitting,
       transform = transform.preTranslate(factor * direction *|* screenWorldSize).preTranslate(-direction *|* screenWorldSize)
