@@ -2,7 +2,7 @@ package com.github.gigurra.glasciia.test1
 
 import com.badlogic.gdx.backends.lwjgl.{LwjglApplication, LwjglApplicationConfiguration}
 import com.github.gigurra.glasciia.test1.testcomponents.TestGameResources
-import com.github.gigurra.glasciia.{Game, GameLauncher, GameLauncherIfc, Resources}
+import com.github.gigurra.glasciia.{Game, GameLauncher, GameFactory, Resources}
 
 /**
   * Created by johan on 2016-09-26.
@@ -26,7 +26,7 @@ object Main {
       backgroundFPS = 30
     }
 
-    new LwjglApplication(GameLauncher(new GameLauncherIfc[TestGameResources] {
+    new LwjglApplication(GameLauncher(new GameFactory[TestGameResources] {
       override def loadingScreen(): Game = new LoadingScreen()
       override def launch(resources: TestGameResources): Game = new TestGame(resources)
       override def resources(): TestGameResources = new TestGameResources

@@ -16,5 +16,6 @@ object Glasciia
     with CursorCreation
     with GuiImplicits
     with ImageImplicits
-    with FontImplicits {
+    with FontImplicits
+    with InputImplicits {
 }
