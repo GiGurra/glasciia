@@ -10,11 +10,11 @@ trait ZTranslationExtraction {
   private val tempZTransform = new Transform(Mat4Mutable())
 
   protected final def extractZTranslation(transform: Transform): Transform = {
-    if (transform.zTranslation == 0.0f) {
+    if (transform.translationZ == 0.0f) {
       Transform.IDENTITY
     }
     else {
-      tempZTransform.data(14) = transform.zTranslation * transform.scaleZ
+      tempZTransform.data(14) = transform.translationZ * transform.scaleZ
       tempZTransform
     }
   }

@@ -9,11 +9,12 @@ import com.github.gigurra.math.Vec2
   * Created by johan on 2016-10-08.
   */
 object drawMenu {
-  def apply(canvas: Canvas, resources: ResourceManager): Unit = {
+  def apply(canvas: Canvas, resources: ResourceManager, transform: Transform): Unit = {
     val stage = resources[Stage]("gui:main-menu")
     canvas.drawGui(
       stage = stage,
-      scaling = LinearShortestSide(reference = Vec2(640, 480)) * Constant(0.75f)
+      screenFitting = LinearShortestSide(reference = Vec2(640, 480)) * Constant(0.75f),
+      transform = transform
     )
   }
 }

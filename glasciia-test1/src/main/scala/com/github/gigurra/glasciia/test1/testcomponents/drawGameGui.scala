@@ -13,7 +13,7 @@ object drawGameGui {
     val stage = resources[Stage]("gui:game-world")
     canvas.drawGui(
       stage = stage,
-      scaling = LinearShortestSide(reference = Vec2(640, 480)) * Constant(0.75f)
+      screenFitting = LinearShortestSide(reference = Vec2(640, 480)) * Constant(0.75f)
     )
   }
 }

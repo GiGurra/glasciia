@@ -91,17 +91,10 @@ object GuiImplicitsImpl {
   }
 
   implicit class StageImplicitOps(val stage: Stage) extends AnyVal {
-    import scala.collection.JavaConverters._
-    def show(): Unit = stage.getActors.asScala.foreach(_.show())
-    def hide(): Unit = stage.getActors.asScala.foreach(_.hide())
+    def show(): Unit = stage.getRoot.show()
+    def hide(): Unit = stage.getRoot.hide()
     def hidden: Boolean = !visible
-    def visible: Boolean = {
-      if (stage.getActors.size > 0) {
-        stage.getActors.first().isVisible
-      } else {
-        false
-      }
-    }
+    def visible: Boolean = stage.getRoot.isVisible
   }
 
   implicit class TextButtonImplicitsOps(val button: TextButton) extends AnyVal {

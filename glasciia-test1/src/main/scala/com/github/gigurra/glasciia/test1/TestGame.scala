@@ -1,5 +1,6 @@
 package com.github.gigurra.glasciia.test1
 
+import com.badlogic.gdx.Gdx
 import com.badlogic.gdx.Input.Keys
 import com.badlogic.gdx.scenes.scene2d.Stage
 import com.github.gigurra.glasciia._
@@ -25,13 +26,22 @@ class TestGame(resources: TestGameResources) extends Game with Logging {
     override def onEnd(): Unit = log.info("Act ended")
   }
 
+  def getMainMenuTransform: Transform = {
+    Transform
+      .rotate(10.0f)
+      .translate(200.0f, 100.0f)
+      .rotate((Gdx.graphics.getFrameId % 1080) / 3)
+      .scale(0.75f, 0.75f)
+      .build
+  }
+
   def eventHandler = {
 
     case Render(time, _) =>
       updateWorld(canvas, resources)
       drawWorld(canvas, resources)
       drawGameGui(canvas, resources)
-      drawMenu(canvas, resources)
+      drawMenu(canvas, resources, getMainMenuTransform)
 
       testTimedAct.update(time)
 

@@ -3,7 +3,7 @@ package com.github.gigurra.glasciia
 import java.util
 
 import com.badlogic.gdx.math.Matrix4
-import com.github.gigurra.glasciia.impl.Mat4Mutable
+import com.github.gigurra.glasciia.impl.{Mat4Mutable, fastFloat16ArrayEq}
 
 import scala.language.implicitConversions
 import com.github.gigurra.math.{Vec2, Vec3, Vec4}
@@ -14,10 +14,18 @@ import com.github.gigurra.math.{Vec2, Vec3, Vec4}
 case class Transform(private val impl: Mat4Mutable) {
 
   final def data: Array[Float] = impl.values
+
   final def scaleX: Float = impl.getScaleX
   final def scaleY: Float = impl.getScaleY
   final def scaleZ: Float = impl.getScaleZ
-  final def zTranslation: Float = impl.values(14)
+
+  final def translation: Vec3 = Vec3(translationX, translationY, translationZ)
+
+  final def translationX: Float = data(12)
+  final def translationY: Float = data(13)
+  final def translationZ: Float = data(14)
+
+  final def rotationDegrees: Float = (this * Vec2(1.0f, 0.0f) - this * Vec2(0.5f, 0.0f)).angle
 
   final def *(v: Vec2): Vec2 = {
     Vec2(
@@ -47,7 +55,7 @@ case class Transform(private val impl: Mat4Mutable) {
 
   override def equals(obj: scala.Any): Boolean = {
     obj match {
-      case otherTransform: Transform => util.Arrays.equals(otherTransform.data, data)
+      case otherTransform: Transform => fastFloat16ArrayEq(otherTransform.data, data)
       case _ => false
     }
   }
@@ -60,7 +68,7 @@ object Transform {
   private val Vec2One = Vec2(1.0f, 1.0f)
 
   implicit def toTransformBuilder(t: Transform): TransformBuilder = new TransformBuilder(Mat4Mutable.copyFrom(t.data))
-  implicit def toTransform(t: TransformBuilder): Transform = new Transform(t.m)
+  implicit def toTransform(t: TransformBuilder): Transform = t.build
 
   def apply(): Transform = {
     IDENTITY
@@ -81,6 +89,10 @@ object Transform {
     * Note: You should NEVER allocate or hold a reference to a TransformBuilder
     */
   final class TransformBuilder(val m: Mat4Mutable) extends AnyVal {
+
+    final def build: Transform = {
+      new Transform(m)
+    }
 
     final def inverse: TransformBuilder = {
       m.invert()

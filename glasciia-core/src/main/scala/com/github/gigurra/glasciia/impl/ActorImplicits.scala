@@ -3,8 +3,9 @@ package com.github.gigurra.glasciia.impl
 import com.badlogic.gdx.scenes.scene2d._
 import com.badlogic.gdx.scenes.scene2d.utils.FocusListener.FocusEvent
 import com.badlogic.gdx.scenes.scene2d.utils.{ClickListener, FocusListener}
-import com.github.gigurra.glasciia.GameEvent
+import com.github.gigurra.glasciia.{GameEvent, Transform}
 import com.github.gigurra.glasciia.GameEvent.{CharTyped, KeyDown, KeyUp, KeyboardEvent}
+
 import scala.language.implicitConversions
 /**
   * Created by johan on 2016-10-09.
@@ -25,6 +26,10 @@ trait ActorImplicits {
 
   implicit def actorCanConsumeEvents[T <: Actor](self: T): ActorImplicitsImpl.canConsumeEvents[T] = {
     new ActorImplicitsImpl.canConsumeEvents(self)
+  }
+
+  implicit def actorCanBeTransformed[T <: Actor](self: T): ActorImplicitsImpl.canBeTransformed[T] = {
+    new ActorImplicitsImpl.canBeTransformed(self)
   }
 }
 
@@ -89,6 +94,23 @@ object ActorImplicitsImpl {
     private def addAndReturnListener[L <: EventListener](listener: L): L ={
       self.addListener(listener)
       listener
+    }
+  }
+
+  implicit class canBeTransformed[T <: Actor] (val self: T) extends AnyVal {
+
+    def setTransform(transform: Transform): T = {
+      self.setPosition(transform.translationX, transform.translationY)
+      self.setRotation(transform.rotationDegrees)
+      self.setScale(transform.scaleX, transform.scaleY)
+      self
+    }
+
+    def transform(transform: Transform): T = {
+      self.moveBy(transform.translationX, transform.translationY)
+      self.rotateBy(transform.rotationDegrees)
+      self.scaleBy(transform.scaleX, transform.scaleY)
+      self
     }
   }
 
