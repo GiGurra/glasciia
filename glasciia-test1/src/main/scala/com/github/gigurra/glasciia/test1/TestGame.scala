@@ -13,7 +13,6 @@ import com.github.gigurra.glasciia.test1.testcomponents._
 class TestGame(resources: TestGameResources) extends Game with Logging {
 
   implicit val gestureState = GestureState()
-  resources.reloadAfterContextLoss() // TODO: For testing only! Don't have here in production code! Intentional GPU memory leak!
   setInitValues(this)
   printShaders(canvas.batch)
 

@@ -64,17 +64,6 @@ object Resources {
     }
   }
 
-  /*
-  val resourceFolders = Vector(
-    "animations",
-    "backgrounds",
-    "cursors",
-    "images",
-    "particle-effects",
-    "pt-mono",
-    "shaders"
-  )*/
-
   case class ResourceWalker(impl: Vector[FileHandle] => Vector[FileHandle]) {
     def walk[_: FixErasure](folders: Vector[FileHandle]): Vector[FileHandle] = impl.apply(folders)
     def walk(folders: Vector[String]): Vector[FileHandle] = walk(folders.map(f => f : FileHandle))
