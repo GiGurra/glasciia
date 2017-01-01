@@ -3,21 +3,22 @@ package com.github.gigurra.glasciia.test1.testcomponents
 import com.badlogic.gdx.Gdx
 import com.badlogic.gdx.Input.Keys
 import com.badlogic.gdx.graphics.g2d.TextureRegion
-import com.badlogic.gdx.scenes.scene2d.Stage
-import com.badlogic.gdx.scenes.scene2d.ui.{Label, TextButton}
 import com.badlogic.gdx.scenes.scene2d.ui.TextButton.TextButtonStyle
+import com.badlogic.gdx.scenes.scene2d.ui.{Label, TextButton}
 import com.github.gigurra.glasciia.GameEvent.KeyDown
-import com.github.gigurra.glasciia.{ResourceManager, _}
 import com.github.gigurra.glasciia.Glasciia._
+import com.github.gigurra.glasciia.{ResourceManager, Signal, _}
 
 /**
   * Created by johan on 2016-10-09.
   */
-object createMainMenu {
+class MainMenu(resources: ResourceManager,
+               regions: InMemoryLoader[TextureRegion]) extends RootGui {
 
-  def apply(resources: ResourceManager,
-            regions: InMemoryLoader[TextureRegion]): Stage = {
-    val (stage, menu) = RootGui()
+  val startSignal = new Signal[Unit]
+
+  /* Constructor */ {
+    val menu = rootTable
     val skin = menu.debug(true).skin
 
     addDefaultGuiStyles(resources, skin, regions)
@@ -30,15 +31,16 @@ object createMainMenu {
 
     startBtn.onClick(println("hello"))
 
-    startBtn.onClick(stage.hide())
+    startBtn.onClick(startSignal.apply(()))
     exitBtn.onClick(Gdx.app.exit())
     optionsBtn.onClick(resources.add("controls-inverted", !resources[Boolean]("controls-inverted", default = false)))
 
     for ((btn, i) <- menuButtons.zipWithIndex) {
       def go(di: Int) = menuButtons((menuButtons.size + i + di) % menuButtons.size).setKeyFocus()
+
       btn.on {
         case KeyDown(Keys.DOWN) => go(+1)
-        case KeyDown(Keys.UP)   => go(-1)
+        case KeyDown(Keys.UP) => go(-1)
       }
 
       btn.onKeyFocusGained(_.setStyle(menu.style[TextButtonStyle]("default:keyboard-focus")))
@@ -65,7 +67,6 @@ object createMainMenu {
 
     startBtn.setKeyFocus()
     stage.blockInputEventPropagation()
-
-    stage
   }
+
 }

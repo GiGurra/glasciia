@@ -17,9 +17,9 @@ trait GuiDrawer {
   def drawGui(stage: Stage,
               dt: Float = Gdx.graphics.getDeltaTime,
               screenFitting: Scale = Scale.ONE,
-              transform: Transform = Transform.IDENTITY): Unit = {
+              transform: Option[Transform] = None): Unit = {
 
-    stage.getRoot.setTransform(transform)
+    transform.foreach(stage.getRoot.setTransform(_))
 
     val bounds: Box2 = screenBounds
     val screenWorldSize = Vec2(bounds.width, bounds.height) / screenFitting(bounds.size)

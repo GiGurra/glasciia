@@ -92,8 +92,8 @@ class TestGameResources extends Resources with Logging {
   private def loadGui(resources: ResourceManager, regions: InMemoryLoader[TextureRegion]): Unit = {
     log.info("loadGui")
     Thread.sleep(200)
-    resources.add[Stage]("gui:main-menu", createMainMenu(resources, regions))
-    resources.add[Stage]("gui:game-world", createGameWorldGui(resources, regions))
+    resources.add[MainMenu]("gui:main-menu", new MainMenu(resources, regions))
+    resources.add[GameWorldGui]("gui:game-world", new GameWorldGui(resources, regions))
   }
 
   private def createTextureRegionLoader(resources: ResourceManager): InMemoryLoader[TextureRegion] = {

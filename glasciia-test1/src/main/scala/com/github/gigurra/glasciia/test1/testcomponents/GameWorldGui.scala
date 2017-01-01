@@ -1,7 +1,6 @@
 package com.github.gigurra.glasciia.test1.testcomponents
 
 import com.badlogic.gdx.graphics.g2d.TextureRegion
-import com.badlogic.gdx.scenes.scene2d.Stage
 import com.badlogic.gdx.scenes.scene2d.ui.{Table, TextButton}
 import com.github.gigurra.glasciia._
 import com.github.gigurra.glasciia.Glasciia._
@@ -9,11 +8,11 @@ import com.github.gigurra.glasciia.Glasciia._
 /**
   * Created by johan on 2016-10-09.
   */
-object createGameWorldGui {
+class GameWorldGui(resources: ResourceManager,
+                   regions: InMemoryLoader[TextureRegion]) extends RootGui {
 
-  def apply(resources: ResourceManager, regions: InMemoryLoader[TextureRegion]): Stage = {
-    val (stage, root) = RootGui()
-    val skin = root.debug(true).skin
+  /* constructor */ {
+    val skin = rootTable.debug(true).skin
 
     addDefaultGuiStyles(resources, skin, regions)
 
@@ -46,19 +45,20 @@ object createGameWorldGui {
     val unitBar = new TextButton("unit-bar", skin)
     val commandArea = new TextButton("cmd-area", skin)
 
-    root.rw {
+    rootTable.rw {
       _.cell(statusBar).colspan(3).growX().prefHeight(640.0f * 0.10f)
     }
-    root.rw {
+
+    rootTable.rw {
       _.cell(gameArea).colspan(3).grow()
     }
-    root.rw { r =>
+
+    rootTable.rw { r =>
       r.cell(miniMap).prefWidth(640.0f * 0.33f).prefHeight(480.0f * 0.33f).fill()
       r.cell(unitBar).prefHeight(0.20f * 480).expandX().bottom().fillX()
       r.cell(commandArea).prefWidth(640.0f * 0.33f).prefHeight(480.0f * 0.33f).fill()
       r.bottom()
     }
 
-    stage
   }
 }
