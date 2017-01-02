@@ -9,7 +9,9 @@ import com.github.gigurra.glasciia.Resources.{AsyncLoadTask, LoadTask, SyncLoadT
 
 import scala.collection.mutable
 import scala.collection.mutable.ArrayBuffer
-import scala.concurrent.Future
+import scala.concurrent.duration.Duration
+import scala.concurrent.{Await, Future}
+import scala.util.{Failure, Success}
 
 /**
   * Created by johan on 2016-12-31.
@@ -70,14 +72,19 @@ object Resources {
   }
 
   case class AsyncLoadTask(expr: () => Future[Unit]) extends LoadTask {
-    private var future: Option[Future[Unit]] = None
+    private var futureOpt: Option[Future[Unit]] = None
     override def loadSome(): Boolean = {
 
-      if (future.isEmpty) {
-        future = Some(expr())
+      futureOpt match {
+        case None =>
+          futureOpt = Some(expr())
+          false
+        case Some(future) => future.value match {
+          case None => false
+          case Some(Success(_)) => true
+          case Some(Failure(e)) => throw e
+        }
       }
-
-      future.fold(false)(_.isCompleted)
     }
   }
 
