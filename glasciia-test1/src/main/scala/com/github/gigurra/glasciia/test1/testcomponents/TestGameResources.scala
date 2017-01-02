@@ -9,19 +9,23 @@ import com.github.gigurra.glasciia.Glasciia._
 import com.github.gigurra.glasciia.{ResourceManager, _}
 import com.github.gigurra.math.{Box2, Vec2}
 
+import scala.concurrent.Future
+
 /**
   * Created by johan on 2016-10-08.
   */
 class TestGameResources extends Resources with Logging {
   val regions: InMemoryLoader[TextureRegion] = createTextureRegionLoader(resources)
 
+  import scala.concurrent.ExecutionContext.Implicits.global
+
   addLoadTask(loadTestTextures(resources, regions))
   addLoadTask(loadFonts(resources, regions))
-  addLoadTask(loadImages(resources, regions))
+  addLoadTask(Future(loadImages(resources, regions)))
   addLoadTask(loadParticleEffects(resources, regions))
   addLoadTask(loadBackground(resources, regions))
   addLoadTask(loadGui(resources, regions))
-  addLoadTask(loadCursor(resources, regions))
+  addLoadTask(Future(loadCursor(resources, regions)))
   addLoadTask(loadMipMaps(regions))
   addLoadTask(printLoadedResults())
 

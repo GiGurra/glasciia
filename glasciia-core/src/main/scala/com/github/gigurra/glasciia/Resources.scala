@@ -5,9 +5,11 @@ import java.net.JarURLConnection
 import com.badlogic.gdx.files.FileHandle
 import com.github.gigurra.lang.FixErasure
 import com.github.gigurra.glasciia.Glasciia._
+import com.github.gigurra.glasciia.Resources.{AsyncLoadTask, LoadTask, SyncLoadTask}
 
 import scala.collection.mutable
 import scala.collection.mutable.ArrayBuffer
+import scala.concurrent.Future
 
 /**
   * Created by johan on 2016-12-31.
@@ -15,20 +17,15 @@ import scala.collection.mutable.ArrayBuffer
 abstract class Resources extends ResourceManager {
 
   private var _loadSomeFinished: Boolean = false
-  private val loadTasks: mutable.Queue[Runnable] = new mutable.Queue[Runnable]
+  private val loadTasks: mutable.Queue[LoadTask] = new mutable.Queue[LoadTask]
 
   /**
     * @return true if done
     */
   protected def loadSome(): Boolean = true
-  protected def addLoadTask(task: Runnable): Unit = {
-    loadTasks.enqueue(task)
-  }
-  protected def addLoadTask(f: => Unit): Unit = {
-    addLoadTask(new Runnable {
-      override def run(): Unit = f
-    })
-  }
+  protected def addLoadTask(task: LoadTask): Unit = loadTasks.enqueue(task)
+  protected def addLoadTask(f: => Unit): Unit = addLoadTask(SyncLoadTask(() => f))
+  protected def addLoadTask[_: FixErasure](f: => Future[Unit]): Unit = addLoadTask(AsyncLoadTask(() => f))
 
   final def load(maxTimeMillis: Long): Boolean ={
     val startTime = System.currentTimeMillis()
@@ -37,7 +34,9 @@ abstract class Resources extends ResourceManager {
     if (!finished) {
       do {
         if (loadTasks.nonEmpty) {
-          loadTasks.dequeue().run()
+          if (loadTasks.head.loadSome()) {
+            loadTasks.dequeue()
+          }
         } else {
           _loadSomeFinished = loadSome()
         }
@@ -54,6 +53,33 @@ abstract class Resources extends ResourceManager {
 
 
 object Resources {
+
+  trait LoadTask {
+    /**
+      * @return
+      *         true if finished
+      */
+    def loadSome(): Boolean
+  }
+
+  case class SyncLoadTask(expr: () => Unit) extends LoadTask {
+    override def loadSome(): Boolean = {
+      expr()
+      true
+    }
+  }
+
+  case class AsyncLoadTask(expr: () => Future[Unit]) extends LoadTask {
+    private var future: Option[Future[Unit]] = None
+    override def loadSome(): Boolean = {
+
+      if (future.isEmpty) {
+        future = Some(expr())
+      }
+
+      future.fold(false)(_.isCompleted)
+    }
+  }
 
   def empty(): Resources = {
     new Resources {
