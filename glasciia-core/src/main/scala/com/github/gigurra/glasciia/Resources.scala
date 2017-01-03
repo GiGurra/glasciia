@@ -1,7 +1,7 @@
 package com.github.gigurra.glasciia
 
 import java.net.JarURLConnection
-import java.util.concurrent.Executors
+import java.util.concurrent.{Executors, ThreadFactory}
 
 import com.badlogic.gdx.files.FileHandle
 import com.github.gigurra.glasciia.Glasciia._
@@ -21,7 +21,15 @@ abstract class Resources extends ResourceManager {
 
   private var _loadSomeFinished: Boolean = false
   private val loadTasks: mutable.Queue[LoadTask] = new mutable.Queue[LoadTask]
-  private lazy val asyncLoader = Executors.newSingleThreadExecutor()
+  private lazy val asyncLoader = Executors.newFixedThreadPool(1,
+    new ThreadFactory {
+      override def newThread(r: Runnable): Thread = {
+        val t = Executors.defaultThreadFactory().newThread(r)
+        t.setDaemon(true)
+        t
+      }
+    }
+  )
 
   /**
     * @return true if done
