@@ -9,7 +9,6 @@ import scala.collection.mutable
 import scala.util.Random
 
 class AudioPlayer extends Logging {
-
   private val loadedSoundFiles = new mutable.HashMap[String, Sound]
   private val loadedMusicFiles = new mutable.HashMap[String, Music]
   private val loopingSounds = new mutable.HashMap[Long, SoundInstance]
@@ -111,6 +110,10 @@ class AudioPlayer extends Logging {
   private[glasciia] def ensureLoopedSoundRemoved(id: Long): Unit = {
     loopingSounds.remove(id)
   }
+
+  private[glasciia] def ensureLoopedSoundAdded(instanceId: Long, instance: SoundInstance): Unit = {
+    loopingSounds.put(instanceId, instance)
+  }
 }
 
 case class SoundInstance(sound: Sound,
@@ -142,6 +145,10 @@ case class SoundInstance(sound: Sound,
 
   def setLooping(state: Boolean = true): SoundInstance = {
     sound.setLooping(instanceId, state)
+    if (state)
+      player.ensureLoopedSoundAdded(instanceId, this)
+    else
+      player.ensureLoopedSoundRemoved(instanceId)
     this
   }
 
