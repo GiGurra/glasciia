@@ -8,6 +8,7 @@ import com.github.gigurra.glasciia.GameEvent._
 import com.github.gigurra.glasciia.Scale.{Constant, LinearShortestSide}
 import com.github.gigurra.glasciia.test1.testcomponents._
 import com.github.gigurra.math.Vec2
+import TransitionSystem.executionContext
 
 /**
   * Created by johan on 2016-10-31.
@@ -17,6 +18,17 @@ class TestGame(resources: TestGameResources) extends Game with Logging {
   implicit val gestureState = GestureState()
   setInitValues(this)
   printShaders(canvas.batch)
+
+  val transitions = TransitionSystem()
+
+  for {
+    _ <- transitions.execute(Delay(1000))
+    _ = println("Transition1 ended")
+    _ <- transitions.execute(Delay(1000))
+    _ = println("Transition2 ended")
+    _ <- transitions.execute(Delay(1000))
+    _ = println("Transition3 ended")
+  } ()
 
   val testTimedAct = new Act(Vector(
     new TimedScene(length = 1000) { override def onEnd(): Unit = { log.info("Scene1 ended")} },
@@ -32,7 +44,7 @@ class TestGame(resources: TestGameResources) extends Game with Logging {
     "main-menu" -> resources[MainMenu]("gui:main-menu"),
     "game-gui" -> resources[GameWorldGui]("gui:game-world")
   )
-  resources[MainMenu]("gui:main-menu").startSignal.connect {
+  resources[MainMenu]("gui:main-menu").startSignal.connect { _ =>
     gui.transition(
       to = "game-gui",
       transitionTime = 1000L,
@@ -59,6 +71,7 @@ class TestGame(resources: TestGameResources) extends Game with Logging {
       updateWorld(canvas, resources)
       drawWorld(canvas, resources)
       gui.draw(canvas, screenFitting = guiScaling)
+      transitions.update(time)
 
       testTimedAct.update(time)
 

@@ -2,7 +2,6 @@ package com.github.gigurra.glasciia
 
 import com.badlogic.gdx.Gdx
 import com.github.gigurra.glasciia.GameEvent.InputEvent
-import com.github.gigurra.glasciia.GuiSystem.Transition
 import scala.language.implicitConversions
 
 /**
@@ -12,7 +11,7 @@ case class GuiSystem(guis: Map[String, Gui], private var _active: String) extend
 
   require(guis.contains(activeName), s"gui $activeName is not part of GuiSystem $this")
 
-  private var transition: Option[Transition] = None
+  private var transition: Option[GuiSystem.Transition] = None
   private var transitionStartTime: Long = 0L
   private var transitionTotalTime: Long = 0L
   private var transitionFrom: Gui = null.asInstanceOf[Gui]
@@ -31,7 +30,7 @@ case class GuiSystem(guis: Map[String, Gui], private var _active: String) extend
     _active = name
   }
 
-  def transition(to: String, transitionTime: Long, transition: Transition): Unit = {
+  def transition(to: String, transitionTime: Long, transition: GuiSystem.Transition): Unit = {
     require(guis.contains(to), s"gui $to is not part of GuiSystem $this")
     this.transitionStartTime = timeMillis
     this.transitionTotalTime = transitionTime
