@@ -37,12 +37,9 @@ class AudioPlayer extends Logging {
     SoundInstance(sound, instance, volume, this)
   }
 
-  def loopSound(instanceId: Long, soundName: String, volume: Float = 0.5f): SoundInstance = {
+  def loopSound(soundName: String, volume: Float = 0.5f): SoundInstance = {
     val instance = playSound(soundName = soundName, volume = volume).setLooping()
-    loopingSounds.put(instanceId, instance).foreach{ prev =>
-      log.info(s"Warning - loopSound $soundName/$instanceId already exists. Stopping previous instance..")
-      prev.stop()
-    }
+    loopingSounds.put(instance.instanceId, instance)
     instance
   }
 
