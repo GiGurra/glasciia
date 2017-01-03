@@ -43,4 +43,13 @@ object Signal {
   def apply[T1, T2, T3, T4, T5, T6]: Signal6[T1, T2, T3, T4, T5, T6] = new Signal6[T1, T2, T3, T4, T5, T6]
 
   implicit def toSignal(s: Signal.type): Signal[Unit] = Signal.apply[Unit]
+  implicit def specialConnectSignalUnit(s: Signal[Unit]): SpecialConnectSignalUnit = {
+    SpecialConnectSignalUnit(s)
+  }
+
+  case class SpecialConnectSignalUnit(s: Signal[Unit]) extends AnyVal {
+    def connect(f: => Unit): Unit = {
+      s.connect(_ => f)
+    }
+  }
 }
