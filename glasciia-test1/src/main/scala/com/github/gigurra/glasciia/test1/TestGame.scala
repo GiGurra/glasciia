@@ -44,7 +44,7 @@ class TestGame(resources: TestGameResources) extends Game with Logging {
     "main-menu" -> resources[MainMenu]("gui:main-menu"),
     "game-gui" -> resources[GameWorldGui]("gui:game-world")
   )
-  resources[MainMenu]("gui:main-menu").startSignal.connect {
+  resources[MainMenu]("gui:main-menu").startSignal.connect { _ =>
     gui.transition(
       to = "game-gui",
       transitionTime = 1000L,
