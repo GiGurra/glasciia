@@ -4,12 +4,9 @@ import com.badlogic.gdx.Gdx
 import com.badlogic.gdx.graphics.g2d.Animation.PlayMode
 import com.badlogic.gdx.graphics.g2d.{BitmapFont, TextureRegion}
 import com.badlogic.gdx.graphics.{Color, Cursor, Pixmap}
-import com.badlogic.gdx.scenes.scene2d.Stage
 import com.github.gigurra.glasciia.Glasciia._
 import com.github.gigurra.glasciia.{ResourceManager, _}
 import com.github.gigurra.math.{Box2, Vec2}
-
-import scala.concurrent.Future
 
 /**
   * Created by johan on 2016-10-08.
@@ -17,15 +14,13 @@ import scala.concurrent.Future
 class TestGameResources extends Resources with Logging {
   val regions: InMemoryLoader[TextureRegion] = createTextureRegionLoader(resources)
 
-  import scala.concurrent.ExecutionContext.Implicits.global
-
   addLoadTask(loadTestTextures(resources, regions))
   addLoadTask(loadFonts(resources, regions))
-  addLoadTask(Future(loadImages(resources, regions)))
+  addAsyncLoadTask(loadImages(resources, regions))
   addLoadTask(loadParticleEffects(resources, regions))
   addLoadTask(loadBackground(resources, regions))
   addLoadTask(loadGui(resources, regions))
-  addLoadTask(Future(loadCursor(resources, regions)))
+  addAsyncLoadTask(loadCursor(resources, regions))
   addLoadTask(loadMipMaps(regions))
   addLoadTask(printLoadedResults())
 

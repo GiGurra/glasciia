@@ -1,16 +1,17 @@
 package com.github.gigurra.glasciia
 
 import java.net.JarURLConnection
+import java.util.concurrent.Executors
 
 import com.badlogic.gdx.files.FileHandle
-import com.github.gigurra.lang.FixErasure
 import com.github.gigurra.glasciia.Glasciia._
 import com.github.gigurra.glasciia.Resources.{AsyncLoadTask, LoadTask, SyncLoadTask}
+import com.github.gigurra.lang.FixErasure
 
 import scala.collection.mutable
 import scala.collection.mutable.ArrayBuffer
-import scala.concurrent.duration.Duration
-import scala.concurrent.{Await, Future}
+import scala.concurrent.{Future, Promise}
+import scala.util.control.NonFatal
 import scala.util.{Failure, Success}
 
 /**
@@ -20,6 +21,7 @@ abstract class Resources extends ResourceManager {
 
   private var _loadSomeFinished: Boolean = false
   private val loadTasks: mutable.Queue[LoadTask] = new mutable.Queue[LoadTask]
+  private lazy val asyncLoader = Executors.newSingleThreadExecutor()
 
   /**
     * @return true if done
@@ -27,7 +29,23 @@ abstract class Resources extends ResourceManager {
   protected def loadSome(): Boolean = true
   protected def addLoadTask(task: LoadTask): Unit = loadTasks.enqueue(task)
   protected def addLoadTask(f: => Unit): Unit = addLoadTask(SyncLoadTask(() => f))
-  protected def addLoadTask[_: FixErasure](f: => Future[Unit]): Unit = addLoadTask(AsyncLoadTask(() => f))
+  protected def addAsyncLoadTask(f: => Unit): Unit = addLoadTask(AsyncLoadTask(() => async(f)))
+
+  private def async(f: => Unit): Future[Unit] = {
+    val promise = Promise[Unit]
+    asyncLoader.execute(new Runnable {
+      override def run(): Unit = {
+        try {
+          promise.success(f)
+        } catch {
+          case NonFatal(e) =>
+            promise.failure(e)
+        }
+      }
+    })
+
+    promise.future
+  }
 
   final def load(maxTimeMillis: Long): Boolean ={
     val startTime = System.currentTimeMillis()
