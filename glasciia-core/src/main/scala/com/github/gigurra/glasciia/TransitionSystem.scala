@@ -82,6 +82,7 @@ case class TransitionSystem() extends Logging {
 
     def cancel(cause: Throwable = null): Unit = {
       if (!finished) {
+        transition.act.forceFinish()
         promise.failure(Cancelled(cause))
       }
     }

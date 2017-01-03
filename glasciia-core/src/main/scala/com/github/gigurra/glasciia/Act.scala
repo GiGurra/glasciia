@@ -6,6 +6,7 @@ import com.github.gigurra.glasciia.GameEvent.InputEvent
   * Created by johan on 2016-10-31.
   */
 case class Act(scenes: Vector[Scene], var sceneIndex: Int = 0) extends InputEventHandler {
+
   require(sceneIndex >= 0, s"Cannot create scene with sceneIndex < 0")
   require(sceneIndex < scenes.length, s"Cannot create scene with sceneIndex >= scenes.length")
 
@@ -21,6 +22,10 @@ case class Act(scenes: Vector[Scene], var sceneIndex: Int = 0) extends InputEven
       updateScene(time)
       checkMoveToNextScene(time)
     }
+  }
+
+  def forceFinish(): Unit = {
+    _finished = true
   }
 
   def onEnd(): Unit = {}
