@@ -55,7 +55,7 @@ class AudioPlayer extends Logging {
   }
 
   def stopLoopSounds(): Unit = {
-    loopingSounds.values.foreach(_.stop())
+    loopingSounds.values.toVector.foreach(_.stop())
     loopingSounds.clear()
   }
 
