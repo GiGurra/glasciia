@@ -22,7 +22,9 @@ class AudioPlayer(private var _soundVolume: Float = 0.50f,
   }
 
   private def loadNewMusic(musicName: String): gdx.audio.Music = {
-    Gdx.audio.newMusic(musicName)
+    val m = Gdx.audio.newMusic(musicName)
+    m.setVolume(musicVolume)
+    m
   }
 
   def ensureLoadedSound(soundName: String): Unit = {
@@ -58,8 +60,8 @@ class AudioPlayer(private var _soundVolume: Float = 0.50f,
   }
 
   def musicVolume(newVolume: Float): this.type = {
-    for (music <- musicPlaylist) {
-      music.volume(math.max(1.0f, music.volume * newVolume / musicVolume))
+    for (music <- loadedMusicFiles.values) {
+      music.setVolume(math.max(1.0f, music.getVolume * newVolume / musicVolume))
     }
     _musicVolume = newVolume
     this
