@@ -210,17 +210,13 @@ object AudioPlayer {
     }
 
     def resume(): SoundLoopInstance = {
-      assume(!stopPromise.isCompleted, "Cannot resume a stopped sound. Use pause instead")
+      assume(!stopped, "Cannot resume a stopped sound. Use pause instead")
       gdxSound.resume(instanceId)
       this
     }
 
     def stopped: Boolean = {
       stopPromise.isCompleted
-    }
-
-    def playing: Boolean = {
-      !stopped
     }
 
     def volume: Float = {
