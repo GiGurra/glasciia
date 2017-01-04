@@ -1,10 +1,8 @@
 package com.github.gigurra.glasciia
 
 import com.badlogic.gdx.Gdx
-import com.badlogic.gdx.audio.Music.OnCompletionListener
 import com.badlogic.gdx
-import com.badlogic.gdx.audio.Music
-import com.github.gigurra.glasciia.AudioPlayer.{Sound, SoundInstance, SoundLoopInstance}
+import com.github.gigurra.glasciia.AudioPlayer.{Music, Sound, SoundInstance, SoundLoopInstance}
 import com.github.gigurra.glasciia.Glasciia._
 
 import scala.collection.mutable
@@ -17,7 +15,7 @@ class AudioPlayer(private var _soundVolume: Float = 0.50f,
   private val loadedSoundFiles = new mutable.HashMap[String, gdx.audio.Sound]
   private val loadedMusicFiles = new mutable.HashMap[String, gdx.audio.Music]
   private val loopingSoundLkup = new mutable.HashMap[Long, SoundLoopInstance]
-  private var musicPlaylist = Vector[gdx.audio.Music]()
+  private var musicPlaylist = Vector[Music]()
 
   private def loadNewSound(soundName: String): gdx.audio.Sound = {
     Gdx.audio.newSound(soundName)
@@ -43,6 +41,14 @@ class AudioPlayer(private var _soundVolume: Float = 0.50f,
     _musicVolume
   }
 
+  def playList: Vector[String] = {
+    musicPlaylist.map(_.name)
+  }
+
+  def currentPlaylistItem: Option[String] = {
+    musicPlaylist.find(_.playing).map(_.name)
+  }
+
   def soundVolume(newVolume: Float): this.type = {
     for (sound <- loopingSoundLkup.values) {
       sound.volume(math.max(1.0f, sound.volume * newVolume / soundVolume))
@@ -52,8 +58,8 @@ class AudioPlayer(private var _soundVolume: Float = 0.50f,
   }
 
   def musicVolume(newVolume: Float): this.type = {
-    for (song <- musicPlaylist) {
-      song.setVolume(math.max(1.0f, song.getVolume * newVolume / musicVolume))
+    for (music <- musicPlaylist) {
+      music.volume(math.max(1.0f, music.volume * newVolume / musicVolume))
     }
     _musicVolume = newVolume
     this
@@ -73,7 +79,12 @@ class AudioPlayer(private var _soundVolume: Float = 0.50f,
     */
   def music(name: String): Music = {
     ensureLoadedMusic(name)
-    loadedMusicFiles(name)
+    Music(
+      initVolume = musicVolume,
+      name = name,
+      gdxMusic = loadedMusicFiles(name),
+      player = this
+    )
   }
 
   def getLoopSound(instanceId: Long): Option[SoundLoopInstance] = {
@@ -108,24 +119,22 @@ class AudioPlayer(private var _soundVolume: Float = 0.50f,
                   volume: Float = musicVolume): this.type = {
 
     // Stop prevous sounds
-    musicPlaylist.foreach(_.stop())
+    stopMusic()
 
     if (trackNames.nonEmpty) {
 
       trackNames.foreach(ensureLoadedSound)
-      musicPlaylist = trackNames.map(loadedMusicFiles.apply)
-      musicPlaylist.foreach(_.setVolume(volume))
+      musicPlaylist = trackNames.map(music)
+      musicPlaylist.foreach(_.volume(volume))
       musicPlaylist.zipWithIndex.foreach {
         case (item, i) =>
-          item.setOnCompletionListener(new OnCompletionListener {
-            override def onCompletion(music: gdx.audio.Music): Unit = {
-              if (shuffle) {
-                pickRandom((musicPlaylist.toBuffer - music).toVector).play()
-              } else {
-                musicPlaylist((i + 1) % musicPlaylist.length).play()
-              }
+          item.onComplete{
+            if (shuffle) {
+              pickRandom((musicPlaylist.toBuffer - item).toVector).play()
+            } else {
+              musicPlaylist((i + 1) % musicPlaylist.length).play()
             }
-          })
+          }
       }
       if (shuffle) {
         pickRandom(musicPlaylist).play()
@@ -151,9 +160,108 @@ class AudioPlayer(private var _soundVolume: Float = 0.50f,
   private def removeLooping(id: Long): Unit = {
     loopingSoundLkup.remove(id)
   }
+
+  private def removeMusic(name: String): Unit = {
+    loadedMusicFiles.remove(name)
+  }
 }
 
 object AudioPlayer {
+
+  case class Music(initVolume: Float,
+                   name: String,
+                   private val gdxMusic: gdx.audio.Music,
+                   private val player: AudioPlayer) {
+
+    // API below just copied from gdx.audio.Music
+
+    /** Starts the play back of the music stream. In case the stream was paused this will resume the play back. In case the music
+      * stream is finished playing this will restart the play back. */
+    def play(): Music = {
+      gdxMusic.play()
+      this
+    }
+
+    /** Pauses the play back. If the music stream has not been started yet or has finished playing a call to this method will be
+      * ignored. */
+    def pause(): Music = {
+      gdxMusic.pause()
+      this
+    }
+
+    /** Stops a playing or paused Music instance. Next time play() is invoked the Music will start from the beginning. */
+    def stop(): Music = {
+      gdxMusic.stop()
+      this
+    }
+
+    /** @return whether this music stream is playing */
+    def playing: Boolean = {
+      gdxMusic.isPlaying
+    }
+
+    /** Sets whether the music stream is looping. This can be called at any time, whether the stream is playing.
+      *
+      * @param isLooping whether to loop the stream */
+    def loop(isLooping: Boolean): Music = {
+      gdxMusic.setLooping(isLooping)
+      this
+    }
+
+    /** @return whether the music stream is playing. */
+    def looping: Boolean = {
+      gdxMusic.isLooping
+    }
+
+    /** Sets the volume of this music stream. The volume must be given in the range [0,1] with 0 being silent and 1 being the
+      * maximum volume.
+      */
+    def volume(volume: Float): Music = {
+      gdxMusic.setVolume(volume)
+      this
+    }
+
+    /** @return the volume of this music stream. */
+    def volume: Float = {
+      gdxMusic.getVolume
+    }
+
+    /** Sets the panning and volume of this music stream.
+      *
+      * @param pan    panning in the range -1 (full left) to 1 (full right). 0 is center position.
+      * @param volume the volume in the range [0,1]. */
+    def pan(pan: Float, volume: Float): Music = {
+      gdxMusic.setPan(pan, volume)
+      this
+    }
+
+    /** Set the playback position in seconds. */
+    def position(position: Float): Music = {
+      gdxMusic.setPosition(position)
+      this
+    }
+
+    /** Returns the playback position in seconds. */
+    def position: Float = {
+      gdxMusic.getPosition
+    }
+
+    /** Needs to be called when the Music is no longer needed. */
+    def dispose(): Unit = {
+      gdxMusic.dispose()
+      player.removeMusic(name)
+    }
+
+    /** Register a callback to be invoked when the end of a music stream has been reached during playback.
+      * */
+    def onComplete(f: => Unit): Unit = {
+      gdxMusic.setOnCompletionListener(new gdx.audio.Music.OnCompletionListener {
+        override def onCompletion(music: gdx.audio.Music): Unit = {
+          f
+        }
+      })
+    }
+  }
 
   case class Sound(initVolume: Float,
                    private val gdxSound: gdx.audio.Sound,
