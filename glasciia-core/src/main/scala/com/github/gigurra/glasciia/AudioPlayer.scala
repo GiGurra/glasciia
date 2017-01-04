@@ -213,34 +213,39 @@ object AudioPlayer {
     }
 
     def pause(): SoundLoopInstance = {
-      assume(!stopped, "Cannot pause a stopped sound.")
-      gdxSound.pause(instanceId)
+      if (!stopped) {
+        gdxSound.pause(instanceId)
+      }
       this
     }
 
     def resume(): SoundLoopInstance = {
-      assume(!stopped, "Cannot resume a stopped sound. Use pause instead")
-      gdxSound.resume(instanceId)
+      if (!stopped) {
+        gdxSound.resume(instanceId)
+      }
       this
     }
 
     def pan(pan: Float, volume: Float): SoundLoopInstance = {
-      assume(!stopped, "Cannot pan a stopped sound.")
-      _currentVolume = volume
-      gdxSound.setPan(instanceId, pan, volume.toFloat)
+      if (!stopped) {
+        _currentVolume = volume
+        gdxSound.setPan(instanceId, pan, volume.toFloat)
+      }
       this
     }
 
     def pitch(state: Float): SoundLoopInstance = {
-      assume(!stopped, "Cannot pitch a stopped sound.")
-      gdxSound.setPitch(instanceId, state)
+      if (!stopped) {
+        gdxSound.setPitch(instanceId, state)
+      }
       this
     }
 
     def volume(volume: Float): SoundLoopInstance = {
-      assume(!stopped, "Cannot set volume on a stopped sound.")
-      _currentVolume = volume
-      gdxSound.setVolume(instanceId, volume)
+      if (!stopped) {
+        _currentVolume = volume
+        gdxSound.setVolume(instanceId, volume)
+      }
       this
     }
 
