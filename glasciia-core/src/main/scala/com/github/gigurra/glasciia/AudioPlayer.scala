@@ -51,6 +51,10 @@ class AudioPlayer(private var _soundVolume: Float = 0.50f,
     musicPlaylist.find(_.playing).map(_.name)
   }
 
+  def currentPlaylistItemIndex: Option[Int] = {
+    Option(musicPlaylist.indexWhere(_.playing)).filter(_ != -1)
+  }
+
   def soundVolume(newVolume: Float): this.type = {
     for (sound <- loopingSoundLkup.values) {
       sound.volume(math.max(1.0f, sound.volume * newVolume / soundVolume))
@@ -105,14 +109,78 @@ class AudioPlayer(private var _soundVolume: Float = 0.50f,
     loopingSoundLkup.toMap
   }
 
-  def stopMusic(): Unit = {
+  def stopMusic(): this.type = {
     musicPlaylist.foreach(_.stop())
     musicPlaylist = Vector.empty
+    this
   }
 
   def stop(): this.type = {
     stopMusic()
     stopLoopSounds()
+    this
+  }
+
+  def nextMusic(): this.type = {
+    val iCur = musicPlaylist.indexWhere(_.playing)
+    if (iCur != -1) {
+      changeCurrentPlaylistItemTo((iCur + 1)%musicPlaylist.length)
+    } else {
+      restartPlaylist()
+    }
+    this
+  }
+
+  def prevMusic(): this.type = {
+    val iCur = musicPlaylist.indexWhere(_.playing)
+    if (iCur != -1) {
+      changeCurrentPlaylistItemTo((iCur - 1 + musicPlaylist.length)%musicPlaylist.length)
+    } else {
+      restartPlaylist()
+    }
+    this
+  }
+
+  def changeCurrentPlaylistItemTo(i: Int): this.type = {
+    if (i>= 0 && i < musicPlaylist.length) {
+      stopMusic()
+      musicPlaylist(i).play()
+    } else {
+      log.error(s"Cannot change music to index $i - outside playlist size (=${musicPlaylist.size})!")
+    }
+
+    this
+  }
+
+  def changeCurrentPlaylistItemTo(name: String): this.type = {
+    val i = musicPlaylist.indexWhere(_.name == name)
+    if (i != -1) {
+      changeCurrentPlaylistItemTo(i)
+    } else {
+      log.error(s"Cannot change music to $name - no such music in playlist!")
+    }
+    this
+  }
+
+  def restartPlaylist(): this.type = {
+    if (musicPlaylist.nonEmpty) {
+      changeCurrentPlaylistItemTo(0)
+    }
+    this
+  }
+
+  def changeToRandomMusic(): this.type = {
+    if (musicPlaylist.size == 1) {
+      restartPlaylist()
+    } else if (musicPlaylist.size > 1) {
+      for {
+        iCur <- currentPlaylistItemIndex
+      } {
+        val validIndices = (musicPlaylist.indices.toBuffer - iCur).toVector
+        val validMusics = validIndices.map(musicPlaylist.apply)
+        pickRandom(validMusics).play()
+      }
+    }
     this
   }
 
