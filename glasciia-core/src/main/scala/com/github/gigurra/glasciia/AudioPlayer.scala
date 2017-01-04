@@ -249,8 +249,9 @@ object AudioPlayer {
       this
     }
 
-    def onStop(f: => Unit): Unit = {
+    def onStop(f: => Unit): SoundLoopInstance = {
       stopPromise.future.onComplete(_ => f)(SameThreadExecutionContext)
+      this
     }
   }
 
