@@ -102,10 +102,7 @@ object TransitionSystem {
   /**
     * Transitions must execute on the same thread, i.e. the GL thread
     */
-  implicit object executionContext extends ExecutionContext {
-    override final def reportFailure(cause: Throwable): Unit = throw cause
-    override final def execute(runnable: Runnable): Unit = runnable.run()
-  }
+  implicit val executionContext = SameThreadExecutionContext
 
   case class Cancelled(cause: Throwable) extends RuntimeException(cause)
 

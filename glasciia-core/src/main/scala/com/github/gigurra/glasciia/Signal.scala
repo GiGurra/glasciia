@@ -7,6 +7,7 @@ class Signal[T] {
   protected val slots = new mutable.ArrayBuffer[T => Unit](initialSize = 2)
   def apply(t: T): Unit = slots.foreach(_.apply(t))
   def connect(slot: T => Unit): Unit = slots += slot
+  def connect(slot: => Unit): Unit = slots += ((_: T) => slot)
 }
 
 class Signal2[T1, T2] extends Signal[(T1, T2)] {
