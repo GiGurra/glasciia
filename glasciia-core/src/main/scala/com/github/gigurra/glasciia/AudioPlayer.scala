@@ -196,6 +196,14 @@ object AudioPlayer {
     private val stopPromise: Promise[Unit] = Promise[Unit]()
     private var _currentVolume: Float = initVolume
 
+    def stopped: Boolean = {
+      stopPromise.isCompleted
+    }
+
+    def volume: Float = {
+      _currentVolume
+    }
+
     def stop(): SoundLoopInstance = {
       if (!stopped) {
         gdxSound.stop(instanceId)
@@ -205,6 +213,7 @@ object AudioPlayer {
     }
 
     def pause(): SoundLoopInstance = {
+      assume(!stopped, "Cannot pause a stopped sound.")
       gdxSound.pause(instanceId)
       this
     }
@@ -215,26 +224,21 @@ object AudioPlayer {
       this
     }
 
-    def stopped: Boolean = {
-      stopPromise.isCompleted
-    }
-
-    def volume: Float = {
-      _currentVolume
-    }
-
     def pan(pan: Float, volume: Float): SoundLoopInstance = {
+      assume(!stopped, "Cannot pan a stopped sound.")
       _currentVolume = volume
       gdxSound.setPan(instanceId, pan, volume.toFloat)
       this
     }
 
     def pitch(state: Float): SoundLoopInstance = {
+      assume(!stopped, "Cannot pitch a stopped sound.")
       gdxSound.setPitch(instanceId, state)
       this
     }
 
     def volume(volume: Float): SoundLoopInstance = {
+      assume(!stopped, "Cannot set volume on a stopped sound.")
       _currentVolume = volume
       gdxSound.setVolume(instanceId, volume)
       this
