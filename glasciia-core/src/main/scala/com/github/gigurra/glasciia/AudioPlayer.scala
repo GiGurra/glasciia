@@ -3,6 +3,7 @@ package com.github.gigurra.glasciia
 import com.badlogic.gdx.Gdx
 import com.badlogic.gdx.audio.Music.OnCompletionListener
 import com.badlogic.gdx
+import com.badlogic.gdx.audio.Music
 import com.github.gigurra.glasciia.AudioPlayer.{Sound, SoundInstance, SoundLoopInstance}
 import com.github.gigurra.glasciia.Glasciia._
 
@@ -10,7 +11,9 @@ import scala.collection.mutable
 import scala.concurrent.Promise
 import scala.util.Random
 
-class AudioPlayer extends Logging {
+class AudioPlayer(private var _soundVolume: Float = 0.50f,
+                  private var _musicVolume: Float = 0.35f) extends Logging {
+
   private val loadedSoundFiles = new mutable.HashMap[String, gdx.audio.Sound]
   private val loadedMusicFiles = new mutable.HashMap[String, gdx.audio.Music]
   private val loopingSoundLkup = new mutable.HashMap[Long, SoundLoopInstance]
@@ -32,7 +35,31 @@ class AudioPlayer extends Logging {
     loadedMusicFiles.getOrElseUpdate(musicName, loadNewMusic(musicName))
   }
 
-  def sound(name: String, volume: Float = 0.5f): Sound = {
+  def soundVolume: Float = {
+    _soundVolume
+  }
+
+  def musicVolume: Float = {
+    _musicVolume
+  }
+
+  def soundVolume(newVolume: Float): this.type = {
+    for (sound <- loopingSoundLkup.values) {
+      sound.volume(math.max(1.0f, sound.volume * newVolume / soundVolume))
+    }
+    _soundVolume = newVolume
+    this
+  }
+
+  def musicVolume(newVolume: Float): this.type = {
+    for (song <- musicPlaylist) {
+      song.setVolume(math.max(1.0f, song.getVolume * newVolume / musicVolume))
+    }
+    _musicVolume = newVolume
+    this
+  }
+
+  def sound(name: String, volume: Float = soundVolume): Sound = {
     ensureLoadedSound(name)
     Sound(
       gdxSound = loadedSoundFiles(name),
@@ -41,11 +68,19 @@ class AudioPlayer extends Logging {
     )
   }
 
+  /**
+    * Use this to play longer items, but controlling the start and end yourself, such as recorded speech and dialogues
+    */
+  def music(name: String): Music = {
+    ensureLoadedMusic(name)
+    loadedMusicFiles(name)
+  }
+
   def getLoopSound(instanceId: Long): Option[SoundLoopInstance] = {
     loopingSoundLkup.get(instanceId)
   }
 
-  def playOneOf(soundNames: Vector[String], volume: Float = 0.5f): SoundInstance = {
+  def playOneOf(soundNames: Vector[String], volume: Float = soundVolume): SoundInstance = {
     sound(pickRandom(soundNames), volume).play()
   }
 
@@ -62,14 +97,15 @@ class AudioPlayer extends Logging {
     musicPlaylist = Vector.empty
   }
 
-  def stop(): Unit = {
+  def stop(): this.type = {
     stopMusic()
     stopLoopSounds()
+    this
   }
 
   def setPlayList(trackNames: Vector[String],
                   shuffle: Boolean = false,
-                  volume: Float = 0.25f): Unit = {
+                  volume: Float = musicVolume): this.type = {
 
     // Stop prevous sounds
     musicPlaylist.foreach(_.stop())
@@ -99,6 +135,8 @@ class AudioPlayer extends Logging {
     } else {
       musicPlaylist = Vector.empty
     }
+
+    this
   }
 
   private def pickRandom[T](items: Vector[T]): T = {
