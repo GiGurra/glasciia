@@ -173,13 +173,10 @@ class AudioPlayer(private var _soundVolume: Float = 0.50f,
     if (musicPlaylist.size == 1) {
       restartPlaylist()
     } else if (musicPlaylist.size > 1) {
-      for {
-        iCur <- currentPlaylistItemIndex
-      } {
-        val validIndices = (musicPlaylist.indices.toBuffer - iCur).toVector
-        val validMusics = validIndices.map(musicPlaylist.apply)
-        pickRandom(validMusics).play()
-      }
+      val iCur = currentPlaylistItemIndex.getOrElse(-1)
+      val validIndices = (musicPlaylist.indices.toBuffer - iCur).toVector
+      val validMusics = validIndices.map(musicPlaylist.apply)
+      pickRandom(validMusics).play()
     }
     this
   }
