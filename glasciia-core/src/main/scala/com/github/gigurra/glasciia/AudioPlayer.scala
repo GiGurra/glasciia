@@ -120,12 +120,12 @@ class AudioPlayer(private var _soundVolume: Float = 0.50f,
                   shuffle: Boolean = false,
                   volume: Float = musicVolume): this.type = {
 
-    // Stop prevous sounds
+    // Stop prevous music
     stopMusic()
 
     if (trackNames.nonEmpty) {
 
-      trackNames.foreach(ensureLoadedSound)
+      trackNames.foreach(ensureLoadedMusic)
       musicPlaylist = trackNames.map(music)
       musicPlaylist.foreach(_.volume(volume))
       musicPlaylist.zipWithIndex.foreach {
