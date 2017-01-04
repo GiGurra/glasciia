@@ -109,14 +109,16 @@ class AudioPlayer(private var _soundVolume: Float = 0.50f,
     loopingSoundLkup.toMap
   }
 
-  def stopMusic(): this.type = {
+  def stopMusic(clearPlaylist: Boolean): this.type = {
     musicPlaylist.foreach(_.stop())
-    musicPlaylist = Vector.empty
+    if (clearPlaylist) {
+      musicPlaylist = Vector.empty
+    }
     this
   }
 
-  def stop(): this.type = {
-    stopMusic()
+  def stop(clearPlaylist: Boolean): this.type = {
+    stopMusic(clearPlaylist)
     stopLoopSounds()
     this
   }
@@ -143,7 +145,7 @@ class AudioPlayer(private var _soundVolume: Float = 0.50f,
 
   def changeCurrentPlaylistItemTo(i: Int): this.type = {
     if (i>= 0 && i < musicPlaylist.length) {
-      stopMusic()
+      stopMusic(clearPlaylist = false)
       musicPlaylist(i).play()
     } else {
       log.error(s"Cannot change music to index $i - outside playlist size (=${musicPlaylist.size})!")
@@ -185,7 +187,7 @@ class AudioPlayer(private var _soundVolume: Float = 0.50f,
                   volume: Float = musicVolume): this.type = {
 
     // Stop prevous music
-    stopMusic()
+    stopMusic(clearPlaylist = true)
 
     if (trackNames.nonEmpty) {
 
