@@ -51,15 +51,23 @@ object Animation {
             mode: PlayMode = PlayMode.NORMAL): Animation = {
     require(nx >= 0, s"Animation.apply: nx must be at least 1")
     require(nx >= 0, s"Animation.apply: ny must be at least 1")
-    val tmp = region.split(region.getRegionWidth / nx, region.getRegionHeight / ny)
-    val frames = new GdxArray[TextureRegion](nx * ny)
-    for (iy <- 0 until ny) {
-      for (jx <- 0 until nx) {
-        frames.add(tmp(iy)(jx))
-      }
-    }
-    val sz = Vec2(frames.get(0).getRegionWidth, frames.get(0).getRegionHeight)
-    new Animation(new GdxAnimation((dt.toDouble / 1000.0).toFloat, frames, mode), sz)
+    val frames = region.split(region.getRegionWidth / nx, region.getRegionHeight / ny).flatten
+    apply(frames, dt, mode)
+  }
+
+  def apply(frames: Seq[TextureRegion],
+            dt: Long): Animation = {
+    apply(frames, dt, PlayMode.NORMAL)
+  }
+
+  def apply(frames: Seq[TextureRegion],
+            dt: Long,
+            mode: PlayMode): Animation = {
+    require(frames.nonEmpty, "Cannot create animation without any frames")
+
+    val gdxArray = new GdxArray[TextureRegion](frames.toArray)
+    val sz = Vec2(frames.head.getRegionWidth, frames.head.getRegionHeight)
+    new Animation(new GdxAnimation((dt.toDouble / 1000.0).toFloat, gdxArray, mode), sz)
   }
 
   case class Instance(animation: Animation, t0: Long) {
