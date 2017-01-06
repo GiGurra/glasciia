@@ -20,6 +20,7 @@ trait FrameDrawer {
                 camPos: Vec2 = camera.position,
                 camViewportWithoutZoom: Vec2 = Vec2(camera.viewportWidth, camera.viewportHeight),
                 camZoom: Float = camera.zoom,
+                camRotation: Float = 0.0f,
                 yDown: Boolean = false,
                 setOrtho: Boolean = true,
                 useBatch: Boolean = true)(content: => Unit): Unit = {
@@ -34,6 +35,7 @@ trait FrameDrawer {
       camPos = camPos,
       camViewportWithoutZoom = camViewportWithoutZoom,
       camZoom = camZoom,
+      camRotation = camRotation,
       yDown = yDown,
       setOrtho = setOrtho,
       useBatch = useBatch
@@ -44,6 +46,7 @@ trait FrameDrawer {
                    camPos: Vec2 = camera.position,
                    camViewportWithoutZoom: Vec2 = Vec2(camera.viewportWidth, camera.viewportHeight),
                    camZoom: Float = camera.zoom,
+                   camRotation: Float = 0.0f,
                    yDown: Boolean = false,
                    setOrtho: Boolean = true,
                    useBatch: Boolean = true)(content: => Unit): Unit = {
@@ -53,6 +56,8 @@ trait FrameDrawer {
 
     camera.zoom = camZoom
     camera.position.set(camPos)
+    if (camRotation != 0.0f)
+      camera.rotate(camRotation)
     camera.update()
 
     HdpiUtils.glViewport(
