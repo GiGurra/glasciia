@@ -42,8 +42,8 @@ case class TransitionSystem() extends Logging {
     }
   }
 
-  final def execute[T <: Transition](transition: T): Future[T] = {
-    val promise = Promise[T]()
+  final def execute[T <: Transition](transition: T): SameThreadFuture[T] = {
+    val promise = SameThreadPromise[T]()
     entries.put(transition.id, Entry[T](transition, promise))
     promise.future
   }
@@ -69,7 +69,7 @@ case class TransitionSystem() extends Logging {
     snapshot.map(_.inputHandler).fold(PartialFunction.empty)((acc, item) => acc.orElse(item))
   }
 
-  private case class Entry[T <: Transition](transition: T, promise: Promise[T]) {
+  private case class Entry[T <: Transition](transition: T, promise: SameThreadPromise[T]) {
 
     def update(time: Long): Unit = {
       if (!finished) {

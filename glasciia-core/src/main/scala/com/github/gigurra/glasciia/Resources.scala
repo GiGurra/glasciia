@@ -20,7 +20,7 @@ import scala.util.{Failure, Success}
 abstract class Resources extends ResourceManager {
 
   private var _loadSomeFinished: Boolean = false
-  private val loadTasks: mutable.Queue[LoadTask] = new mutable.Queue[LoadTask]
+  private val loadTasks: mutable.Queue[LoadTask[_]] = new mutable.Queue[LoadTask[_]]
   private lazy val asyncLoader = Executors.newFixedThreadPool(1,
     new ThreadFactory {
       override def newThread(r: Runnable): Thread = {
@@ -35,16 +35,22 @@ abstract class Resources extends ResourceManager {
     * @return true if done
     */
   protected def loadSome(): Boolean = true
-  protected def addLoadTask(task: LoadTask): Unit = loadTasks.enqueue(task)
-  protected def addLoadTask(f: => Unit): Unit = addLoadTask(SyncLoadTask(() => f))
-  protected def addAsyncLoadTask(f: => Unit): Unit = addLoadTask(AsyncLoadTask(() => async(f)))
+  private def addLoadTask[R](task: LoadTask[R]): SameThreadFuture[R] = {
+    loadTasks.enqueue(task)
+    task.sameThreadFuture
+  }
 
-  private def async(f: => Unit): Future[Unit] = {
-    val promise = Promise[Unit]
+  protected def addLoadTask[R](f: => R): SameThreadFuture[R] = addLoadTask(SyncLoadTask(() => f))
+  protected def addAsyncLoadTask[R](f: => R): SameThreadFuture[R] = addLoadTask(AsyncLoadTask(() => async(f)))
+  protected def addAsyncLoadTask[R : FixErasure](f: => Future[R]): SameThreadFuture[R] = addLoadTask(AsyncLoadTask(() => f))
+
+  private def async[R](f: => R): Future[R] = {
+    val promise = Promise[R]()
     asyncLoader.execute(new Runnable {
       override def run(): Unit = {
         try {
-          promise.success(f)
+          val result = f
+          promise.success(result)
         } catch {
           case NonFatal(e) =>
             promise.failure(e)
@@ -81,38 +87,6 @@ abstract class Resources extends ResourceManager {
 
 
 object Resources {
-
-  trait LoadTask {
-    /**
-      * @return
-      *         true if finished
-      */
-    def loadSome(): Boolean
-  }
-
-  case class SyncLoadTask(expr: () => Unit) extends LoadTask {
-    override def loadSome(): Boolean = {
-      expr()
-      true
-    }
-  }
-
-  case class AsyncLoadTask(expr: () => Future[Unit]) extends LoadTask {
-    private var futureOpt: Option[Future[Unit]] = None
-    override def loadSome(): Boolean = {
-
-      futureOpt match {
-        case None =>
-          futureOpt = Some(expr())
-          false
-        case Some(future) => future.value match {
-          case None => false
-          case Some(Success(_)) => true
-          case Some(Failure(e)) => throw e
-        }
-      }
-    }
-  }
 
   def empty(): Resources = {
     new Resources {
@@ -181,5 +155,44 @@ object Resources {
     }
     folders.foreach(fetchChildren)
     out.toVector
+  }
+
+
+  private trait LoadTask[R] {
+    /**
+      * @return
+      *         true if finished
+      */
+    def loadSome(): Boolean
+    protected val sameThreadPromise: SameThreadPromise[R] = SameThreadPromise[R]()
+    val sameThreadFuture: SameThreadFuture[R] = sameThreadPromise.future
+  }
+
+  private case class SyncLoadTask[R](expr: () => R) extends LoadTask[R] {
+    override def loadSome(): Boolean = {
+      sameThreadPromise.success(expr())
+      true
+    }
+  }
+
+  private case class AsyncLoadTask[R](expr: () => Future[R]) extends LoadTask[R] {
+
+    private var futureOpt: Option[Future[R]] = None
+
+    override def loadSome(): Boolean = {
+
+      if (futureOpt.isEmpty)
+        futureOpt = Some(expr())
+
+      futureOpt.get.value match {
+        case None             =>
+          false
+        case Some(Success(r)) =>
+          sameThreadPromise.success(r)
+          true
+        case Some(Failure(e)) =>
+          throw e
+      }
+    }
   }
 }

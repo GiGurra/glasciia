@@ -407,7 +407,7 @@ object AudioPlayer {
                                private val gdxSound: gdx.audio.Sound,
                                private val instanceId: Long) {
 
-    private val stopPromise: Promise[Unit] = Promise[Unit]()
+    private val stopPromise: SameThreadPromise[Unit] = SameThreadPromise[Unit]()
     private var _currentVolume: Float = initVolume
 
     def stopped: Boolean = {
@@ -464,7 +464,7 @@ object AudioPlayer {
     }
 
     def onStop(f: => Unit): SoundLoopInstance = {
-      stopPromise.future.onComplete(_ => f)(SameThreadExecutionContext)
+      stopPromise.future.onComplete(_ => f)
       this
     }
   }

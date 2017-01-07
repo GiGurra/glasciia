@@ -12,17 +12,20 @@ import com.github.gigurra.math.{Box2, Vec2}
   * Created by johan on 2016-10-08.
   */
 class TestGameResources extends Resources with Logging {
-  val regions: InMemoryLoader[TextureRegion] = createTextureRegionLoader(resources)
 
-  addLoadTask(loadTestTextures(resources, regions))
-  addLoadTask(loadFonts(resources, regions))
-  addAsyncLoadTask(loadImages(resources, regions))
-  addLoadTask(loadParticleEffects(resources, regions))
-  addLoadTask(loadBackground(resources, regions))
-  addLoadTask(loadGui(resources, regions))
-  addAsyncLoadTask(loadCursor(resources, regions))
-  addLoadTask(loadMipMaps(regions))
-  addLoadTask(printLoadedResults())
+  for {
+    regions <- createTextureRegionLoader(resources)
+    _       <- loadTestTextures(resources, regions)
+    _       <- addLoadTask(loadTestTextures(resources, regions))
+    _       <- addLoadTask(loadFonts(resources, regions))
+    _       <- addAsyncLoadTask(loadImages(resources, regions))
+    _       <- addLoadTask(loadParticleEffects(resources, regions))
+    _       <- addLoadTask(loadBackground(resources, regions))
+    _       <- addLoadTask(loadGui(resources, regions))
+    _       <- addAsyncLoadTask(loadCursor(resources, regions))
+    _       <- addLoadTask(loadMipMaps(regions))
+    _       <- addLoadTask(printLoadedResults())
+  } ()
 
   def resources: TestGameResources = {
     this
@@ -95,39 +98,47 @@ class TestGameResources extends Resources with Logging {
     resources.add[GameWorldGui]("gui:game-world", new GameWorldGui(resources, regions))
   }
 
-  private def createTextureRegionLoader(resources: ResourceManager): InMemoryLoader[TextureRegion] = {
+  private def createTextureRegionLoader(resources: ResourceManager) = addLoadTask {
     log.info("createTextureRegionLoader")
     Thread.sleep(200)
     TextureRegionLoader.newDefault()()
   }
 
-  private def loadTestTextures(resources: ResourceManager, loader: InMemoryLoader[TextureRegion]): Unit = {
-    log.info("loadTestTextures")
-    Thread.sleep(200)
-    resources.add("filled-texture", loader("images/filled-texture.png"))
-    loader.add("filled-texture", loader("images/filled-texture.png"))
-    resources.add("texture-loader", loader)
+  private def loadTestTextures(resources: ResourceManager, loader: InMemoryLoader[TextureRegion]) = addLoadTask {
 
-    loader.add("circle-texture", {
-      val fillPixMap = new Pixmap(101, 101, Pixmap.Format.RGBA8888)
-      Pixmap.setBlending(Pixmap.Blending.None)
-      fillPixMap.setColor(Color.WHITE.scaleAlpha(0.0f))
-      fillPixMap.fill()
-      fillPixMap.setColor(Color.WHITE)
-      fillPixMap.fillCircle(50, 50, 50)
-      Pixmap.setBlending(Pixmap.Blending.SourceOver)
-      StaticImage.fromPixMap(fillPixMap)
-    })
-    loader.add("square-90-percent", {
-      val out = new Pixmap(400, 400, Pixmap.Format.RGBA8888)
-      out.setColor(Color.YELLOW.scaleAlpha(0.9f))
-      out.fill()
-      Pixmap.setBlending(Pixmap.Blending.None)
-      out.setColor(new Color(0,0,0,0))
-      out.fillRectangle(10,10,380,380)
-      Pixmap.setBlending(Pixmap.Blending.SourceOver)
-      StaticImage.fromPixMap(out)
-    })
+    addLoadTask {
+      log.info("loadTestTextures")
+      Thread.sleep(200)
+      resources.add("filled-texture", loader("images/filled-texture.png"))
+      loader.add("filled-texture", loader("images/filled-texture.png"))
+      resources.add("texture-loader", loader)
+    }
+
+    addLoadTask {
+      loader.add("circle-texture", {
+        val fillPixMap = new Pixmap(101, 101, Pixmap.Format.RGBA8888)
+        Pixmap.setBlending(Pixmap.Blending.None)
+        fillPixMap.setColor(Color.WHITE.scaleAlpha(0.0f))
+        fillPixMap.fill()
+        fillPixMap.setColor(Color.WHITE)
+        fillPixMap.fillCircle(50, 50, 50)
+        Pixmap.setBlending(Pixmap.Blending.SourceOver)
+        StaticImage.fromPixMap(fillPixMap)
+      })
+    }
+
+    addLoadTask {
+      loader.add("square-90-percent", {
+        val out = new Pixmap(400, 400, Pixmap.Format.RGBA8888)
+        out.setColor(Color.YELLOW.scaleAlpha(0.9f))
+        out.fill()
+        Pixmap.setBlending(Pixmap.Blending.None)
+        out.setColor(new Color(0, 0, 0, 0))
+        out.fillRectangle(10, 10, 380, 380)
+        Pixmap.setBlending(Pixmap.Blending.SourceOver)
+        StaticImage.fromPixMap(out)
+      })
+    }
   }
 
   private def loadCursor(resources: ResourceManager, regions: Loader[TextureRegion]): Unit = {
