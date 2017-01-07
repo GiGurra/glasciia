@@ -28,4 +28,8 @@ case class InMemoryLoader[T <: AnyRef : ClassTag](loader: Loader[T],
   }
 
   override def uploadIfDirty(): Unit = loader.uploadIfDirty()
+
+  def dispose(): Unit = {
+    loader.dispose()
+  }
 }

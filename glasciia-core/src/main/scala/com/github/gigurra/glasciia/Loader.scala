@@ -9,4 +9,5 @@ abstract class Loader[T <: AnyRef : ClassTag] {
   def get(name: String, upload: Boolean = false): Option[T]
   def apply(name: String, upload: Boolean = false): T = get(name, upload).getOrElse(throw new NoSuchElementException(s"Could not find any ${implicitly[ClassTag[T]].runtimeClass} by name '$name' in $this"))
   def uploadIfDirty(): Unit
+  def dispose(): Unit
 }

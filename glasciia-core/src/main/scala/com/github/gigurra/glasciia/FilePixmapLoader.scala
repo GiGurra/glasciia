@@ -14,4 +14,6 @@ case class FilePixmapLoader() extends Loader[Pixmap] {
     }
   }
   override def uploadIfDirty(): Unit = {}
+
+  override def dispose(): Unit = {}
 }

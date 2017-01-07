@@ -51,6 +51,7 @@ class GameLauncher[R <: Resources](gameFactory: GameFactory[R]) extends Applicat
 
     if (resources.finished && (stage eq loadingScreen)) {
       log.info("Loading done - launching game!")
+      consumeEvent(Exit(stage.time, stage.canvas))
       stage = gameFactory.launch(resources)
     }
   }

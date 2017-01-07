@@ -10,6 +10,10 @@ import com.github.gigurra.math.Vec2
   */
 class LoadingScreen extends Game with Logging {
 
+  private val loadingScreenTextures = TextureRegionLoader.newDefault()()
+  private val someImg = loadingScreenTextures("images/test-image.png")
+  loadingScreenTextures.uploadIfDirty()
+
   def eventHandler: PartialFunction[GameEvent, Unit] = {
 
     case Render(time, _) =>
@@ -20,6 +24,9 @@ class LoadingScreen extends Game with Logging {
       ) {
 
       }
+    case Exit(_, _) =>
+      log.info("LoadingScreen disposing resources")
+      loadingScreenTextures.dispose()
   }
 
   private def loadingSreenColor(time: Long) : Color = {

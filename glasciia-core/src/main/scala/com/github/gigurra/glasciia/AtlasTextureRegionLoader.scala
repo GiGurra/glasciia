@@ -27,4 +27,8 @@ case class AtlasTextureRegionLoader(atlas: DynamicTextureAtlas, fallback: Option
   }
 
   override def uploadIfDirty(): Unit = atlas.uploadIfDirty()
+
+  override def dispose(): Unit = {
+    atlas.dispose()
+  }
 }
