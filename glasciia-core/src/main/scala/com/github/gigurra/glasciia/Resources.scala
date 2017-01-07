@@ -158,6 +158,10 @@ object Resources {
   }
 
   private def isDirectoryFast(handle: FileHandle): Boolean = {
+    !isFileFast(handle)
+  }
+
+  private def isFileFast(handle: FileHandle): Boolean = {
     val trimmedPath = handle.path.trim
     trimmedPath.indexOf('.') > trimmedPath.indexOf('/')
   }
