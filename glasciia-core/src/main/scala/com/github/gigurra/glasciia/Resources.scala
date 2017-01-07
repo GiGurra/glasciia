@@ -149,8 +149,11 @@ object Resources {
     val out = new ArrayBuffer[FileHandle]
     def fetchChildren(parent: FileHandle): Unit = {
       parent.list.foreach { child =>
-        if (child.isDirectory) fetchChildren(child)
-        else out += child
+        child.path.trim match {
+          case "" | "." | ".." => // ignore
+          case path if path.last == '/' =>  fetchChildren(path) // it's a dir
+          case _ => out += child // it's a file
+        }
       }
     }
     folders.foreach(fetchChildren)
