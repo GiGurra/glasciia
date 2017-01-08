@@ -13,7 +13,7 @@ class PDA[State](stack: mutable.Stack[State]) {
   def nonEmpty: Boolean = stack.nonEmpty
   def size: Int = stack.size
 
-  def contains(state: State): Unit = {
+  def contains(state: State): Boolean = {
     stack.contains(state)
   }
 
