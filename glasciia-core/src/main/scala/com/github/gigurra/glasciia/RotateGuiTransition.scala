@@ -16,46 +16,52 @@ class RotateGuiTransition(ccw: Boolean = true,
                     transform: Transform,
                     elapsed: Long,
                     transitionTime: Long,
-                    from: Gui,
-                    to: Gui): Unit = {
+                    from: Option[Gui],
+                    to: Option[Gui]): Unit = {
+
+    if (from.isEmpty && to.isEmpty) return
 
     val bounds = canvas.screenBounds
     val screenWorldSize = Vec2(bounds.width, bounds.height) / screenFitting(bounds.size)
 
     val factor: Float = interpolator.apply(elapsed.toFloat / transitionTime.toFloat)
-
     val joint = screenWorldSize *|* relativeLocation
-
     val direction: Float = if (ccw) 1.0f else -1.0f
 
-    val transformOut =
-      Transform
-        .translate(joint)
-        .rotate(direction * angleRange * factor)
-        .translate(-joint)
-        .mul(transform)
+    from.foreach{ gui =>
 
-    val startInfrom: Float = if (ccw) -angleRange else angleRange
+      val transformOut =
+        Transform
+          .translate(joint)
+          .rotate(direction * angleRange * factor)
+          .translate(-joint)
+          .mul(transform)
 
-    val transformIn =
-      Transform
-        .translate(joint)
-        .rotate(startInfrom + direction * angleRange * factor)
-        .translate(-joint)
-        .mul(transform)
+      gui.draw(
+        canvas = canvas,
+        dt = dt,
+        screenFitting = screenFitting,
+        transform = transformOut
+      )
+    }
 
-    from.draw(
-      canvas = canvas,
-      dt = dt,
-      screenFitting = screenFitting,
-      transform = transformOut
-    )
+    to.foreach { gui =>
 
-    to.draw(
+      val startInfrom: Float = if (ccw) -angleRange else angleRange
+
+      val transformIn =
+        Transform
+          .translate(joint)
+          .rotate(startInfrom + direction * angleRange * factor)
+          .translate(-joint)
+          .mul(transform)
+
+      gui.draw(
       canvas = canvas,
       dt = dt,
       screenFitting = screenFitting,
       transform = transformIn
-    )
+      )
+    }
   }
 }

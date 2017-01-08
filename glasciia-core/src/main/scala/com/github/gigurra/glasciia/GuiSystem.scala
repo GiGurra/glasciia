@@ -2,32 +2,70 @@ package com.github.gigurra.glasciia
 
 import com.badlogic.gdx.Gdx
 import com.github.gigurra.glasciia.GameEvent.InputEvent
+
+import scala.collection.mutable
 import scala.language.implicitConversions
 
 /**
   * Created by johan on 2017-01-01.
   */
-case class GuiSystem(guis: Map[String, Gui], private var _active: String) extends Gui {
+class GuiSystem(private val guis: mutable.Map[String, Gui],
+                private var _activeName: Option[String]) extends Gui {
 
-  require(guis.contains(activeName), s"gui $activeName is not part of GuiSystem $this")
+  require(activeName.forall(guis.contains), s"gui $activeName is not part of GuiSystem $this")
 
   private var transition: Option[GuiSystem.Transition] = None
   private var transitionStartTime: Long = 0L
   private var transitionTotalTime: Long = 0L
-  private var transitionFrom: Gui = null.asInstanceOf[Gui]
-  private var transitionTo: Gui = null.asInstanceOf[Gui]
+  private var transitionFrom: Option[Gui] = None
+  private var transitionTo: Option[Gui] = None
 
-  def activeName: String = {
-    _active
+  def add(name: String, gui: Gui): Option[Gui] = {
+    guis.put(name, gui)
   }
 
-  def activeGui: Gui = {
-    guis(activeName)
+  def remove(name: String): Option[Gui] = {
+    require(!activeName.contains(name), s"Cannot remove the active gui: $name")
+    guis.remove(name)
+  }
+
+  def activeName: Option[String] = {
+    _activeName
+  }
+
+  def clear(): Unit = {
+    guis.clear()
+    _activeName = None
+  }
+
+  def size: Int = {
+    guis.size
+  }
+
+  def isEmpty: Boolean = {
+    guis.isEmpty
+  }
+
+  def nonEmpty: Boolean = {
+    guis.nonEmpty
+  }
+
+  def guiNames: Vector[String] = {
+    guis.keys.toVector
+  }
+
+  def activeGui: Option[Gui] = {
+    activeName.flatMap(guis.get)
   }
 
   def setActive(name: String): Unit = {
     require(guis.contains(name), s"gui $name is not part of GuiSystem $this")
-    _active = name
+    _activeName = Some(name)
+  }
+
+  def setActive(name: Option[String]): Unit = {
+    require(name.forall(guis.contains), s"gui $name is not part of GuiSystem $this")
+    _activeName = name
   }
 
   def transition(to: String, transitionTime: Long, transition: GuiSystem.Transition): Unit = {
@@ -36,7 +74,7 @@ case class GuiSystem(guis: Map[String, Gui], private var _active: String) extend
     this.transitionTotalTime = transitionTime
     this.transition = Some(transition)
     this.transitionFrom = activeGui
-    this.transitionTo = guis(to)
+    this.transitionTo = guis.get(to)
     setActive(to)
   }
 
@@ -63,19 +101,20 @@ case class GuiSystem(guis: Map[String, Gui], private var _active: String) extend
           transition = None
         }
 
-      case None => activeGui.draw(
-        canvas = canvas,
-        dt = dt,
-        screenFitting = screenFitting,
-        transform = transform
-      )
+      case None =>
+        activeGui.foreach(_.draw(
+          canvas = canvas,
+          dt = dt,
+          screenFitting = screenFitting,
+          transform = transform
+        ))
     }
   }
 
   override def inputHandler: PartialFunction[InputEvent, Unit] = {
     transition match {
       case Some(t) => t.inputHandler(transitionElapsed, transitionTotalTime, transitionFrom, transitionTo)
-      case None => activeGui
+      case None => activeGui.map(_.inputHandler).getOrElse(PartialFunction.empty)
     }
   }
 
@@ -91,8 +130,7 @@ case class GuiSystem(guis: Map[String, Gui], private var _active: String) extend
 object GuiSystem {
 
   def apply(guis: Map[String, Gui]): GuiSystem = {
-    require(guis.nonEmpty, s"Must have at least one gui to create a ${classOf[GuiSystem].getSimpleName}")
-    new GuiSystem(guis, guis.keys.head)
+    new GuiSystem(new mutable.LinkedHashMap[String, Gui] ++= guis, guis.keys.headOption)
   }
 
   def apply(guis: (String, Gui)*): GuiSystem = {
@@ -111,16 +149,16 @@ object GuiSystem {
              transform: Transform,
              elapsed: Long,
              transitionTime: Long,
-             from: Gui,
-             to: Gui): Unit
+             from: Option[Gui],
+             to: Option[Gui]): Unit
 
     ////////////////////////////////////////////////////////////////////////////////
     ////////////////////////////////////////////////////////////////////////////////
     // Optional overloads below
 
-    def inputHandler(elapsed: Long, transitionTime: Long, from: Gui, to: Gui): PartialFunction[InputEvent, Unit] = {
+    def inputHandler(elapsed: Long, transitionTime: Long, from: Option[Gui], to: Option[Gui]): PartialFunction[InputEvent, Unit] = {
       // from.act(dt) // By default, block actions/input into
-      to
+      to.map(_.inputHandler).getOrElse(PartialFunction.empty)
     }
 
     def finish(): Unit = {

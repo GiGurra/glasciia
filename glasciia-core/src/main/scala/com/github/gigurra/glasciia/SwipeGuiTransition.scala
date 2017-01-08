@@ -14,26 +14,25 @@ class SwipeGuiTransition(direction: Vec2 = Vec2(1.0f, 0.0f),
                     transform: Transform,
                     elapsed: Long,
                     transitionTime: Long,
-                    from: Gui,
-                    to: Gui): Unit = {
+                    from: Option[Gui],
+                    to: Option[Gui]): Unit = {
 
     val bounds = canvas.screenBounds
     val screenWorldSize = Vec2(bounds.width, bounds.height) / screenFitting(bounds.size)
-
     val factor: Float = interpolator.apply(elapsed.toFloat / transitionTime.toFloat)
 
-    from.draw(
+    from.foreach(_.draw(
       canvas = canvas,
       dt = dt,
       screenFitting = screenFitting,
       transform = transform.preTranslate(factor * direction *|* screenWorldSize)
-    )
+    ))
 
-    to.draw(
+    to.foreach(_.draw(
       canvas = canvas,
       dt = dt,
       screenFitting = screenFitting,
       transform = transform.preTranslate(factor * direction *|* screenWorldSize).preTranslate(-direction *|* screenWorldSize)
-    )
+    ))
   }
 }
