@@ -64,7 +64,7 @@ class PDA[State](stack: mutable.Stack[State]) {
 object PDA {
   def apply[State](states: State*): PDA[State] = {
     val stack = new mutable.Stack[State]
-    states foreach stack.push
+    states.reverse foreach stack.push
     new PDA(stack)
   }
 }
