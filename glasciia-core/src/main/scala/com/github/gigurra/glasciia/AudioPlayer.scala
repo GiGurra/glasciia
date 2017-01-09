@@ -15,9 +15,11 @@ class AudioPlayer(private var _soundVolume: Float = 0.50f,
   private val loadedMusicFiles = new mutable.HashMap[String, Music]
   private val loopingSoundLkup = new mutable.HashMap[Long, SoundLoopInstance]
   private var musicPlaylist = Vector[Music]()
+  private var _soundMuted: Boolean = false
+  private var _musicMuted: Boolean = false
 
   private def loadNewSound(soundName: String): Sound = {
-    Sound(
+    new Sound(
       name = soundName,
       gdxSound = Gdx.audio.newSound(soundName),
       player = this
@@ -25,7 +27,7 @@ class AudioPlayer(private var _soundVolume: Float = 0.50f,
   }
 
   private def loadNewMusic(musicName: String): Music = {
-    Music(
+    new Music(
       name = musicName,
       gdxMusic = Gdx.audio.newMusic(musicName),
       player = this
@@ -40,12 +42,38 @@ class AudioPlayer(private var _soundVolume: Float = 0.50f,
     loadedMusicFiles.getOrElseUpdate(musicName, loadNewMusic(musicName))
   }
 
+  def muteMusic(state: Boolean = true): this.type = {
+    _musicMuted = state
+    flushMusicVolume()
+    this
+  }
+
+  def muteSound(state: Boolean = true): this.type = {
+    _soundMuted = state
+    flushSoundVolume()
+    this
+  }
+
+  def soundMuted: Boolean = {
+    _soundMuted
+  }
+
+  def musicMuted: Boolean = {
+    _musicMuted
+  }
+
+  def mute(state: Boolean = true): this.type = {
+    muteSound(state)
+    muteMusic(state)
+    this
+  }
+
   def soundVolume: Float = {
-    _soundVolume
+    if (soundMuted) 0.0f else _soundVolume
   }
 
   def musicVolume: Float = {
-    _musicVolume
+    if (musicMuted) 0.0f else _musicVolume
   }
 
   def playList: Vector[String] = {
@@ -62,17 +90,33 @@ class AudioPlayer(private var _soundVolume: Float = 0.50f,
 
   def soundVolume(newVolume: Float): this.type = {
     _soundVolume = newVolume
+    flushSoundVolume()
+    this
+  }
+
+  def musicVolume(newVolume: Float): this.type = {
+    _musicVolume = newVolume
+    flushMusicVolume()
+    this
+  }
+
+  def flushMusicVolume(): this.type = {
+    for (music <- loadedMusicFiles.values) {
+      music.flushVolume()
+    }
+    this
+  }
+
+  def flushSoundVolume(): this.type = {
     for (sound <- loopingSoundLkup.values) {
       sound.flushVolume()
     }
     this
   }
 
-  def musicVolume(newVolume: Float): this.type = {
-    _musicVolume = newVolume
-    for (music <- loadedMusicFiles.values) {
-      music.flushVolume()
-    }
+  def flushVolume(): this.type = {
+    flushSoundVolume()
+    flushMusicVolume()
     this
   }
 
@@ -232,9 +276,9 @@ class AudioPlayer(private var _soundVolume: Float = 0.50f,
 
 object AudioPlayer {
 
-  case class Music(name: String,
-                   private val gdxMusic: gdx.audio.Music,
-                   private val player: AudioPlayer) {
+  class Music(val name: String,
+              gdxMusic: gdx.audio.Music,
+              player: AudioPlayer) {
 
 
     // API below just copied from gdx.audio.Music
@@ -316,15 +360,16 @@ object AudioPlayer {
     }
   }
 
-  case class Sound(name: String,
-                   private val gdxSound: gdx.audio.Sound,
-                   private val player: AudioPlayer) {
+  class Sound(val name: String,
+              gdxSound: gdx.audio.Sound,
+              player: AudioPlayer) {
 
     def play(unscaledVolume: Float = 1.0f): SoundInstance = {
 
       val id = gdxSound.play(player.soundVolume * unscaledVolume)
 
       new SoundInstance(
+        name = name,
         initUnscaledVolume = unscaledVolume,
         gdxSound = gdxSound,
         instanceId = id,
@@ -337,6 +382,7 @@ object AudioPlayer {
       val id = gdxSound.loop(player.soundVolume * unscaledVolume)
 
       val instance = new SoundLoopInstance(
+        name = name,
         initUnscaledVolume = unscaledVolume,
         gdxSound = gdxSound,
         instanceId = id,
@@ -349,7 +395,8 @@ object AudioPlayer {
     }
   }
 
-  class SoundInstance(initUnscaledVolume: Float,
+  class SoundInstance(val name: String,
+                      initUnscaledVolume: Float,
                       gdxSound: gdx.audio.Sound,
                       instanceId: Long,
                       player: AudioPlayer) {
@@ -401,10 +448,11 @@ object AudioPlayer {
     }
   }
 
-  class SoundLoopInstance(initUnscaledVolume: Float,
+  class SoundLoopInstance(name: String,
+                          initUnscaledVolume: Float,
                           gdxSound: gdx.audio.Sound,
                           instanceId: Long,
-                          player: AudioPlayer) extends SoundInstance(initUnscaledVolume, gdxSound, instanceId, player) {
+                          player: AudioPlayer) extends SoundInstance(name, initUnscaledVolume, gdxSound, instanceId, player) {
 
     private val stopPromise: SameThreadPromise[Unit] = SameThreadPromise[Unit]()
 
