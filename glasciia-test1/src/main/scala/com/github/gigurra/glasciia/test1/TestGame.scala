@@ -31,6 +31,18 @@ class TestGame(resources: TestGameResources) extends Game with Logging {
   require(Try(atlasLoader.reserve("Hej3", 1536, 1536)).isFailure) // Duplicate name
   require(Try(atlasLoader.reserve("Hej4", 2536, 2536)).isFailure) // Too large
 
+  require(textureLoader.get("Hej1").isDefined)
+  textureLoader.remove("Hej1")
+  require(textureLoader.get("Hej1").isEmpty)
+
+  require(textureLoader.get("Hej2").isDefined)
+  textureLoader.remove("Hej2")
+  require(textureLoader.get("Hej2").isEmpty)
+
+  require(textureLoader.get("Hej3").isDefined)
+  textureLoader.remove("Hej3")
+  require(textureLoader.get("Hej3").isEmpty)
+
   for {
     _ <- transitions.execute(Delay(1000))
     _ = println("Transition1 ended")

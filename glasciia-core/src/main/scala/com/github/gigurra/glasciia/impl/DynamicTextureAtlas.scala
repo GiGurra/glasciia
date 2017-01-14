@@ -11,7 +11,6 @@ import com.github.gigurra.glasciia.impl.DynamicTextureAtlas.{Page, Strategy, Swe
 import com.github.gigurra.math.{Box2, Vec2}
 
 import scala.collection.mutable
-import scala.collection.mutable.ArrayBuffer
 import scala.language.implicitConversions
 
 /**
@@ -23,16 +22,16 @@ case class DynamicTextureAtlas(conf: Conf,
                                padding: Int = 10,
                                atlas: TextureAtlas = new TextureAtlas()) extends Logging {
 
-  private val pages = new ArrayBuffer[Page]()
-  private val lookup = new mutable.HashMap[String, AtlasRegion]()
+  private val pages = new mutable.ArrayBuffer[Page]
+  private val regions = new mutable.HashMap[String, AtlasRegion]
 
   def get(name: String): Option[AtlasRegion] = {
-    lookup.get(name) match {
+    regions.get(name) match {
       case r @ Some(_) => r
       case None => Option(atlas.findRegion(name)) match {
         case None => None
         case r@Some(region) =>
-          lookup.put(name, region)
+          regions.put(name, region)
           r
       }
     }
@@ -74,10 +73,31 @@ case class DynamicTextureAtlas(conf: Conf,
     region
   }
 
+  def remove(name: String): Unit = {
+    for {
+      region    <- regions.get(name)
+      iPage     = pages.indexWhere(_.byName.contains(name))
+      page      = pages(iPage)
+    } {
+
+      // Remove region
+      regions.remove(name)
+      page.remove(region)
+      atlas.getRegions.removeValue(region, true)
+
+      // Dispose the page if it's now empty
+      if (page.isEmpty) {
+        pages.remove(iPage)
+        atlas.getTextures.remove(page.texture)
+        page.dispose()
+      }
+    }
+  }
+
   def reserve(name: String,
               width: Int,
               height: Int): (AtlasRegion, DynamicTextureAtlas.Page) = {
-    require(!lookup.contains(name), s"Tried to reserve region with name $name twice!")
+    require(!regions.contains(name), s"Tried to reserve region with name $name twice!")
     require(width + padding * 2 <= pageSize.x, s"Tried to reserve region $name, but it was larger that the maximum allowed texture width - 2*padding, which set to ${pageSize.x - 2 * padding}")
     require(height + padding * 2 <= pageSize.y, s"Tried to reserve region $name, but it was larger that the maximum allowed texture height - 2*padding, which set to ${pageSize.y - 2 * padding}")
 
@@ -91,7 +111,7 @@ case class DynamicTextureAtlas(conf: Conf,
 
     def addRegionToPage(page: Page, position: Vec2): (AtlasRegion, DynamicTextureAtlas.Page) = {
       val newRegion = page.reserve(name, to = position, width = width, height = height)
-      lookup.put(name, newRegion)
+      regions.put(name, newRegion)
       atlas.getRegions.add(newRegion)
       (newRegion, page)
     }
@@ -130,6 +150,21 @@ object DynamicTextureAtlas {
              val bounds: mutable.ArrayBuffer[Box2] = new mutable.ArrayBuffer[Box2],
              var boundsSortedByTop: Vector[Box2] = Vector.empty,
              var mipmapsDirty: Boolean = false) {
+
+    def dispose(): Unit = {
+      texture.dispose()
+    }
+
+    def remove(region: AtlasRegion): Unit = {
+      byName.remove(region.name)
+      bounds.remove(bounds.indexOf(region.bounds))
+      boundsSortedByTop = bounds.sortBy(_.top).toVector
+      mipmapsDirty = true
+    }
+
+    def isEmpty: Boolean = {
+      byName.isEmpty
+    }
 
     def blit(source: Pixmap, region: AtlasRegion, rebuildMipmaps: Boolean): Unit = {
 

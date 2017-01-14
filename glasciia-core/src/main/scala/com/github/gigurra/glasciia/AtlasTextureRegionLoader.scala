@@ -25,6 +25,10 @@ case class AtlasTextureRegionLoader(atlas: DynamicTextureAtlas, fallback: Option
     atlas.reserve(name, width, height)._1
   }
 
+  def remove(name: String): Unit = {
+    atlas.remove(name)
+  }
+
   def pageSize: Vec2 = {
     atlas.pageSize
   }

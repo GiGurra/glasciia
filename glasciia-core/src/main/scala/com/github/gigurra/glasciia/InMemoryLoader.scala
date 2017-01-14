@@ -23,8 +23,9 @@ case class InMemoryLoader[T <: AnyRef : ClassTag](impl: Loader[T],
     explicitlyAdded.put(name, value)
   }
 
-  def remove(name: String): Option[T] = {
+  def remove(name: String): Unit = {
     explicitlyAdded.remove(name)
+    impl.remove(name)
   }
 
   override def flush(force: Boolean): Unit = {

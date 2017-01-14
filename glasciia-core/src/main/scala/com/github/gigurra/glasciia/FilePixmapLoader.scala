@@ -16,4 +16,6 @@ case class FilePixmapLoader() extends Loader[Pixmap] {
   override def flush(force: Boolean): Unit = {}
 
   override def dispose(): Unit = {}
+
+  override def remove(name: String): Unit = {}
 }
