@@ -12,16 +12,16 @@ import scala.language.implicitConversions
 trait ImageImplicits {
   import ImageImplicitsImpl._
 
-  implicit def img2TextureSizeImplicits(texture: Texture): TextureSizeImplicits = {
-    new TextureSizeImplicits(texture)
+  implicit def img2TextureSizeImplicits(texture: Texture): TextureImplicits = {
+    new TextureImplicits(texture)
   }
 
-  implicit def img2PixMapSizeImplicits(pixmap: Pixmap): PixMapSizeImplicits = {
-    new PixMapSizeImplicits(pixmap)
+  implicit def img2PixMapSizeImplicits(pixmap: Pixmap): PixmapImplicits = {
+    new PixmapImplicits(pixmap)
   }
 
-  implicit def img2TextureRegionSizeImplicits(region: TextureRegion): TextureRegionSizeImplicits = {
-    new TextureRegionSizeImplicits(region)
+  implicit def img2TextureRegionSizeImplicits(region: TextureRegion): TextureRegionImplicits = {
+    new TextureRegionImplicits(region)
   }
 
   implicit def img2PolygonRegionSizeImplicits(polygon: PolygonRegion): PolygonRegionSizeImplicits = {
@@ -33,7 +33,7 @@ object ImageImplicits extends ImageImplicits
 
 object ImageImplicitsImpl {
 
-  implicit class TextureSizeImplicits(val texture: Texture) extends AnyVal {
+  implicit class TextureImplicits(val texture: Texture) extends AnyVal {
     def size: Vec2 = Vec2(width, height)
     def width: Int = texture.getWidth
     def height: Int = texture.getHeight
@@ -44,16 +44,11 @@ object ImageImplicitsImpl {
     def uuSize: Float = u2 - u
     def vvSize: Float = v2 - v
 
-    def slice(x: Int, y: Int, width: Int, height: Int): TextureRegion = new TextureRegion(texture, x, y, width, height)
-    def sliceUV(u: Float, v: Float, u2: Float, v2: Float): TextureRegion = new TextureRegion(texture, u, v, u2, v2)
-    def sliceFraction(x: Float, y: Float, width: Float, height: Float): TextureRegion = {
-      val uAbs = u + x * uuSize
-      val vAbs = v + y * vvSize
-      new TextureRegion(texture, uAbs, vAbs, uAbs + width * uuSize, vAbs + height * vvSize)
-    }
+    def regionByPixels(x: Int, y: Int, width: Int, height: Int): TextureRegion = new TextureRegion(texture, x, y, width, height)
+    def regionByUV(u: Float, v: Float, u2: Float, v2: Float): TextureRegion = new TextureRegion(texture, u, v, u2, v2)
   }
 
-  implicit class PixMapSizeImplicits(val pixmap: Pixmap) extends AnyVal {
+  implicit class PixmapImplicits(val pixmap: Pixmap) extends AnyVal {
     def size: Vec2 = Vec2(width, height)
     def width: Int = pixmap.getWidth
     def height: Int = pixmap.getHeight
@@ -65,7 +60,7 @@ object ImageImplicitsImpl {
     def vvSize: Float = v2 - v
   }
 
-  implicit class TextureRegionSizeImplicits(val region: TextureRegion) extends AnyVal {
+  implicit class TextureRegionImplicits(val region: TextureRegion) extends AnyVal {
     def size: Vec2 = Vec2(width, height)
     def width: Int = region.getRegionWidth
     def height: Int = region.getRegionHeight
@@ -80,12 +75,18 @@ object ImageImplicitsImpl {
     def uuSize: Float = u2 - u
     def vvSize: Float = v2 - v
 
-    def slice(x: Int, y: Int, width: Int, height: Int): TextureRegion = new TextureRegion(region, x, y, width, height)
-    def sliceUV(u: Float, v: Float, u2: Float, v2: Float): TextureRegion = new TextureRegion(region.getTexture, u, v, u2, v2)
-    def sliceFraction(x: Float, y: Float, width: Float, height: Float): TextureRegion = {
+    def subRegionByUV(u: Float, v: Float, u2: Float, v2: Float): TextureRegion = {
+      new TextureRegion(region.getTexture, this.u + u, this.v + v, this.u + u2, this.v + v2)
+    }
+
+    def subRegionByFraction(x: Float, y: Float, width: Float, height: Float): TextureRegion = {
       val uAbs = u + x * uuSize
       val vAbs = v + y * vvSize
       new TextureRegion(region.getTexture, uAbs, vAbs, uAbs + width * uuSize, vAbs + height * vvSize)
+    }
+
+    def subRegionByPixels(x: Int, y: Int, width: Int, height: Int): TextureRegion = {
+      new TextureRegion(region.getTexture, this.x + x, this.y + y, width, height)
     }
   }
 
