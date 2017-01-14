@@ -1,19 +1,19 @@
 package com.github.gigurra.glasciia
 
-import scala.collection.concurrent.TrieMap
+import scala.collection.mutable
 import scala.reflect.ClassTag
 
 /**
   * Created by johan_home on 2016-10-15.
   */
 case class InMemoryLoader[T <: AnyRef : ClassTag](loader: Loader[T],
-                                                  explicitlyAdded: TrieMap[String, T] = new TrieMap[String, T]) extends Loader[T] {
+                                                  explicitlyAdded: mutable.HashMap[String, T] = new mutable.HashMap[String, T]) extends Loader[T] {
 
   override def get(name: String, upload: Boolean = false): Option[T] = {
     explicitlyAdded.get(name) match {
-      case r@Some(region) => r
+      case r@Some(_) => r
       case None => loader.get(name, upload) match {
-        case r@Some(region) => r
+        case r@Some(_) => r
         case None => None
       }
     }
