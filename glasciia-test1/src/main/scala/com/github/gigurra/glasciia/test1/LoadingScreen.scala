@@ -12,7 +12,7 @@ class LoadingScreen extends Game with Logging {
 
   private val loadingScreenTextures = TextureRegionLoader.newDefault()()
   private val someImg = loadingScreenTextures("images/test-image.png")
-  loadingScreenTextures.uploadIfDirty()
+  loadingScreenTextures.flush()
 
   def eventHandler: PartialFunction[GameEvent, Unit] = {
 

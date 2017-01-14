@@ -25,7 +25,9 @@ class TestGameResources extends Resources with Logging {
     _       <- addAsyncLoadTask(loadCursor(resources, regions))
     _       <- addLoadTask(loadMipMaps(regions))
     _       <- addLoadTask(printLoadedResults())
-  } ()
+  } {
+    this.add("texture-loader", regions)
+  }
 
   def resources: TestGameResources = {
     this
@@ -150,6 +152,6 @@ class TestGameResources extends Resources with Logging {
   private def loadMipMaps(regions: InMemoryLoader[TextureRegion]): Unit = {
     log.info("loadMipMaps")
     Thread.sleep(200)
-    regions.uploadIfDirty()
+    regions.flush()
   }
 }

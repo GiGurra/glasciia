@@ -1,12 +1,15 @@
 package com.github.gigurra.glasciia.test1
 
 import com.badlogic.gdx.Input.Keys
+import com.badlogic.gdx.graphics.g2d.TextureRegion
 import com.github.gigurra.glasciia._
 import com.github.gigurra.glasciia.Glasciia._
 import com.github.gigurra.glasciia.GameEvent._
 import com.github.gigurra.glasciia.Scale.{Constant, LinearShortestSide}
 import com.github.gigurra.glasciia.test1.testcomponents._
 import com.github.gigurra.math.Vec2
+
+import scala.util.Try
 
 /**
   * Created by johan on 2016-10-31.
@@ -18,6 +21,15 @@ class TestGame(resources: TestGameResources) extends Game with Logging {
   printShaders(canvas.batch)
 
   val transitions = TransitionSystem()
+
+  // Test reserving some stuff
+  private val textureLoader = resources[InMemoryLoader[TextureRegion]]("texture-loader")
+  private val atlasLoader = textureLoader.impl.asInstanceOf[AtlasTextureRegionLoader]
+  atlasLoader.reserve("Hej1", 1536, 1536)
+  atlasLoader.reserve("Hej2", 1536, 1536)
+  atlasLoader.reserve("Hej3", 1536, 1536)
+  require(Try(atlasLoader.reserve("Hej3", 1536, 1536)).isFailure) // Duplicate name
+  require(Try(atlasLoader.reserve("Hej4", 2536, 2536)).isFailure) // Too large
 
   for {
     _ <- transitions.execute(Delay(1000))

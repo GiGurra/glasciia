@@ -40,65 +40,83 @@ case class DynamicTextureAtlas(conf: Conf,
 
   def add(name: String,
           source: TextureRegion,
-          upload: Boolean,
+          rebuildMipmaps: Boolean,
           deleteSource: Boolean): AtlasRegion = {
+
     val texture = source.getTexture
     val textureData = texture.getTextureData
+
     if (!textureData.isPrepared)
       textureData.prepare()
+
     val pixMap = texture.getTextureData.consumePixmap()
-    val newRegion = add(name, pixMap, upload = upload, deleteSource = false)
+    val newRegion = add(name, pixMap, rebuildMipmaps = rebuildMipmaps, deleteSource = false)
+
     if (deleteSource) {
       pixMap.dispose()
       texture.dispose()
     }
+
     newRegion
   }
 
   def add(name: String,
           source: Pixmap,
-          upload: Boolean,
+          rebuildMipmaps: Boolean,
           deleteSource: Boolean): AtlasRegion = {
-    require(source.getWidth + padding <= pageSize.x, s"Tried to add region $name, but it was larger that the maximum allowed texture width - 2*padding, which set to ${pageSize.x - 2 * padding}")
-    require(source.getHeight + padding <= pageSize.y, s"Tried to add region $name, but it was larger that the maximum allowed texture height - 2*padding, which set to ${pageSize.y - 2 * padding}")
+
+    val (region, page) = reserve(name, source.width, source.height)
+    page.blit(source, region, rebuildMipmaps = rebuildMipmaps)
+
+    if (deleteSource)
+      source.dispose()
+
+    region
+  }
+
+  def reserve(name: String,
+              width: Int,
+              height: Int): (AtlasRegion, DynamicTextureAtlas.Page) = {
+    require(!lookup.contains(name), s"Tried to reserve region with name $name twice!")
+    require(width + padding * 2 <= pageSize.x, s"Tried to reserve region $name, but it was larger that the maximum allowed texture width - 2*padding, which set to ${pageSize.x - 2 * padding}")
+    require(height + padding * 2 <= pageSize.y, s"Tried to reserve region $name, but it was larger that the maximum allowed texture height - 2*padding, which set to ${pageSize.y - 2 * padding}")
+
+    val size = Vec2(width, height)
 
     object Fitting {
       def unapply(page: Page): Option[(Page, Vec2)] = {
-        strategy.findPosition(source.size, padding = padding, page).map(pos => (page, pos))
+        strategy.findPosition(size, padding = padding, page).map(pos => (page, pos))
       }
     }
 
-    def addRegionToPage(page: Page, position: Vec2, upload: Boolean): AtlasRegion = {
-      val newRegion = page.copyIn(name, source, position, upload = upload)
+    def addRegionToPage(page: Page, position: Vec2): (AtlasRegion, DynamicTextureAtlas.Page) = {
+      val newRegion = page.reserve(name, to = position, width = width, height = height)
       lookup.put(name, newRegion)
       atlas.getRegions.add(newRegion)
-      newRegion
+      (newRegion, page)
     }
 
     val out = pages.collectFirst {
       case Fitting(page, position) => (page, position)
     } match {
       case Some((page, position)) =>
-        addRegionToPage(page, position, upload = upload)
+        addRegionToPage(page, position)
       case None =>
         val newTexture = new Texture(new PixmapTextureData(new Pixmap(pageSize.x.toInt, pageSize.y.toInt, Pixmap.Format.RGBA8888), null: Pixmap.Format, conf.useMipMaps, false))
         newTexture.setFilter(conf.minFilter, conf.magFilter)
         atlas.getTextures.add(newTexture)
         val page = new Page(pageSize, newTexture)
         pages += page
-        addRegionToPage(page, position = Vec2.zero + padding, upload = upload)
+        addRegionToPage(page, position = Vec2.zero + padding)
     }
 
-    if (deleteSource)
-      source.dispose()
-
-    log.debug(s"Placing $name at ${out.bounds}")
+    log.debug(s"Placing $name at ${out._1.bounds}")
 
     out
   }
 
-  def uploadIfDirty(): Unit = {
-    pages.foreach(_.uploadIfDirty())
+  def rebuildMipmaps(force: Boolean): Unit = {
+    pages.foreach(_.buildMipmaps(force = force))
   }
 }
 
@@ -111,18 +129,11 @@ object DynamicTextureAtlas {
              val byName: mutable.HashMap[String, AtlasRegion] = new mutable.HashMap[String, AtlasRegion],
              val bounds: mutable.ArrayBuffer[Box2] = new mutable.ArrayBuffer[Box2],
              var boundsSortedByTop: Vector[Box2] = Vector.empty,
-             var dirty: Boolean = false) {
+             var mipmapsDirty: Boolean = false) {
 
-    def copyIn(name: String, source: Pixmap, to: Vec2, upload: Boolean): AtlasRegion = {
+    def blit(source: Pixmap, region: AtlasRegion, rebuildMipmaps: Boolean): Unit = {
 
-      val region = new AtlasRegion(texture, to.x.toInt, to.y.toInt, source.width, source.height)
-
-      val itemBounds = region.bounds
-      region.name = name
-      region.index = -1
-      region.originalWidth = source.getWidth
-      region.originalHeight = source.getHeight
-
+      val to: Vec2 = region.pos
       val targetPixMap = texture.getTextureData.consumePixmap()
       val pixmapCopySettingBefore = Pixmap.getBlending
       try {
@@ -135,11 +146,30 @@ object DynamicTextureAtlas {
         Pixmap.setBlending(pixmapCopySettingBefore)
       }
 
+      mipmapsDirty = true
 
-      dirty = true
+      if (rebuildMipmaps)
+        buildMipmaps(force = false)
+    }
 
-      if (upload)
-        uploadIfDirty()
+    def buildMipmaps(force: Boolean): Unit = {
+      if (force || mipmapsDirty) {
+        texture.load(texture.getTextureData)
+        mipmapsDirty = false
+      }
+    }
+
+    def reserve(name: String, to: Vec2, width: Int, height: Int): AtlasRegion = {
+
+      val region = new AtlasRegion(texture, to.x.toInt, to.y.toInt, width, height)
+
+      val itemBounds = region.bounds
+      region.name = name
+      region.index = -1
+      region.originalWidth = width
+      region.originalHeight = height
+
+      mipmapsDirty = true // Assume you will fill this region in externally
 
       byName += name -> region
       bounds += itemBounds
@@ -148,12 +178,6 @@ object DynamicTextureAtlas {
       region
     }
 
-    def uploadIfDirty(): Unit = {
-      if (dirty) {
-        texture.load(texture.getTextureData)
-        dirty = false
-      }
-    }
   }
 
   trait Strategy {
