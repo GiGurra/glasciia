@@ -1,9 +1,10 @@
 package com.github.gigurra.glasciia.impl
 
+import com.badlogic.gdx.Gdx
 import com.badlogic.gdx.graphics.g2d.TextureAtlas.AtlasRegion
 import com.badlogic.gdx.graphics.g2d.{TextureAtlas, TextureRegion}
 import com.badlogic.gdx.graphics.glutils.PixmapTextureData
-import com.badlogic.gdx.graphics.{Pixmap, Texture}
+import com.badlogic.gdx.graphics.{GL20, Pixmap, Texture}
 import com.github.gigurra.glasciia.Glasciia._
 import com.github.gigurra.glasciia.Logging
 import com.github.gigurra.glasciia.TextureRegionLoader.Conf
@@ -39,7 +40,7 @@ case class DynamicTextureAtlas(conf: Conf,
 
   def add(name: String,
           source: TextureRegion,
-          rebuildMipmaps: Boolean,
+          flush: Boolean,
           deleteSource: Boolean): AtlasRegion = {
 
     val texture = source.getTexture
@@ -49,7 +50,7 @@ case class DynamicTextureAtlas(conf: Conf,
       textureData.prepare()
 
     val pixMap = texture.getTextureData.consumePixmap()
-    val newRegion = add(name, pixMap, rebuildMipmaps = rebuildMipmaps, deleteSource = false)
+    val newRegion = add(name, pixMap, flush = flush, deleteSource = false)
 
     if (deleteSource) {
       pixMap.dispose()
@@ -61,14 +62,17 @@ case class DynamicTextureAtlas(conf: Conf,
 
   def add(name: String,
           source: Pixmap,
-          rebuildMipmaps: Boolean,
+          flush: Boolean,
           deleteSource: Boolean): AtlasRegion = {
 
     val (region, page) = reserve(name, source.width, source.height)
-    page.blit(source, region, rebuildMipmaps = rebuildMipmaps)
+    page.blit(source, region)
 
     if (deleteSource)
       source.dispose()
+
+    if (flush)
+      page.flush(force = false)
 
     region
   }
@@ -135,8 +139,8 @@ case class DynamicTextureAtlas(conf: Conf,
     out
   }
 
-  def rebuildMipmaps(force: Boolean): Unit = {
-    pages.foreach(_.buildMipmaps(force = force))
+  def flush(force: Boolean): Unit = {
+    pages.foreach(_.flush(force = force))
   }
 }
 
@@ -144,53 +148,98 @@ object DynamicTextureAtlas {
 
   implicit def dynamic2atlas(dynamicTexturePackingAtlas: DynamicTextureAtlas): TextureAtlas = dynamicTexturePackingAtlas.atlas
 
+  case class DirtyRegion(box2: Box2, needUpload: Boolean)
+  object DirtyRegion {
+    implicit def DR2b2(dr: DirtyRegion): Box2 = dr.box2
+  }
+
   class Page(val capacity: Vec2,
              val texture: Texture,
              val byName: mutable.HashMap[String, AtlasRegion] = new mutable.HashMap[String, AtlasRegion],
              val bounds: mutable.ArrayBuffer[Box2] = new mutable.ArrayBuffer[Box2],
-             var boundsSortedByTop: Vector[Box2] = Vector.empty,
-             var mipmapsDirty: Boolean = false) {
+             var boundsSortedByTop: Vector[Box2] = Vector.empty) {
+
+    private val pixMap = texture.getTextureData.consumePixmap()
+    private val dirtyRegions = new mutable.ArrayBuffer[DirtyRegion]
 
     def dispose(): Unit = {
       texture.dispose()
+      pixMap.dispose()
     }
 
     def remove(region: AtlasRegion): Unit = {
       byName.remove(region.name)
       bounds.remove(bounds.indexOf(region.bounds))
       boundsSortedByTop = bounds.sortBy(_.top).toVector
-      mipmapsDirty = true
     }
 
     def isEmpty: Boolean = {
       byName.isEmpty
     }
 
-    def blit(source: Pixmap, region: AtlasRegion, rebuildMipmaps: Boolean): Unit = {
+    def blit(source: Pixmap, region: AtlasRegion): Unit = {
 
       val to: Vec2 = region.pos
-      val targetPixMap = texture.getTextureData.consumePixmap()
+
+      val mariginX = math.max(0, to.x.toInt-1)
+      val mariginY = math.max(0, to.y.toInt-1)
+      val mariginBounds = Box2(
+        x = mariginX,
+        y = mariginY,
+        width  = math.min(source.width + 2, region.getTexture.width - mariginX),
+        height = math.min(source.height + 2, region.getTexture.height - mariginY)
+      )
+
       val pixmapCopySettingBefore = Pixmap.getBlending
-      try {
-        Pixmap.setBlending(Pixmap.Blending.None)
-        // UV coordinates are apparently interpreted differently depending on device... Better just draw the image again outside
-        // to double up on the border
-        targetPixMap.drawPixmap(source, 0, 0, source.width, source.height, math.max(0, to.x.toInt-1), math.max(0, to.y.toInt-1), source.width+2, source.height+2)
-        targetPixMap.drawPixmap(source, to.x.toInt, to.y.toInt)
-      } finally {
-        Pixmap.setBlending(pixmapCopySettingBefore)
-      }
+      Pixmap.setBlending(Pixmap.Blending.None)
+      // UV coordinates are apparently interpreted differently depending on device... Better just draw the image again outside
+      // to double up on the border
+      pixMap.drawPixmap(source, 0, 0, source.width, source.height, mariginBounds.left.toInt, mariginBounds.bottom.toInt, mariginBounds.width.toInt, mariginBounds.height.toInt)
+      pixMap.drawPixmap(source, to.x.toInt, to.y.toInt)
+      Pixmap.setBlending(pixmapCopySettingBefore)
 
-      mipmapsDirty = true
-
-      if (rebuildMipmaps)
-        buildMipmaps(force = false)
+      dirtyRegions += DirtyRegion(mariginBounds, needUpload = true)
     }
 
-    def buildMipmaps(force: Boolean): Unit = {
-      if (force || mipmapsDirty) {
-        texture.load(texture.getTextureData)
-        mipmapsDirty = false
+    def dirty: Boolean = {
+      dirtyRegions.nonEmpty
+    }
+
+    def flush(force: Boolean): Unit = {
+
+      if (force || dirty) {
+
+        texture.bind()
+
+        val pixmapCopySettingBefore = Pixmap.getBlending
+        Pixmap.setBlending(Pixmap.Blending.None)
+
+        for (bounds <- dirtyRegions) {
+
+          if (bounds.needUpload) {
+            // GL_UNPACK_ROW_LENGTH isnt supported in GL ES 2.0, so need to copy image data info a temp buffer
+            // Super duper mega slow but what can we do :(
+            val tempBuffer = new Pixmap(bounds.width.toInt, bounds.height.toInt, pixMap.getFormat)
+            tempBuffer.drawPixmap(pixMap, 0, 0, bounds.left.toInt, bounds.bottom.toInt, bounds.width.toInt, bounds.height.toInt)
+            Gdx.gl.glTexSubImage2D(
+              GL20.GL_TEXTURE_2D,
+              0,
+              bounds.left.toInt,
+              bounds.bottom.toInt,
+              bounds.width.toInt,
+              bounds.height.toInt,
+              tempBuffer.getGLInternalFormat,
+              tempBuffer.getGLType,
+              tempBuffer.getPixels
+            )
+            tempBuffer.dispose()
+          }
+        }
+
+        Pixmap.setBlending(pixmapCopySettingBefore)
+
+        Gdx.gl20.glGenerateMipmap(GL20.GL_TEXTURE_2D)
+        dirtyRegions.clear()
       }
     }
 
@@ -204,7 +253,7 @@ object DynamicTextureAtlas {
       region.originalWidth = width
       region.originalHeight = height
 
-      mipmapsDirty = true // Assume you will fill this region in externally
+      dirtyRegions += DirtyRegion(region.bounds, needUpload = false)
 
       byName += name -> region
       bounds += itemBounds

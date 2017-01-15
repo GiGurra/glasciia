@@ -11,8 +11,7 @@ import com.github.gigurra.glasciia.Glasciia._
   */
 case class TextureRegionFrameBuffer(region: TextureRegion,
                                     useDepth: Boolean,
-                                    useStencil: Boolean,
-                                    useHdpi: Boolean = true)
+                                    useStencil: Boolean)
   extends FrameBuffer(
     region.getTexture.getTextureData.getFormat,
     region.width,

@@ -16,8 +16,6 @@ import scala.util.Random
 object drawWorld {
   def apply(canvas: Canvas, resources: ResourceManager): Unit = {
 
-    val app = canvas.game
-
     val monospaceFont = resources[BitmapFont]("font:monospace-default")
     val monospaceFontMasked = resources[BitmapFont]("font:monospace-default-masked")
     val walkingDudeAnimation = resources[Animation.Instance]("animation:capguy-walk:instance-0")
@@ -33,16 +31,14 @@ object drawWorld {
     val textureLoader = resources[InMemoryLoader[TextureRegion]]("texture-loader")
     val circleImage = textureLoader("circle-texture")
     val fillImage = textureLoader("filled-texture")
+    val fboCircle = textureLoader("fbo-circle")
 
     val camScale = 0.5f * (1.0f + math.min(canvas.width / 640.0f, canvas.height / 480.0f))
     canvas.drawFrame(
       pixelViewport = canvas.screenBounds,
       clearBuffer = Some(Color.DARK_GRAY),
       camPos = cameraPos,
-      yDown = false,
-      camViewportWithoutZoom = Vec2(canvas.width, canvas.height) / camScale,
-      setOrtho = true,
-      useBatch = true
+      camViewportWithoutZoom = Vec2(canvas.width, canvas.height) / camScale
     ) {
 
       canvas.drawBackGround(background)
@@ -133,6 +129,16 @@ object drawWorld {
         )
       )
 
+      canvas.batch.setColor(Color.WHITE)
+
+      canvas.drawImage(
+        image = fboCircle,
+        transform = Transform(
+          at = Vec2(400.0f, 100.0f),
+          scale = Vec2(200.0f, 200.0f)
+        )
+      )
+
       val preparedLines = PrepareLinePolygon(
         points = Vector(
           Vec2(0.0f, 0.0f),
@@ -148,8 +154,7 @@ object drawWorld {
           at = Vec2(500.0f, 100.0f),
           angle = 45.0f,
           scale = Vec2(100.0f, 100.0f)
-        ),
-        closed = true
+        )
       )
 
       canvas.drawImageRepeated(preparedLines)
@@ -194,7 +199,6 @@ object drawWorld {
           Transform
             .translate(Gdx.graphics.getFrameId % 320)
             .translate(Vec2(100, 300))
-            .scale(1.0f, 1.0f)
             .rotate(Gdx.graphics.getFrameId % 320)
             .scale(Vec2(160.0f, 120.0f))
             .translate(-0.5f, -0.5f, -0.5f)
@@ -206,7 +210,6 @@ object drawWorld {
           Transform
             .translate(Gdx.graphics.getFrameId % 360)
             .translate(Vec2(100, 300))
-            .scale(1.0f, 1.0f)
             .rotate(-Gdx.graphics.getFrameId % 360)
             .scale(Vec2(160.0f, 120.0f))
             .translate(-0.5f, -0.5f, -0.5f),
@@ -223,7 +226,6 @@ object drawWorld {
           Transform
             .translate(Gdx.graphics.getFrameId % 320)
             .translate(Vec2(100, 300))
-            .scale(1.0f, 1.0f)
             .rotate(Gdx.graphics.getFrameId % 320)
             .scale(Vec2(160.0f, 120.0f))
             .translate(-0.5f, -0.5f, -0.5f)
@@ -275,6 +277,7 @@ object drawWorld {
         )
       )
     }
+
   }
 
   private def testEffectPosition(tMillis: Long): Vec2 = {

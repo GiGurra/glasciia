@@ -15,7 +15,7 @@ case class AtlasTextureRegionLoader(atlas: DynamicTextureAtlas, fallback: Option
     atlas.get(nameWithoutFileEnding) match {
       case r @ Some(_) => r
       case None => fallback.flatMap(_.get(name, flush)) match {
-        case Some(source) => Some(atlas.add(nameWithoutFileEnding, source, rebuildMipmaps = flush, deleteSource = true))
+        case Some(source) => Some(atlas.add(nameWithoutFileEnding, source, flush = flush, deleteSource = true))
         case None => None
       }
     }
@@ -41,7 +41,7 @@ case class AtlasTextureRegionLoader(atlas: DynamicTextureAtlas, fallback: Option
   }
 
   override def flush(force: Boolean = false): Unit = {
-    atlas.rebuildMipmaps(force = force)
+    atlas.flush(force = force)
   }
 
   override def dispose(): Unit = {
