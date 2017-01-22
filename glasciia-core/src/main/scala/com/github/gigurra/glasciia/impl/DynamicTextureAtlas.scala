@@ -183,18 +183,23 @@ object DynamicTextureAtlas {
 
       val mariginX = math.max(0, to.x.toInt-1)
       val mariginY = math.max(0, to.y.toInt-1)
-      val mariginBounds = Box2(
+
+      val padUp: Boolean = region.width <= 5 && region.height <= 5
+
+      val mariginBounds = if (padUp) Box2(
         x = mariginX,
         y = mariginY,
         width  = math.min(source.width + 2, region.getTexture.width - mariginX),
         height = math.min(source.height + 2, region.getTexture.height - mariginY)
-      )
+      ) else region.bounds
 
       val pixmapCopySettingBefore = Pixmap.getBlending
       Pixmap.setBlending(Pixmap.Blending.None)
-      // UV coordinates are apparently interpreted differently depending on device... Better just draw the image again outside
-      // to double up on the border
-      pixMap.drawPixmap(source, 0, 0, source.width, source.height, mariginBounds.left.toInt, mariginBounds.bottom.toInt, mariginBounds.width.toInt, mariginBounds.height.toInt)
+      if (padUp) {
+        // UV coordinates are apparently interpreted differently depending on device... Better just draw the image again outside
+        // to double up on the border
+        pixMap.drawPixmap(source, 0, 0, source.width, source.height, mariginBounds.left.toInt, mariginBounds.bottom.toInt, mariginBounds.width.toInt, mariginBounds.height.toInt)
+      }
       pixMap.drawPixmap(source, to.x.toInt, to.y.toInt)
       Pixmap.setBlending(pixmapCopySettingBefore)
 
