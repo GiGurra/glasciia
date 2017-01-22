@@ -23,8 +23,12 @@ case class DynamicTextureAtlas(conf: Conf,
                                padding: Int = 10,
                                atlas: TextureAtlas = new TextureAtlas()) extends Logging {
 
-  private val pages = new mutable.ArrayBuffer[Page]
+  private val _pages = new mutable.ArrayBuffer[Page]
   private val regions = new mutable.HashMap[String, AtlasRegion]
+
+  final def pages: Seq[Page] = {
+    _pages
+  }
 
   def get(name: String): Option[AtlasRegion] = {
     regions.get(name) match {
@@ -91,7 +95,7 @@ case class DynamicTextureAtlas(conf: Conf,
 
       // Dispose the page if it's now empty
       if (page.isEmpty) {
-        pages.remove(iPage)
+        _pages.remove(iPage)
         atlas.getTextures.remove(page.texture)
         page.dispose()
       }
@@ -130,7 +134,7 @@ case class DynamicTextureAtlas(conf: Conf,
         newTexture.setFilter(conf.minFilter, conf.magFilter)
         atlas.getTextures.add(newTexture)
         val page = new Page(pageSize, newTexture)
-        pages += page
+        _pages += page
         addRegionToPage(page, position = Vec2.zero + padding)
     }
 
