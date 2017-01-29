@@ -20,8 +20,10 @@ import scala.language.implicitConversions
 case class DynamicTextureAtlas(conf: Conf,
                                pageSize: Vec2 = Vec2(2048, 2048),
                                strategy: Strategy = SweepStrategy,
-                               padding: Int = 10,
+                               padding: Int = 8,
                                atlas: TextureAtlas = new TextureAtlas()) extends Logging {
+
+  require(padding % 4 == 0, s"Padding must be 4 byte aligned")
 
   private val _pages = new mutable.ArrayBuffer[Page]
   private val regions = new mutable.HashMap[String, AtlasRegion]
@@ -125,7 +127,9 @@ case class DynamicTextureAtlas(conf: Conf,
     }
 
     val out = pages.collectFirst {
-      case Fitting(page, position) => (page, position)
+      case Fitting(page, position) =>
+        require(is4ByteAligned(position), s"Atlas strategy returned non 4-byte aligned atlas position for: '$name', pos: $position")
+        (page, position)
     } match {
       case Some((page, position)) =>
         addRegionToPage(page, position)
@@ -147,6 +151,10 @@ case class DynamicTextureAtlas(conf: Conf,
 
   def flush(force: Boolean): Unit = {
     pages.foreach(_.flush(force = force))
+  }
+
+  private def is4ByteAligned(position: Vec2): Boolean = {
+    position.x % 4 == 0 && position.y % 4 == 0
   }
 }
 
@@ -317,12 +325,14 @@ object DynamicTextureAtlas {
             }
             if (collision) {
               xOffs = obstacle.right.toInt + 1
+              xOffs += (4 - xOffs % 4) // 4 byte alignment
             } else {
               answer = Some(Vec2(left, bottom) + padding)
             }
           }
           if (answer.isEmpty) {
             yOffs = bounds(passed).top.toInt + 1
+            yOffs += (4 - yOffs % 4) // 4 byte alignment
             passed += 1
           }
         }
