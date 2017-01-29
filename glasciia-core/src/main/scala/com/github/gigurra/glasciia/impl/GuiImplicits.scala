@@ -64,6 +64,13 @@ object GuiImplicitsImpl {
     def cell(): Cell[_] = table.add()
     def cellImg(template: String, color: Color): Cell[Scene2dImage] = cell(new Scene2dImage(table.getSkin.newDrawable(template, color)))
 
+    def spring(h: Boolean = true, v: Boolean = false): Cell[_] = {
+      val c = table.cell()
+      if (h) c.growX()
+      if (v) c.growY()
+      c
+    }
+
     def rw[A](f: Table => A): Table = {
       f(table)
       table.row()
