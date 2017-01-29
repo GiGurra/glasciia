@@ -71,6 +71,8 @@ case class DynamicTextureAtlas(conf: Conf,
           flush: Boolean,
           deleteSource: Boolean): AtlasRegion = {
 
+    require(source.getFormat == Pixmap.Format.RGBA8888, s"Can only add pixmaps to atlas of format RGBA8888, however '$name' is of format ${source.getFormat}")
+
     val (region, page) = reserve(name, source.width, source.height)
     page.blit(source, region)
 
