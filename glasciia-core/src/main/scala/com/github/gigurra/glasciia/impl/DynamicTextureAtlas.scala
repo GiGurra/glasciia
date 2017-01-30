@@ -34,13 +34,15 @@ case class DynamicTextureAtlas(conf: Conf,
 
   def get(name: String): Option[AtlasRegion] = {
     regions.get(name) match {
-      case r @ Some(_) => r
-      case None => Option(atlas.findRegion(name)) match {
-        case None => None
-        case r@Some(region) =>
-          regions.put(name, region)
-          r
-      }
+      case r@Some(_) => r
+      case None =>
+        val nameWithoutFileEnding = stripEnding(name)
+        Option(atlas.findRegion(nameWithoutFileEnding)) match {
+          case None => None
+          case r@Some(region) =>
+            regions.put(name, region)
+            r
+        }
     }
   }
 
@@ -157,6 +159,13 @@ case class DynamicTextureAtlas(conf: Conf,
 
   private def is4ByteAligned(position: Vec2): Boolean = {
     position.x % 4 == 0 && position.y % 4 == 0
+  }
+
+  private def stripEnding(name: String): String = {
+    name.lastIndexOf('.') match {
+      case -1 => name
+      case i => name.splitAt(i)._1
+    }
   }
 }
 

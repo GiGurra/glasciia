@@ -11,11 +11,10 @@ import com.github.gigurra.math.Vec2
 case class AtlasTextureRegionLoader(atlas: DynamicTextureAtlas, fallback: Option[Loader[Pixmap]] = None) extends Loader[TextureRegion] {
 
   override def get(name: String, flush: Boolean = false): Option[TextureRegion] = {
-    val nameWithoutFileEnding = stripEnding(name)
-    atlas.get(nameWithoutFileEnding) match {
+    atlas.get(name) match {
       case r @ Some(_) => r
       case None => fallback.flatMap(_.get(name, flush)) match {
-        case Some(source) => Some(atlas.add(nameWithoutFileEnding, source, flush = flush, deleteSource = true))
+        case Some(source) => Some(atlas.add(name, source, flush = flush, deleteSource = true))
         case None => None
       }
     }
@@ -31,13 +30,6 @@ case class AtlasTextureRegionLoader(atlas: DynamicTextureAtlas, fallback: Option
 
   def pageSize: Vec2 = {
     atlas.pageSize
-  }
-
-  private def stripEnding(name: String): String = {
-    name.lastIndexOf('.') match {
-      case -1 => name
-      case i => name.splitAt(i)._1
-    }
   }
 
   override def flush(force: Boolean = false): Unit = {
