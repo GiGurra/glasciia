@@ -2,6 +2,7 @@ package com.github.gigurra.glasciia.impl
 
 import com.badlogic.gdx.graphics.g2d.{PolygonRegion, TextureRegion}
 import com.badlogic.gdx.graphics.{Pixmap, Texture}
+import com.badlogic.gdx.scenes.scene2d.utils.Drawable
 import com.github.gigurra.math.{Box2, Vec2}
 
 import scala.language.implicitConversions
@@ -27,6 +28,10 @@ trait ImageImplicits {
   implicit def img2PolygonRegionSizeImplicits(polygon: PolygonRegion): PolygonRegionSizeImplicits = {
     new PolygonRegionSizeImplicits(polygon)
   }
+
+  implicit def drawable2DrawableImplicits(drawable: Drawable): DrawableImplicits = {
+    new DrawableImplicits(drawable)
+  }
 }
 
 object ImageImplicits extends ImageImplicits
@@ -46,6 +51,14 @@ object ImageImplicitsImpl {
 
     def regionByPixels(x: Int, y: Int, width: Int, height: Int): TextureRegion = new TextureRegion(texture, x, y, width, height)
     def regionByUV(u: Float, v: Float, u2: Float, v2: Float): TextureRegion = new TextureRegion(texture, u, v, u2, v2)
+  }
+
+  implicit class DrawableImplicits(val drawable: Drawable) extends AnyVal {
+    def noMinSize(): Drawable = {
+      drawable.setMinHeight(0)
+      drawable.setMinWidth(0)
+      drawable
+    }
   }
 
   implicit class PixmapImplicits(val pixmap: Pixmap) extends AnyVal {
