@@ -69,6 +69,8 @@ object Signal {
       signal
     }
   }
+
+  implicit def binding2Value[T](signal: Signal[T => Unit]): T = signal.get
 }
 
 object Binding {
