@@ -8,7 +8,7 @@ import com.github.gigurra.math.Vec2
 /**
   * Created by johan on 2016-10-31.
   */
-class LoadingScreen(canvas: Canvas) extends Game(canvas) with Logging {
+class LoadingScreen(canvas: Canvas) extends Game with Logging {
 
   private val loadingScreenTextures = TextureRegionLoader.newDefault()()
   private val someImg = loadingScreenTextures("images/test-image.png")

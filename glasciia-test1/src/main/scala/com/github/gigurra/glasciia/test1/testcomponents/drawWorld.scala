@@ -72,7 +72,7 @@ object drawWorld {
         color = Color.GREEN,
         transform = Transform(
           at = Vec2(400, 400),
-          angle = 180 + canvas.drawTime * 360L / 1000L,
+          angle = 180 + canvas.time * 360L / 1000L,
           scale = Vec2(50, 50)
         )
       )
@@ -241,18 +241,18 @@ object drawWorld {
 
       canvas.drawParticles(
         effect = effect1,
-        at = testEffectPosition(canvas.drawTime)
+        at = testEffectPosition(canvas.time)
       )
 
       canvas.drawParticles(
         effect = effect2,
-        at = testEffectPosition(canvas.drawTime)
+        at = testEffectPosition(canvas.time)
       )
 
       canvas.drawParticles(
         effect = effect3,
         at = mouseWorldPos,
-        angle = canvas.drawTime * 180L / 1000L
+        angle = canvas.time * 180L / 1000L
       )
 
       canvas.drawText(

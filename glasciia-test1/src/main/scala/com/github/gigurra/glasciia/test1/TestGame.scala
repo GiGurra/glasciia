@@ -14,10 +14,10 @@ import scala.util.Try
 /**
   * Created by johan on 2016-10-31.
   */
-class TestGame(resources: TestGameResources, canvas: Canvas) extends Game(canvas) with Logging {
+class TestGame(resources: TestGameResources, canvas: Canvas) extends Game with Logging {
 
   implicit val gestureState = GestureState()
-  setInitValues(this)
+  setInitValues(this, canvas)
   printShaders(canvas.batch)
 
   val transitions = TransitionSystem()
@@ -90,7 +90,7 @@ class TestGame(resources: TestGameResources, canvas: Canvas) extends Game(canvas
     )
   }
   
-  private val ingame = new GameScreen[TestGame](this) {
+  private val ingame = new GameScreen[TestGame](canvas) {
     override def eventHandler: PartialFunction[GameEvent, Unit] = {
 
       case Render(time, _) =>
@@ -142,7 +142,7 @@ class TestGame(resources: TestGameResources, canvas: Canvas) extends Game(canvas
     }
   }
 
-  private val mainMenu = new GameScreen[TestGame](this) {
+  private val mainMenu = new GameScreen[TestGame](canvas) {
     override def eventHandler: PartialFunction[GameEvent, Unit] = {
       case Render(_, _)    => guiSystem.draw(canvas, screenFitting = LinearShortestSide(reference = Vec2(640, 480)) * Constant(0.75f))
       case input: InputEvent  => input.filter(guiSystem)

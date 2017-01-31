@@ -31,7 +31,7 @@ class Canvas
   def screenBounds: Box2 = Box2(0, 0, width, height)
   def aspectRatio: Float = width.toFloat / height.toFloat
 
-  def drawTime: Long = _drawTimeMillis
+  def time: Long = _drawTimeMillis
 
   def screen2World(screenPos: Vec2): Vec2 = screen2World(screenPos, wholeCanvasProjectionArea)
   def world2Screen(screenPos: Vec2): Vec2 = world2Screen(screenPos, wholeCanvasProjectionArea)

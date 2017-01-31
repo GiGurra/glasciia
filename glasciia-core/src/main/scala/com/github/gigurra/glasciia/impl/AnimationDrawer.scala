@@ -7,12 +7,12 @@ import com.github.gigurra.glasciia.{Animation, Transform}
   */
 trait AnimationDrawer { self: ImageDrawer =>
 
-  def drawTime: Long
+  def time: Long
 
   def drawAnimation(animation: Animation.Instance,
                     transform: Transform,
                     active: Boolean = true,
-                    time: Long = drawTime): Unit = {
+                    time: Long = time): Unit = {
 
     drawImage(animation.currentFrame(time, active), transform)
   }

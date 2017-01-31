@@ -6,10 +6,7 @@ import com.github.gigurra.glasciia._
   * Created by johan on 2016-10-08.
   */
 object setInitValues {
-
-  def apply(app: Game): Unit = {
-    val canvas = app.canvas
+  def apply(app: Game, canvas: Canvas): Unit = {
     canvas.setCameraPos(canvas.screenSize / 2.0f)
   }
-
 }

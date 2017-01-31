@@ -31,15 +31,15 @@ class GameLauncher[R <: Resources, C <: Canvas](gameFactory: GameFactory[R, C]) 
     if (!firstFrame) {
       checkFinishedLoading()
     }
-    stage.canvas.setDrawTime()
-    consumeEvent(Render(stage.time, stage.canvas))
+    canvas.setDrawTime()
+    consumeEvent(Render(canvas.time, canvas))
     firstFrame = false
   }
 
-  override def resize(width: Int, height: Int): Unit = consumeEvent(Resize(stage.time, stage.canvas, Vec2(width, height)))
-  override def dispose(): Unit = consumeEvent(Exit(stage.time, stage.canvas))
-  override def pause(): Unit = consumeEvent(Pause(stage.time, stage.canvas))
-  override def resume(): Unit = consumeEvent(Resume(stage.time, stage.canvas))
+  override def resize(width: Int, height: Int): Unit = consumeEvent(Resize(canvas.time, canvas, Vec2(width, height)))
+  override def dispose(): Unit = consumeEvent(Exit(canvas.time, canvas))
+  override def pause(): Unit = consumeEvent(Pause(canvas.time, canvas))
+  override def resume(): Unit = consumeEvent(Resume(canvas.time, canvas))
 
   private def consumeEvent(event: GameEvent): Boolean = {
     stage.consume(event)
@@ -53,7 +53,7 @@ class GameLauncher[R <: Resources, C <: Canvas](gameFactory: GameFactory[R, C]) 
 
     if (resources.finished && (stage eq loadingScreen)) {
       log.info("Loading done - launching game!")
-      consumeEvent(Exit(stage.time, stage.canvas))
+      consumeEvent(Exit(canvas.time, canvas))
       stage = gameFactory.launch(resources, canvas)
     }
   }

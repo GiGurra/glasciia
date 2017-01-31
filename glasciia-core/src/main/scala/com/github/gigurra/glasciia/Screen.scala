@@ -7,7 +7,5 @@ trait Screen {
   def eventHandler: PartialFunction[GameEvent, Unit]
 }
 
-abstract class GameScreen[T <: Game](game: T) extends Screen {
-  def time: Long = game.time
-  def canvas: Canvas = game.canvas
+abstract class GameScreen[T <: Game](val canvas: Canvas) extends Screen {
 }
