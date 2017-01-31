@@ -75,6 +75,8 @@ class TestGame(resources: TestGameResources, canvas: Canvas) extends Game(canvas
     "game-gui" -> resources[GameWorldGui]("gui:game-world")
   )
 
+  private implicit def a = guiSystem.activeGui.get.asInstanceOf[RootGui]._actionRunner
+
   resources[MainMenu]("gui:main-menu").startSignal.connect { _ =>
     pda.pop()
     guiSystem.transition(

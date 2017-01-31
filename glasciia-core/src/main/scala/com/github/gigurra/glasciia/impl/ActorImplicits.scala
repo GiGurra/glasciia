@@ -3,7 +3,7 @@ package com.github.gigurra.glasciia.impl
 import com.badlogic.gdx.scenes.scene2d._
 import com.badlogic.gdx.scenes.scene2d.utils.FocusListener.FocusEvent
 import com.badlogic.gdx.scenes.scene2d.utils.{ClickListener, FocusListener}
-import com.github.gigurra.glasciia.{GameEvent, Transform}
+import com.github.gigurra.glasciia.{ActionOnChange, GameEvent, Transform}
 import com.github.gigurra.glasciia.GameEvent.{CharTyped, KeyDown, KeyUp, KeyboardEvent}
 
 import scala.language.implicitConversions
@@ -30,6 +30,12 @@ trait ActorImplicits {
 
   implicit def actorCanBeTransformed[T <: Actor](self: T): ActorImplicitsImpl.canBeTransformed[T] = {
     new ActorImplicitsImpl.canBeTransformed(self)
+  }
+
+  implicit class anythingCanChange[T](expr: => T) {
+    def onChange(action: T => Unit)(implicit actor: Actor): Unit = {
+      actor.addAction(ActionOnChange(expr)(action))
+    }
   }
 }
 

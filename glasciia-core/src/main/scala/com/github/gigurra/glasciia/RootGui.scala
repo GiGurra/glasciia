@@ -20,7 +20,7 @@ class RootGui(protected val skin: Skin = new Skin,
   rootTable.setFillParent(true)
   stage.addActor(rootTable)
 
-  protected implicit def _actionRunner: Actor = stage.getRoot
+  implicit def _actionRunner: Actor = stage.getRoot
 
   override def draw(canvas: Canvas,
                     dt: Float,
