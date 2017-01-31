@@ -69,7 +69,7 @@ class TestGame(resources: TestGameResources, canvas: Canvas) extends Game with L
   log.info(s"Bound random: ${myBinding : Double}")
   log.info(s"Bound random: ${myBinding()}")
 
-  private val pda = new PDAScreen[GameScreen[TestGame]]()
+  private val pda = new PDAScreen[Screen]()
   private val guiSystem = GuiSystem(
     "main-menu" -> resources[MainMenu]("gui:main-menu"),
     "game-gui" -> resources[GameWorldGui]("gui:game-world")
@@ -90,7 +90,7 @@ class TestGame(resources: TestGameResources, canvas: Canvas) extends Game with L
     )
   }
   
-  private val ingame = new GameScreen[TestGame](canvas) {
+  private val ingame = new Screen {
     override def eventHandler: PartialFunction[GameEvent, Unit] = {
 
       case Render(time, _) =>
@@ -142,7 +142,7 @@ class TestGame(resources: TestGameResources, canvas: Canvas) extends Game with L
     }
   }
 
-  private val mainMenu = new GameScreen[TestGame](canvas) {
+  private val mainMenu = new Screen {
     override def eventHandler: PartialFunction[GameEvent, Unit] = {
       case Render(_, _)    => guiSystem.draw(canvas, screenFitting = LinearShortestSide(reference = Vec2(640, 480)) * Constant(0.75f))
       case input: InputEvent  => input.filter(guiSystem)

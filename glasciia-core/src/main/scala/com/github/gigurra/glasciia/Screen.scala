@@ -6,6 +6,3 @@ package com.github.gigurra.glasciia
 trait Screen {
   def eventHandler: PartialFunction[GameEvent, Unit]
 }
-
-abstract class GameScreen[T <: Game](val canvas: Canvas) extends Screen {
-}
