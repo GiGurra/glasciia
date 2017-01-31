@@ -67,6 +67,7 @@ class TestGame(resources: TestGameResources, canvas: Canvas) extends Game(canvas
   log.info(s"Bound random: ${myBinding.get}")
   log.info(s"Bound random: ${myBinding.get}")
   log.info(s"Bound random: ${myBinding : Double}")
+  log.info(s"Bound random: ${myBinding()}")
 
   private val pda = new PDAScreen[GameScreen[TestGame]]()
   private val guiSystem = GuiSystem(

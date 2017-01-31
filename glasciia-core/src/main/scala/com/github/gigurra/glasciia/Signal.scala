@@ -68,6 +68,8 @@ object Signal {
       signal.connect(_(f))
       signal
     }
+
+    def apply(): T = get
   }
 
   implicit def binding2Value[T](signal: Signal[T => Unit]): T = signal.get
