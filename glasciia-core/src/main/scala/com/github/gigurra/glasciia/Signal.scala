@@ -1,5 +1,7 @@
 package com.github.gigurra.glasciia
 
+import com.badlogic.gdx.scenes.scene2d.Actor
+
 import scala.collection.mutable
 import scala.language.implicitConversions
 
@@ -70,6 +72,11 @@ object Signal {
     }
 
     def apply(): T = get
+
+    def onChange(action: T => Unit)(implicit actor: Actor): Signal[T => Unit] = {
+      actor.addAction(ActionOnChange(get)(action))
+      signal
+    }
   }
 
   implicit def binding2Value[T](signal: Signal[T => Unit]): T = signal.get
