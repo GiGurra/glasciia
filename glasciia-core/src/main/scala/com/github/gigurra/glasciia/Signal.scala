@@ -51,4 +51,26 @@ class Signal[T] {
 object Signal {
   def apply[T]: Signal[T] = new Signal[T]
   implicit def toSignal(s: Signal.type): Signal[Unit] = Signal.apply[Unit]
+
+  implicit class BindingImpl[T](signal: Signal[T => Unit]) {
+
+    def option: Option[T] = {
+      var out: Option[T] = None
+      signal.apply(v => out = Some(v))
+      out
+    }
+
+    def get: T = {
+      option.getOrElse(throw new NoSuchElementException(s"No data bound to Getter/Signal"))
+    }
+
+    def bind(f: => T): Signal[T => Unit] = {
+      signal.connect(_(f))
+      signal
+    }
+  }
+}
+
+object Binding {
+  def apply[T]: Signal[T => Unit] = new Signal[T => Unit]
 }

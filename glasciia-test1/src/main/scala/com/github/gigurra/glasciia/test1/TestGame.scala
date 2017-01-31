@@ -61,6 +61,12 @@ class TestGame(resources: TestGameResources, canvas: Canvas) extends Game(canvas
     override def onEnd(): Unit = log.info("Act ended")
   }
 
+  val myBinding: Binding[Double] = new Binding[Double].bind(math.random)
+
+  log.info(s"Bound random: ${myBinding.get}")
+  log.info(s"Bound random: ${myBinding.get}")
+  log.info(s"Bound random: ${myBinding.get}")
+
   private val pda = new PDAScreen[GameScreen[TestGame]]()
   private val guiSystem = GuiSystem(
     "main-menu" -> resources[MainMenu]("gui:main-menu"),
