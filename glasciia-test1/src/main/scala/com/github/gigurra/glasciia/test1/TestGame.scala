@@ -14,7 +14,7 @@ import scala.util.Try
 /**
   * Created by johan on 2016-10-31.
   */
-class TestGame(resources: TestGameResources) extends Game with Logging {
+class TestGame(resources: TestGameResources, canvas: Canvas) extends Game(canvas) with Logging {
 
   implicit val gestureState = GestureState()
   setInitValues(this)
@@ -134,7 +134,7 @@ class TestGame(resources: TestGameResources) extends Game with Logging {
 
   private val mainMenu = new GameScreen[TestGame](this) {
     override def eventHandler: PartialFunction[GameEvent, Unit] = {
-      case Render(time, _)    => guiSystem.draw(canvas, screenFitting = LinearShortestSide(reference = Vec2(640, 480)) * Constant(0.75f))
+      case Render(_, _)    => guiSystem.draw(canvas, screenFitting = LinearShortestSide(reference = Vec2(640, 480)) * Constant(0.75f))
       case input: InputEvent  => input.filter(guiSystem)
     }
   }

@@ -6,10 +6,7 @@ import com.badlogic.gdx.Gdx
   * Created by johan on 2016-09-19.
   * Must be used with a GameLauncher
   */
-abstract class Game {
-
-  val t0: Long = System.nanoTime / 1000000L
-  val canvas: Canvas = Canvas(this)
+abstract class Game(val canvas: Canvas) {
 
   def eventHandler: PartialFunction[GameEvent, Unit]
   def close(): Unit = Gdx.app.exit()
@@ -28,13 +25,13 @@ abstract class Game {
 /**
   * An empty game, for example for loading screens without an implementation
   */
-class EmptyGame extends Game {
+class EmptyGame extends Game(new Canvas) {
   override def eventHandler: PartialFunction[GameEvent, Unit] = {
     case _ =>
   }
 }
 
-class EmptyLoadingScreen extends Game {
+class EmptyLoadingScreen extends Game(new Canvas) {
   override def eventHandler: PartialFunction[GameEvent, Unit] = {
     case _ =>
   }

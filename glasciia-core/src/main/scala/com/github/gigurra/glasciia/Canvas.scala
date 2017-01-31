@@ -7,7 +7,7 @@ import com.github.gigurra.math.{Box2, Vec2}
 /**
   * Created by johan on 2016-09-29.
   */
-case class Canvas(game: Game)
+class Canvas
     extends Batcher
     with Cameras
     with ContentDrawer
@@ -38,10 +38,12 @@ case class Canvas(game: Game)
 
   def wholeCanvasProjectionArea: Box2 = Box2(ll = Vec2.zero, size = Vec2(width, height))
 
+  val t0: Long = System.nanoTime / 1000000L
+
   /**
     * Used by time dependent drawing, e.g. animations
     */
-  protected[glasciia] def setDrawTime(now: Long = System.nanoTime / 1000000L - game.t0): Unit = {
+  protected[glasciia] def setDrawTime(now: Long = System.nanoTime / 1000000L - t0): Unit = {
     _drawTimeMillis = now
   }
 

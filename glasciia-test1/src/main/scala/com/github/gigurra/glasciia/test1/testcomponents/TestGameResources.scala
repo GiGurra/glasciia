@@ -13,7 +13,7 @@ import com.github.gigurra.math.{Box2, Vec2}
 /**
   * Created by johan on 2016-10-08.
   */
-class TestGameResources extends Resources with Logging {
+class TestGameResources(canvas: Canvas) extends Resources with Logging {
 
   for {
     regions <- createTextureRegionLoader(resources)
@@ -99,8 +99,8 @@ class TestGameResources extends Resources with Logging {
   private def loadGui(resources: ResourceManager, regions: InMemoryLoader[TextureRegion]): Unit = {
     log.info("loadGui")
     Thread.sleep(100)
-    resources.add[MainMenu]("gui:main-menu", new MainMenu(resources, regions))
-    resources.add[GameWorldGui]("gui:game-world", new GameWorldGui(resources, regions))
+    resources.add[MainMenu]("gui:main-menu", new MainMenu(resources, regions, canvas.batch))
+    resources.add[GameWorldGui]("gui:game-world", new GameWorldGui(resources, regions, canvas.batch))
   }
 
   private def createTextureRegionLoader(resources: ResourceManager) = addLoadTask {
