@@ -76,6 +76,14 @@ class AudioPlayer(private var _soundVolume: Float = 0.50f,
     if (musicMuted) 0.0f else _musicVolume
   }
 
+  def soundVolumeUnMuted: Float = {
+    _soundVolume
+  }
+
+  def musicVolumeUnMuted: Float = {
+    _musicVolume
+  }
+
   def playList: Vector[String] = {
     musicPlaylist.map(_.name)
   }
