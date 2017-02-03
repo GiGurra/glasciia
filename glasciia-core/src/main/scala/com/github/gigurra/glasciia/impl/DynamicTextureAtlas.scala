@@ -1,14 +1,11 @@
 package com.github.gigurra.glasciia.impl
 
 import com.badlogic.gdx.Gdx
-import com.badlogic.gdx.graphics.g2d.TextureAtlas.AtlasRegion
-import com.badlogic.gdx.graphics.g2d.{TextureAtlas, TextureRegion}
-import com.badlogic.gdx.graphics.glutils.GLOnlyTextureData
-import com.badlogic.gdx.graphics.{GL20, Pixmap, Texture}
+import com.badlogic.gdx.graphics.g2d.{SpriteBatcher, TextureRegion}
+import com.badlogic.gdx.graphics.{Camera, GL20, Pixmap, Texture}
 import com.github.gigurra.glasciia.Glasciia._
-import com.github.gigurra.glasciia.Logging
-import com.github.gigurra.glasciia.TextureRegionLoader.Conf
-import com.github.gigurra.glasciia.impl.DynamicTextureAtlas.{Page, Strategy, SweepStrategy}
+import com.github.gigurra.glasciia.{AtlasFrameBuffer, Logging, TextureConf}
+import com.github.gigurra.glasciia.impl.DynamicTextureAtlas.{AtlasRegion, Page, Strategy, SweepStrategy}
 import com.github.gigurra.math.{Box2, Vec2}
 
 import scala.collection.mutable
@@ -17,11 +14,12 @@ import scala.language.implicitConversions
 /**
   * Created by johan on 2016-10-09.
   */
-case class DynamicTextureAtlas(conf: Conf,
+case class DynamicTextureAtlas(textureConf: TextureConf,
                                pageSize: Vec2 = Vec2(2048, 2048),
                                strategy: Strategy = SweepStrategy,
-                               padding: Int = 8,
-                               atlas: TextureAtlas = new TextureAtlas()) extends Logging {
+                               useFramebufferDepth: Boolean = false,
+                               useFramebufferStencil: Boolean = false,
+                               padding: Int = 8) extends Logging {
 
   require(padding % 4 == 0, s"Padding must be 4 byte aligned")
 
@@ -33,39 +31,7 @@ case class DynamicTextureAtlas(conf: Conf,
   }
 
   def get(name: String): Option[AtlasRegion] = {
-    regions.get(name) match {
-      case r@Some(_) => r
-      case None =>
-        val nameWithoutFileEnding = stripEnding(name)
-        Option(atlas.findRegion(nameWithoutFileEnding)) match {
-          case None => None
-          case r@Some(region) =>
-            regions.put(name, region)
-            r
-        }
-    }
-  }
-
-  def add(name: String,
-          source: TextureRegion,
-          flush: Boolean,
-          deleteSource: Boolean): AtlasRegion = {
-
-    val texture = source.getTexture
-    val textureData = texture.getTextureData
-
-    if (!textureData.isPrepared)
-      textureData.prepare()
-
-    val pixMap = texture.getTextureData.consumePixmap()
-    val newRegion = add(name, pixMap, flush = flush, deleteSource = false)
-
-    if (deleteSource) {
-      pixMap.dispose()
-      texture.dispose()
-    }
-
-    newRegion
+    regions.get(name)
   }
 
   def add(name: String,
@@ -75,7 +41,9 @@ case class DynamicTextureAtlas(conf: Conf,
 
     require(source.getFormat == Pixmap.Format.RGBA8888, s"Can only add pixmaps to atlas of format RGBA8888, however '$name' is of format ${source.getFormat}")
 
-    val (region, page) = reserve(name, source.width, source.height)
+    val region = reserve(name, source.width, source.height)
+    val page = region.page
+
     page.blit(source, region)
 
     if (deleteSource)
@@ -97,20 +65,30 @@ case class DynamicTextureAtlas(conf: Conf,
       // Remove region
       regions.remove(name)
       page.remove(region)
-      atlas.getRegions.removeValue(region, true)
 
       // Dispose the page if it's now empty
       if (page.isEmpty) {
         _pages.remove(iPage)
-        atlas.getTextures.remove(page.texture)
         page.dispose()
       }
     }
   }
 
+  def paint(region: AtlasRegion,
+            batch: SpriteBatcher,
+            projection: Camera,
+            clear: Boolean = true)(content: => Unit): Unit = {
+    region.page.paint(
+      region.bounds,
+      batch,
+      projection,
+      clear
+    )(content)
+  }
+
   def reserve(name: String,
               width: Int,
-              height: Int): (AtlasRegion, DynamicTextureAtlas.Page) = {
+              height: Int): AtlasRegion = {
     require(!regions.contains(name), s"Tried to reserve region with name $name twice!")
     require(width + padding * 2 <= pageSize.x, s"Tried to reserve region $name, but it was larger that the maximum allowed texture width - 2*padding, which set to ${pageSize.x - 2 * padding}")
     require(height + padding * 2 <= pageSize.y, s"Tried to reserve region $name, but it was larger that the maximum allowed texture height - 2*padding, which set to ${pageSize.y - 2 * padding}")
@@ -123,11 +101,10 @@ case class DynamicTextureAtlas(conf: Conf,
       }
     }
 
-    def addRegionToPage(page: Page, position: Vec2): (AtlasRegion, DynamicTextureAtlas.Page) = {
+    def addRegionToPage(page: Page, position: Vec2): AtlasRegion = {
       val newRegion = page.reserve(name, to = position, width = width, height = height)
       regions.put(name, newRegion)
-      atlas.getRegions.add(newRegion)
-      (newRegion, page)
+      newRegion
     }
 
     val out = pages.collectFirst {
@@ -138,17 +115,20 @@ case class DynamicTextureAtlas(conf: Conf,
       case Some((page, position)) =>
         addRegionToPage(page, position)
       case None =>
-        val glFormat = Pixmap.Format.toGlFormat(Pixmap.Format.RGBA8888)
-        val glType = Pixmap.Format.toGlType(Pixmap.Format.RGBA8888)
-        val newTexture = new Texture(new GLOnlyTextureData(pageSize.x.toInt, pageSize.y.toInt, 0, glFormat, glFormat, glType))
-        newTexture.setFilter(conf.minFilter, conf.magFilter)
-        atlas.getTextures.add(newTexture)
-        val page = new Page(pageSize, newTexture)
+        val frameBuffer = new AtlasFrameBuffer(
+          width = pageSize.x.toInt,
+          height = pageSize.y.toInt,
+          format = Pixmap.Format.RGBA8888,
+          useDepth = useFramebufferDepth,
+          useStencil = useFramebufferStencil,
+          textureConf = textureConf
+        )
+        val page = new Page(pageSize, frameBuffer)
         _pages += page
         addRegionToPage(page, position = Vec2.zero + padding)
     }
 
-    log.debug(s"Placing $name at ${out._1.bounds}")
+    log.debug(s"Placing $name at ${out.bounds}")
 
     out
   }
@@ -157,37 +137,55 @@ case class DynamicTextureAtlas(conf: Conf,
     pages.foreach(_.flush(force = force))
   }
 
-  private def is4ByteAligned(position: Vec2): Boolean = {
-    position.x % 4 == 0 && position.y % 4 == 0
+  def clear(): Unit = {
+    pages.foreach(_.dispose())
+    _pages.clear()
+    regions.clear()
   }
 
-  private def stripEnding(name: String): String = {
-    name.lastIndexOf('.') match {
-      case -1 => name
-      case i => name.splitAt(i)._1
-    }
+  private def is4ByteAligned(position: Vec2): Boolean = {
+    position.x % 4 == 0 && position.y % 4 == 0
   }
 }
 
 object DynamicTextureAtlas {
-
-  implicit def dynamic2atlas(dynamicTexturePackingAtlas: DynamicTextureAtlas): TextureAtlas = dynamicTexturePackingAtlas.atlas
 
   case class DirtyRegion(box2: Box2, needUpload: Boolean)
   object DirtyRegion {
     implicit def DR2b2(dr: DirtyRegion): Box2 = dr.box2
   }
 
+  case class AtlasRegion(name: String, page: Page, bounds: Box2)
+    extends TextureRegion(page.texture, bounds.left.toInt, bounds.bottom.toInt, bounds.width.toInt, bounds.height.toInt) {
+    def pos: Vec2 = bounds.ll
+    def paint(batch: SpriteBatcher,
+              projection: Camera,
+              clear: Boolean = true)(content: => Unit): Unit = {
+      page.paint(bounds, batch, projection, clear)(content)
+    }
+  }
+  object AtlasRegion {
+    implicit def ar2r(ar: AtlasRegion): Box2 = ar.bounds
+  }
+
   class Page(val capacity: Vec2,
-             val texture: Texture,
+             val frameBuffer: AtlasFrameBuffer,
              val byName: mutable.HashMap[String, AtlasRegion] = new mutable.HashMap[String, AtlasRegion],
              val bounds: mutable.ArrayBuffer[Box2] = new mutable.ArrayBuffer[Box2],
              var boundsSortedByTop: Vector[Box2] = Vector.empty) {
 
     private var mipmapsDirty = true
 
+    def texture: Texture = {
+      frameBuffer.texture
+    }
+
+    def textureConf: TextureConf = {
+      frameBuffer.textureConf
+    }
+
     def dispose(): Unit = {
-      texture.dispose()
+      frameBuffer.dispose()
     }
 
     def remove(region: AtlasRegion): Unit = {
@@ -200,38 +198,38 @@ object DynamicTextureAtlas {
       byName.isEmpty
     }
 
-    def blit(source: Pixmap, region: AtlasRegion): Unit = {
+    def blit(source: Pixmap, region: Box2): Unit = {
 
       // We pad up small images probably intended for filling,
       // since UV interpretations differ between OpenGL implementations
       val padUp: Boolean = region.width <= 5 && region.height <= 5
 
-      val (pixmap, bounds, needDispose) =
+      val (pixMap, bounds, needDispose) =
         if (padUp) {
 
-          val to: Vec2 = region.pos
+          val to: Vec2 = region.ll
           val marginX = math.max(0, to.x.toInt - 1)
           val marginY = math.max(0, to.y.toInt - 1)
 
           val marginBounds = Box2(
             x = marginX,
             y = marginY,
-            width = math.min(source.width + 2, region.getTexture.width - marginX),
-            height = math.min(source.height + 2, region.getTexture.height - marginY)
+            width = math.min(source.width + 2, texture.width - marginX),
+            height = math.min(source.height + 2, texture.height - marginY)
           )
 
           // UV coordinates are apparently interpreted differently depending on device... Better just draw the image again outside
           // to double up on the border
-          val pixmapCopySettingBefore = Pixmap.getBlending
+          val pixMapCopySettingBefore = Pixmap.getBlending
           Pixmap.setBlending(Pixmap.Blending.None)
           val tempBuffer = new Pixmap(marginBounds.width.toInt, marginBounds.height.toInt, source.getFormat)
           tempBuffer.drawPixmap(source, 0, 0, source.width, source.height, 0, 0, marginBounds.width.toInt, marginBounds.height.toInt)
-          Pixmap.setBlending(pixmapCopySettingBefore)
+          Pixmap.setBlending(pixMapCopySettingBefore)
 
           (tempBuffer, marginBounds, true)
         }
         else {
-          (source, region.bounds, false)
+          (source, region, false)
         }
 
       texture.bind()
@@ -242,16 +240,28 @@ object DynamicTextureAtlas {
         bounds.bottom.toInt,
         bounds.width.toInt,
         bounds.height.toInt,
-        pixmap.getGLInternalFormat,
-        pixmap.getGLType,
-        pixmap.getPixels
+        pixMap.getGLInternalFormat,
+        pixMap.getGLType,
+        pixMap.getPixels
       )
 
       if (needDispose) {
-        pixmap.dispose()
+        pixMap.dispose()
       }
 
       mipmapsDirty = true
+    }
+
+    def paint(region: Box2,
+              batch: SpriteBatcher,
+              projection: Camera,
+              clear: Boolean = true)(content: => Unit): Unit = {
+      frameBuffer.use(
+        region = region,
+        batch = batch,
+        projection = projection,
+        clear = clear
+      )(content)
     }
 
     def dirty: Boolean = {
@@ -260,21 +270,18 @@ object DynamicTextureAtlas {
 
     def flush(force: Boolean): Unit = {
       if (force || dirty) {
-        texture.bind()
-        Gdx.gl20.glGenerateMipmap(GL20.GL_TEXTURE_2D)
+        if (textureConf.useMipMaps) {
+          texture.bind()
+          Gdx.gl20.glGenerateMipmap(GL20.GL_TEXTURE_2D)
+        }
         mipmapsDirty = false
       }
     }
 
     def reserve(name: String, to: Vec2, width: Int, height: Int): AtlasRegion = {
 
-      val region = new AtlasRegion(texture, to.x.toInt, to.y.toInt, width, height)
-
+      val region = AtlasRegion(name, this, Box2(to.x, to.y, width, height))
       val itemBounds = region.bounds
-      region.name = name
-      region.index = -1
-      region.originalWidth = width
-      region.originalHeight = height
 
       mipmapsDirty = true
 

@@ -116,12 +116,27 @@ class TestGameResources(canvas: Canvas) extends Resources with Logging {
     val atlasLoader = loader.impl.asInstanceOf[AtlasTextureRegionLoader]
     val reservedRegion = atlasLoader.reserve("fbo-circle", 1024, 1024)
 
-    val fbo = TextureRegionFrameBuffer(reservedRegion, useDepth = false, useStencil = false)
     val camera = new OrthographicCamera(1024, 1024)
+
+    /*
+    val fbo = TextureRegionFrameBuffer(reservedRegion, useDepth = false, useStencil = false)
     val shapeRenderer = new ShapeRenderer()
     shapeRenderer.setProjectionMatrix(camera.combined)
 
     fbo.use {
+      shapeRenderer.setColor(Color.GREEN)
+      shapeRenderer.begin(ShapeType.Filled)
+      shapeRenderer.circle(0.0f, 0.0f, 256.0f, 100)
+      shapeRenderer.end()
+    }*/
+
+    Gdx.gl.glClearColor(0.0f, 0.0f, 0.0f, 0.0f)
+    reservedRegion.paint(
+      canvas.batch,
+      camera
+    ) {
+      val shapeRenderer = new ShapeRenderer()
+      shapeRenderer.setProjectionMatrix(camera.combined)
       shapeRenderer.setColor(Color.GREEN)
       shapeRenderer.begin(ShapeType.Filled)
       shapeRenderer.circle(0.0f, 0.0f, 256.0f, 100)

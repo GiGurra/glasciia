@@ -1,8 +1,9 @@
 package com.github.gigurra.glasciia
 
-import com.badlogic.gdx.graphics.Pixmap
-import com.badlogic.gdx.graphics.g2d.TextureRegion
+import com.badlogic.gdx.graphics.{Camera, Pixmap}
+import com.badlogic.gdx.graphics.g2d.{SpriteBatcher, TextureRegion}
 import com.github.gigurra.glasciia.impl.DynamicTextureAtlas
+import com.github.gigurra.glasciia.impl.DynamicTextureAtlas.AtlasRegion
 import com.github.gigurra.math.Vec2
 
 /**
@@ -20,8 +21,20 @@ case class AtlasTextureRegionLoader(atlas: DynamicTextureAtlas, fallback: Option
     }
   }
 
-  def reserve(name: String, width: Int, height: Int): TextureRegion = {
-    atlas.reserve(name, width, height)._1
+  def reserve(name: String, width: Int, height: Int): AtlasRegion = {
+    atlas.reserve(name, width, height)
+  }
+
+  def paint(region: AtlasRegion,
+            batch: SpriteBatcher,
+            projection: Camera,
+            clear: Boolean = true)(content: => Unit): Unit = {
+    atlas.paint(
+      region,
+      batch,
+      projection,
+      clear
+    )(content)
   }
 
   def remove(name: String): Unit = {
@@ -37,6 +50,6 @@ case class AtlasTextureRegionLoader(atlas: DynamicTextureAtlas, fallback: Option
   }
 
   override def dispose(): Unit = {
-    atlas.dispose()
+    atlas.clear()
   }
 }

@@ -31,7 +31,12 @@ import com.badlogic.gdx.math.Affine2;
 import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.math.Matrix4;
 import com.badlogic.gdx.math.Vector2;
+import com.badlogic.gdx.utils.BufferUtils;
 import com.badlogic.gdx.utils.NumberUtils;
+import com.github.gigurra.math.Box2;
+import com.github.gigurra.math.Vec2;
+
+import java.nio.IntBuffer;
 
 /**
  *
@@ -103,6 +108,7 @@ public final class SpriteBatcher implements Batch {
     private final ShaderProgram shader;
     private ShaderProgram customShader;
     private boolean ownsShader;
+    private final IntBuffer fourIntsBuffer;
 
     float color = Color.WHITE.toFloatBits();
     private Color tempColor = new Color(1, 1, 1, 1);
@@ -162,6 +168,7 @@ public final class SpriteBatcher implements Batch {
 
         vertices = new float[maxVertices * VERTEX_SIZE];
         triangles = new short[maxTriangles * 3];
+        fourIntsBuffer = BufferUtils.newIntBuffer(16);
 
         if (defaultShader == null) {
             shader = SpriteBatch.createDefaultShader();
@@ -204,6 +211,29 @@ public final class SpriteBatcher implements Batch {
             customShader.end();
         else
             shader.end();
+    }
+
+    public Box2 getScissorBox() {
+        Gdx.gl.glGetIntegerv(GL20.GL_SCISSOR_BOX, fourIntsBuffer);
+        fourIntsBuffer.rewind();
+        return new Box2(new Vec2(fourIntsBuffer.get(0), fourIntsBuffer.get(1)), new Vec2(fourIntsBuffer.get(2), fourIntsBuffer.get(3)));
+    }
+
+
+    public Box2 getViewport() {
+        Gdx.gl.glGetIntegerv(GL20.GL_VIEWPORT, fourIntsBuffer);
+        fourIntsBuffer.rewind();
+        return new Box2(new Vec2(fourIntsBuffer.get(0), fourIntsBuffer.get(1)), new Vec2(fourIntsBuffer.get(2), fourIntsBuffer.get(3)));
+    }
+
+    public void setScissorBox(Box2 region) {
+        flush();
+        Gdx.gl.glScissor((int)region.left(), (int)region.bottom(), (int)region.width(), (int)region.height());
+    }
+
+    public void setViewport(Box2 region) {
+        flush();
+        Gdx.gl.glViewport((int)region.left(), (int)region.bottom(), (int)region.width(), (int)region.height());
     }
 
     public void setupDepthTest(boolean test, boolean write, int func) {
