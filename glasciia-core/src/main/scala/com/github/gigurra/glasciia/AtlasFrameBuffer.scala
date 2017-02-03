@@ -73,6 +73,8 @@ class AtlasFrameBuffer(width: Int,
 
     content
 
+    batch.flush()
+
     end(0, 0, Gdx.graphics.getBackBufferWidth, Gdx.graphics.getBackBufferHeight)
 
 
