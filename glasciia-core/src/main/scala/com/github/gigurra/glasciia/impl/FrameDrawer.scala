@@ -16,7 +16,7 @@ trait FrameDrawer {
   def camera: OrthographicCamera
 
   def drawFrame(pixelViewport: Box2 = screenBounds,
-                clearBuffer: Option[Color] = Some(Color.BLACK),
+                clearBuffer: Option[Color] = Some(Color.CLEAR),
                 camPos: Vec2 = camera.position,
                 camViewportWithoutZoom: Vec2 = Vec2(camera.viewportWidth, camera.viewportHeight),
                 camZoom: Float = camera.zoom,
