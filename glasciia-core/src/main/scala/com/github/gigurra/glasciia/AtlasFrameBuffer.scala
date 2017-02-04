@@ -51,14 +51,17 @@ class AtlasFrameBuffer(width: Int,
           projection: Camera,
           clear: Boolean = true)(content: => Unit): Unit = {
 
+    // Flush any previous drawing
+
+    batch.setProjectionMatrix(projection.combined) // also calls batch.flush()
+
+
     // Preparation code
 
     val prevScissorBox = batch.getScissorBox
     val prevViewport = batch.getViewport
     val wasScissorsEnabled = Gdx.gl.glIsEnabled(GL_SCISSOR_TEST)
     val wasDrawingBefore = batch.isDrawing
-
-    batch.setProjectionMatrix(projection.combined) // also calls batch.flush()
 
     if (!wasScissorsEnabled) Gdx.gl.glEnable(GL_SCISSOR_TEST)
     if (!wasDrawingBefore) batch.begin()
@@ -73,7 +76,7 @@ class AtlasFrameBuffer(width: Int,
 
     content
 
-    batch.flush()
+    batch.flush() // We need to flush again before we reset the render target
 
     end(0, 0, Gdx.graphics.getBackBufferWidth, Gdx.graphics.getBackBufferHeight)
 
