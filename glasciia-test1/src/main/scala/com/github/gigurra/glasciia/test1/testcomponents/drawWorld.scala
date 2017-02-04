@@ -28,7 +28,7 @@ object drawWorld {
     val background = resources[MultiLayer[TextureRegion]]("background-0")
     val mouseWorldPos = canvas.screen2World(canvas.mousePos)
     val cameraPos = canvas.cameraPos
-    val textureLoader = resources[InMemoryLoader[TextureRegion]]("texture-loader")
+    val textureLoader = resources[AtlasTextureRegionLoader]("texture-loader")
     val circleImage = textureLoader("circle-texture")
     val fillImage = textureLoader("filled-texture")
     val fboCircle = textureLoader("fbo-circle")

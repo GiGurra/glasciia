@@ -2,7 +2,7 @@ package com.github.gigurra.glasciia.test1.testcomponents
 
 import com.badlogic.gdx.Gdx
 import com.badlogic.gdx.Input.Keys
-import com.badlogic.gdx.graphics.g2d.{SpriteBatcher, TextureRegion}
+import com.badlogic.gdx.graphics.g2d.SpriteBatcher
 import com.badlogic.gdx.scenes.scene2d.ui.TextButton.TextButtonStyle
 import com.badlogic.gdx.scenes.scene2d.ui.{Label, TextButton}
 import com.github.gigurra.glasciia.GameEvent.KeyDown
@@ -13,7 +13,7 @@ import com.github.gigurra.glasciia.{ResourceManager, Signal, _}
   * Created by johan on 2016-10-09.
   */
 class MainMenu(resources: ResourceManager,
-               regions: InMemoryLoader[TextureRegion],
+               regions: AtlasTextureRegionLoader,
                batch: SpriteBatcher) extends RootGui(batch = batch) {
 
   val startSignal = new Signal[Unit]

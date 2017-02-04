@@ -1,7 +1,6 @@
 package com.github.gigurra.glasciia.test1
 
 import com.badlogic.gdx.Input.Keys
-import com.badlogic.gdx.graphics.g2d.TextureRegion
 import com.github.gigurra.glasciia._
 import com.github.gigurra.glasciia.Glasciia._
 import com.github.gigurra.glasciia.GameEvent._
@@ -23,13 +22,12 @@ class TestGame(resources: TestGameResources, canvas: Canvas) extends Game with L
   val transitions = TransitionSystem()
 
   // Test reserving some stuff
-  private val textureLoader = resources[InMemoryLoader[TextureRegion]]("texture-loader")
-  private val atlasLoader = textureLoader.impl.asInstanceOf[AtlasTextureRegionLoader]
-  atlasLoader.reserve("Hej1", 1536, 1536)
-  atlasLoader.reserve("Hej2", 1536, 1536)
-  atlasLoader.reserve("Hej3", 1536, 1536)
-  require(Try(atlasLoader.reserve("Hej3", 1536, 1536)).isFailure) // Duplicate name
-  require(Try(atlasLoader.reserve("Hej4", 2536, 2536)).isFailure) // Too large
+  private val textureLoader = resources[AtlasTextureRegionLoader]("texture-loader")
+  textureLoader.reserve("Hej1", 1536, 1536)
+  textureLoader.reserve("Hej2", 1536, 1536)
+  textureLoader.reserve("Hej3", 1536, 1536)
+  require(Try(textureLoader.reserve("Hej3", 1536, 1536)).isFailure) // Duplicate name
+  require(Try(textureLoader.reserve("Hej4", 2536, 2536)).isFailure) // Too large
 
   require(textureLoader.get("Hej1").isDefined)
   textureLoader.remove("Hej1")

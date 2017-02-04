@@ -10,8 +10,8 @@ import com.github.gigurra.math.Vec2
   */
 class LoadingScreen(canvas: Canvas) extends Game with Logging {
 
-  private val loadingScreenTextures = TextureRegionLoader.newDefault()()
-  private val someImg = loadingScreenTextures("images/test-image.png")
+  private val loadingScreenTextures = TextureRegionLoader()
+  private val someImg = loadingScreenTextures.getOrElseLoadFromFile("images/test-image.png")
   loadingScreenTextures.flush()
 
   def eventHandler: PartialFunction[GameEvent, Unit] = {

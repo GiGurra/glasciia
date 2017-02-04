@@ -9,7 +9,7 @@ import com.github.gigurra.glasciia.Glasciia._
   * Created by johan on 2016-10-09.
   */
 class GameWorldGui(resources: ResourceManager,
-                   regions: InMemoryLoader[TextureRegion],
+                   regions: AtlasTextureRegionLoader,
                    batch: SpriteBatcher) extends RootGui(batch = batch) {
 
   /* constructor */ {

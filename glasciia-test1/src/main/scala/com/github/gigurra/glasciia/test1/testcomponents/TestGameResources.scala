@@ -18,8 +18,7 @@ class TestGameResources(canvas: Canvas) extends Resources with Logging {
   for {
     regions <- createTextureRegionLoader(resources)
     _       <- loadTestTextures(resources, regions)
-    _       <- addLoadTask(loadTestTextures(resources, regions))
-    _       <- addLoadTask(drawSomeFboCircle(resources, regions))
+    _       <- drawSomeFboCircle(resources, regions)
     _       <- addLoadTask(loadFonts(resources, regions))
     _       <- addLoadTask(loadImages(resources, regions))
     _       <- addLoadTask(loadParticleEffects(resources, regions))
@@ -43,23 +42,23 @@ class TestGameResources(canvas: Canvas) extends Resources with Logging {
     }
   }
 
-  private def loadFonts(resources: ResourceManager, regions: Loader[TextureRegion]): Unit = {
+  private def loadFonts(resources: ResourceManager, regions: AtlasTextureRegionLoader): Unit = {
     log.info("loadFonts")
     Thread.sleep(100)
     resources.add("font:monospace-default", Font.fromTtfFile("pt-mono/PTM55FT.ttf"))
     resources.add("font:monospace-default-masked", resources[BitmapFont]("font:monospace-default").createMaskedInstance(maskChar = Font.DEFAULT_MASK_CHAR, deleteSource = false))
   }
 
-  private def loadImages(resources: ResourceManager, regions: Loader[TextureRegion]): Unit = {
+  private def loadImages(resources: ResourceManager, regions: AtlasTextureRegionLoader): Unit = {
     log.info("loadImages")
     Thread.sleep(100)
-    resources.add("animation:capguy-walk", Animation(regions("animations/capguy-walk.png"), nx = 8, ny = 1, dt = 100L, mode = PlayMode.LOOP))
+    resources.add("animation:capguy-walk", Animation(regions.getOrElseLoadFromFile("animations/capguy-walk.png"), nx = 8, ny = 1, dt = 100L, mode = PlayMode.LOOP))
     resources.add("animation:capguy-walk:instance-0", resources[Animation]("animation:capguy-walk").newInstance(t0 = 0L))
-    resources.add("image:test-image", regions("images/test-image.png"))
-    resources.add("image:fill-yellow", regions("square-90-percent"))
+    resources.add("image:test-image", regions.getOrElseLoadFromFile("images/test-image.png"))
+    resources.add("image:fill-yellow", regions.getOrElseLoadFromFile("square-90-percent"))
   }
 
-  private def loadParticleEffects(resources: ResourceManager, regions: Loader[TextureRegion]): Unit = {
+  private def loadParticleEffects(resources: ResourceManager, regions: AtlasTextureRegionLoader): Unit = {
     log.info("loadParticleEffects")
     Thread.sleep(100)
     val effect0 = Particles.standard("particle-effects/test-effect.party", "particle-effects/").scaleEffect(0.5f)
@@ -69,10 +68,10 @@ class TestGameResources(canvas: Canvas) extends Resources with Logging {
     resources.add("cool-cursor", createCursor("cursors/c2.png"))
   }
 
-  private def loadBackground(resources: ResourceManager, regions: Loader[TextureRegion]): Unit = {
+  private def loadBackground(resources: ResourceManager, regions: AtlasTextureRegionLoader): Unit = {
     log.info("loadBackground")
     Thread.sleep(100)
-    resources.add[TextureRegion]("bg-image", regions("backgrounds/bgtest2.jpg"))
+    resources.add[TextureRegion]("bg-image", regions.getOrElseLoadFromFile("backgrounds/bgtest2.jpg"))
     resources.add("background-0",
       MultiLayer[TextureRegion]() {
         _.layer(translationScale = 0.5f, camZero = Vec2(320.0f, 240.0f)) {
@@ -96,7 +95,7 @@ class TestGameResources(canvas: Canvas) extends Resources with Logging {
     )
   }
 
-  private def loadGui(resources: ResourceManager, regions: InMemoryLoader[TextureRegion]): Unit = {
+  private def loadGui(resources: ResourceManager, regions: AtlasTextureRegionLoader): Unit = {
     log.info("loadGui")
     Thread.sleep(100)
     resources.add[MainMenu]("gui:main-menu", new MainMenu(resources, regions, canvas.batch))
@@ -106,15 +105,14 @@ class TestGameResources(canvas: Canvas) extends Resources with Logging {
   private def createTextureRegionLoader(resources: ResourceManager) = addLoadTask {
     log.info("createTextureRegionLoader")
     Thread.sleep(100)
-    TextureRegionLoader.newDefault()()
+    TextureRegionLoader()
   }
 
-  private def drawSomeFboCircle(resources: ResourceManager, loader: InMemoryLoader[TextureRegion]) = addLoadTask {
+  private def drawSomeFboCircle(resources: ResourceManager, loader: AtlasTextureRegionLoader) = addLoadTask {
     log.info("drawSomeFboCircle")
     Thread.sleep(100)
 
-    val atlasLoader = loader.impl.asInstanceOf[AtlasTextureRegionLoader]
-    val reservedRegion = atlasLoader.reserve("fbo-circle", 1024, 1024)
+    val reservedRegion = loader.reserve("fbo-circle", 1024, 1024)
 
     val camera = new OrthographicCamera(1024, 1024)
 
@@ -144,17 +142,18 @@ class TestGameResources(canvas: Canvas) extends Resources with Logging {
     }
   }
 
-  private def loadTestTextures(resources: ResourceManager, loader: InMemoryLoader[TextureRegion]) = addLoadTask {
+  private def loadTestTextures(resources: ResourceManager, loader: AtlasTextureRegionLoader) = addLoadTask {
 
     addLoadTask {
       log.info("loadTestTextures")
       Thread.sleep(100)
-      resources.add("filled-texture", loader("images/filled-texture.png"))
-      loader.add("filled-texture", loader("images/filled-texture.png"))
+      resources.add("filled-texture", loader.getOrElseLoadFromFile("images/filled-texture.png"))
+      loader.addAlias("filled-texture", "images/filled-texture.png")
       resources.add("texture-loader", loader)
     }
 
     addLoadTask {
+      println("hejhej")
       loader.add("circle-texture", {
         val fillPixMap = new Pixmap(101, 101, Pixmap.Format.RGBA8888)
         Pixmap.setBlending(Pixmap.Blending.None)
@@ -163,8 +162,8 @@ class TestGameResources(canvas: Canvas) extends Resources with Logging {
         fillPixMap.setColor(Color.WHITE)
         fillPixMap.fillCircle(50, 50, 50)
         Pixmap.setBlending(Pixmap.Blending.SourceOver)
-        StaticImage.fromPixMap(fillPixMap)
-      })
+        fillPixMap
+      }, deleteSource = true)
     }
 
     addLoadTask {
@@ -176,18 +175,18 @@ class TestGameResources(canvas: Canvas) extends Resources with Logging {
         out.setColor(new Color(0, 0, 0, 0))
         out.fillRectangle(10, 10, 380, 380)
         Pixmap.setBlending(Pixmap.Blending.SourceOver)
-        StaticImage.fromPixMap(out)
-      })
+        out
+      }, deleteSource = true)
     }
   }
 
-  private def loadCursor(resources: ResourceManager, regions: Loader[TextureRegion]): Unit = {
+  private def loadCursor(resources: ResourceManager, regions: AtlasTextureRegionLoader): Unit = {
     log.info("loadCursor")
     Thread.sleep(100)
     Gdx.graphics.setCursor(resources[Cursor]("cool-cursor"))
   }
 
-  private def loadMipMaps(regions: InMemoryLoader[TextureRegion]): Unit = {
+  private def loadMipMaps(regions: AtlasTextureRegionLoader): Unit = {
     log.info("loadMipMaps")
     Thread.sleep(100)
     regions.flush()

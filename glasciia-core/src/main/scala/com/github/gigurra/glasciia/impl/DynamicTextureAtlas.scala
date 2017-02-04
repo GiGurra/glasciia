@@ -14,7 +14,7 @@ import scala.language.implicitConversions
 /**
   * Created by johan on 2016-10-09.
   */
-case class DynamicTextureAtlas(textureConf: TextureConf,
+case class DynamicTextureAtlas(textureConf: TextureConf = TextureConf(),
                                pageSize: Vec2 = Vec2(2048, 2048),
                                strategy: Strategy = SweepStrategy,
                                useFramebufferDepth: Boolean = false,
@@ -34,10 +34,14 @@ case class DynamicTextureAtlas(textureConf: TextureConf,
     regions.get(name)
   }
 
+  def contains(name: String): Boolean = {
+    regions.contains(name)
+  }
+
   def add(name: String,
           source: Pixmap,
-          flush: Boolean,
-          deleteSource: Boolean): AtlasRegion = {
+          deleteSource: Boolean,
+          flush: Boolean): AtlasRegion = {
 
     require(source.getFormat == Pixmap.Format.RGBA8888, s"Can only add pixmaps to atlas of format RGBA8888, however '$name' is of format ${source.getFormat}")
 
@@ -89,9 +93,9 @@ case class DynamicTextureAtlas(textureConf: TextureConf,
   def reserve(name: String,
               width: Int,
               height: Int): AtlasRegion = {
-    require(!regions.contains(name), s"Tried to reserve region with name $name twice!")
-    require(width + padding * 2 <= pageSize.x, s"Tried to reserve region $name, but it was larger that the maximum allowed texture width - 2*padding, which set to ${pageSize.x - 2 * padding}")
-    require(height + padding * 2 <= pageSize.y, s"Tried to reserve region $name, but it was larger that the maximum allowed texture height - 2*padding, which set to ${pageSize.y - 2 * padding}")
+    require(!regions.contains(name), s"Tried to reserve region with name '$name' twice!")
+    require(width + padding * 2 <= pageSize.x, s"Tried to reserve region '$name', but it was larger that the maximum allowed texture width - 2*padding, which set to ${pageSize.x - 2 * padding}")
+    require(height + padding * 2 <= pageSize.y, s"Tried to reserve region '$name', but it was larger that the maximum allowed texture height - 2*padding, which set to ${pageSize.y - 2 * padding}")
 
     val size = Vec2(width, height)
 
