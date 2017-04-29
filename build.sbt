@@ -1,61 +1,71 @@
-lazy val commonSettings = Seq(
+val versions = new {
+  val scala     = "2.11.8"
+  val java      = "1.6"
+  val project   = "0.9.85-SNAPSHOT"
+  val libgurra  = "0.5.2-SNAPSHOT"
+  val libgdx    = "1.9.5"
+  val scalatest = "2.2.4"
+  val mockito   = "1.10.19"
+}
+
+val commonSettings = Seq(
   organization := "com.github.gigurra",
-  version := "0.9.84-SNAPSHOT",
-  scalaVersion := "2.11.8",
+  version := versions.project,
+  scalaVersion := versions.scala,
   scalacOptions ++= Seq("-feature", "-unchecked", "-deprecation"),
-  scalacOptions += "-target:jvm-1.6",
-  javacOptions ++= Seq("-source", "1.6", "-target", "1.6"),
+  scalacOptions += s"-target:jvm-${versions.java}",
+  javacOptions ++= Seq("-source", versions.java, "-target", versions.java),
   pgpPassphrase := sys.env.get("PGP_PASSPHRASE").map(_.toArray),
   resolvers += "Sonatype OSS Snapshots" at "https://oss.sonatype.org/content/repositories/snapshots"
 )
 
 lazy val glasciia_core = module("core").settings(
   libraryDependencies ++= Seq(
-    "com.github.gigurra"    %%  "libgurra"              % "0.5.2-SNAPSHOT",
-    "com.badlogicgames.gdx" %   "gdx"                   % "1.9.5",
-    "com.badlogicgames.gdx" %   "gdx-freetype"          % "1.9.5",
-    "org.scalatest"         %% "scalatest"              % "2.2.4"     % "test",
-    "org.mockito"           %  "mockito-core"           % "1.10.19"   % "test"
+    "com.github.gigurra"    %%  "libgurra"              % versions.libgurra,
+    "com.badlogicgames.gdx" %   "gdx"                   % versions.libgdx,
+    "com.badlogicgames.gdx" %   "gdx-freetype"          % versions.libgdx,
+    "org.scalatest"         %% "scalatest"              % versions.scalatest  % "test",
+    "org.mockito"           %  "mockito-core"           % versions.mockito    % "test"
   )
 )
 
 lazy val glasciia_desktop = module("desktop", dependencies = glasciia_core).settings(
   libraryDependencies ++= Seq(
-    "com.badlogicgames.gdx" %   "gdx-backend-lwjgl"     % "1.9.5",
-    "com.badlogicgames.gdx" %   "gdx-platform"          % "1.9.5" classifier "natives-desktop",
-    "com.badlogicgames.gdx" %   "gdx-freetype-platform" % "1.9.5" classifier "natives-desktop"
+    "com.badlogicgames.gdx" %   "gdx-backend-lwjgl"     % versions.libgdx,
+    "com.badlogicgames.gdx" %   "gdx-platform"          % versions.libgdx classifier "natives-desktop",
+    "com.badlogicgames.gdx" %   "gdx-freetype-platform" % versions.libgdx classifier "natives-desktop"
   )
 )
 
 lazy val glasciia_ios = module("ios", dependencies = glasciia_core).settings(
   libraryDependencies ++= Seq(
-    "com.badlogicgames.gdx" %   "gdx-backend-robovm"    % "1.9.5",
-    "com.badlogicgames.gdx" %   "gdx-platform"          % "1.9.5" classifier "natives-ios",
-    "com.badlogicgames.gdx" %   "gdx-freetype-platform" % "1.9.5" classifier "natives-ios"
+    "com.badlogicgames.gdx" %   "gdx-backend-robovm"    % versions.libgdx,
+    "com.badlogicgames.gdx" %   "gdx-platform"          % versions.libgdx classifier "natives-ios",
+    "com.badlogicgames.gdx" %   "gdx-freetype-platform" % versions.libgdx classifier "natives-ios"
   )
 )
 
 lazy val glasciia_android = module("android", dependencies = glasciia_core).settings(
   libraryDependencies ++= Seq(
-    "com.badlogicgames.gdx" %   "gdx-backend-android"   % "1.9.5",
+    "com.badlogicgames.gdx" %   "gdx-backend-android"   % versions.libgdx,
 
-    "com.badlogicgames.gdx" %   "gdx-platform"          % "1.9.5" classifier "natives-armeabi",
-    "com.badlogicgames.gdx" %   "gdx-platform"          % "1.9.5" classifier "natives-armeabi-v7a",
-    "com.badlogicgames.gdx" %   "gdx-platform"          % "1.9.5" classifier "natives-arm64-v8a",
-    "com.badlogicgames.gdx" %   "gdx-platform"          % "1.9.5" classifier "natives-x86",
-    "com.badlogicgames.gdx" %   "gdx-platform"          % "1.9.5" classifier "natives-x86_64",
+    "com.badlogicgames.gdx" %   "gdx-platform"          % versions.libgdx classifier "natives-armeabi",
+    "com.badlogicgames.gdx" %   "gdx-platform"          % versions.libgdx classifier "natives-armeabi-v7a",
+    "com.badlogicgames.gdx" %   "gdx-platform"          % versions.libgdx classifier "natives-arm64-v8a",
+    "com.badlogicgames.gdx" %   "gdx-platform"          % versions.libgdx classifier "natives-x86",
+    "com.badlogicgames.gdx" %   "gdx-platform"          % versions.libgdx classifier "natives-x86_64",
 
-    "com.badlogicgames.gdx" %   "gdx-freetype-platform" % "1.9.5" classifier "natives-armeabi",
-    "com.badlogicgames.gdx" %   "gdx-freetype-platform" % "1.9.5" classifier "natives-armeabi-v7a",
-    "com.badlogicgames.gdx" %   "gdx-freetype-platform" % "1.9.5" classifier "natives-arm64-v8a",
-    "com.badlogicgames.gdx" %   "gdx-freetype-platform" % "1.9.5" classifier "natives-x86",
-    "com.badlogicgames.gdx" %   "gdx-freetype-platform" % "1.9.5" classifier "natives-x86_64"
+    "com.badlogicgames.gdx" %   "gdx-freetype-platform" % versions.libgdx classifier "natives-armeabi",
+    "com.badlogicgames.gdx" %   "gdx-freetype-platform" % versions.libgdx classifier "natives-armeabi-v7a",
+    "com.badlogicgames.gdx" %   "gdx-freetype-platform" % versions.libgdx classifier "natives-arm64-v8a",
+    "com.badlogicgames.gdx" %   "gdx-freetype-platform" % versions.libgdx classifier "natives-x86",
+    "com.badlogicgames.gdx" %   "gdx-freetype-platform" % versions.libgdx classifier "natives-x86_64"
   )
 )
 
 lazy val glasciia_test1 = module("test1", dependencies = glasciia_core, glasciia_desktop).settings(
   libraryDependencies ++= Seq(
-    "com.badlogicgames.gdx" %   "gdx-tools"             % "1.9.5"
+    "com.badlogicgames.gdx" %   "gdx-tools"             % versions.libgdx
   )
 )
 

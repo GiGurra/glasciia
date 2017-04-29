@@ -23,12 +23,27 @@ trait ImageDrawer extends ZTranslationExtraction { self: ContentDrawer =>
     draw(extractZTranslation(transform))(batch.drawRepeat(image, 1.0f, 1.0f, affine, count, new Vector2(delta.x, delta.y)))
   }
 
-  final def drawImageRepeated(lines: PreparedRepeatedImage): Unit = {
+  final def drawImageRepeated(lines: PreparedRepeatedImage, cornersFirst: Boolean = true): Unit = {
     affine.set(lines.transform)
     val zTranslation = extractZTranslation(lines.transform)
-    draw(zTranslation)(batch.drawRepeat(lines.segmentImage, affine, lines.segments))
-    lines.connectionImage.foreach { connectionImage =>
-      draw(zTranslation)(batch.drawRepeat(connectionImage, affine, lines.connections))
+
+    def drawCorners(): Unit = {
+      lines.connectionImage.foreach { connectionImage =>
+        draw(zTranslation)(batch.drawRepeat(connectionImage, affine, lines.connections))
+      }
     }
+
+    def drawLines(): Unit = {
+      draw(zTranslation)(batch.drawRepeat(lines.segmentImage, affine, lines.segments))
+    }
+
+    if (cornersFirst) {
+      drawCorners()
+    }
+    drawLines()
+    if (!cornersFirst) {
+      drawCorners()
+    }
+
   }
 }
