@@ -16,10 +16,10 @@ case class FilePixmapLoader() extends Loader[Pixmap] with Logging {
     } else {
       log.info(s"WARNING: Loading $fileHandle - which has format ${rawPixMap.getFormat}. Converting on Cpu... Please re-encode to Pixmap.Format.RGBA8888 for faster load times")
       val convertedPixmap = new Pixmap(rawPixMap.getWidth, rawPixMap.getHeight, Pixmap.Format.RGBA8888)
-      val blend = Pixmap.getBlending
-      Pixmap.setBlending(Pixmap.Blending.None)
+      val blend = convertedPixmap.getBlending
+      convertedPixmap.setBlending(Pixmap.Blending.None)
       convertedPixmap.drawPixmap(rawPixMap, 0, 0, 0, 0, rawPixMap.getWidth, rawPixMap.getHeight)
-      Pixmap.setBlending(blend)
+      convertedPixmap.setBlending(blend)
       rawPixMap.dispose()
       convertedPixmap
     }

@@ -156,12 +156,12 @@ class TestGameResources(canvas: Canvas) extends Resources with Logging {
       println("hejhej")
       loader.add("circle-texture", {
         val fillPixMap = new Pixmap(101, 101, Pixmap.Format.RGBA8888)
-        Pixmap.setBlending(Pixmap.Blending.None)
+        fillPixMap.setBlending(Pixmap.Blending.None)
         fillPixMap.setColor(Color.WHITE.scaleAlpha(0.0f))
         fillPixMap.fill()
         fillPixMap.setColor(Color.WHITE)
         fillPixMap.fillCircle(50, 50, 50)
-        Pixmap.setBlending(Pixmap.Blending.SourceOver)
+        fillPixMap.setBlending(Pixmap.Blending.SourceOver)
         fillPixMap
       }, deleteSource = true)
     }
@@ -171,10 +171,10 @@ class TestGameResources(canvas: Canvas) extends Resources with Logging {
         val out = new Pixmap(400, 400, Pixmap.Format.RGBA8888)
         out.setColor(Color.YELLOW.scaleAlpha(0.9f))
         out.fill()
-        Pixmap.setBlending(Pixmap.Blending.None)
+        out.setBlending(Pixmap.Blending.None)
         out.setColor(new Color(0, 0, 0, 0))
         out.fillRectangle(10, 10, 380, 380)
-        Pixmap.setBlending(Pixmap.Blending.SourceOver)
+        out.setBlending(Pixmap.Blending.SourceOver)
         out
       }, deleteSource = true)
     }

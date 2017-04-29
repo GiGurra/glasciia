@@ -224,11 +224,11 @@ object DynamicTextureAtlas {
 
           // UV coordinates are apparently interpreted differently depending on device... Better just draw the image again outside
           // to double up on the border
-          val pixMapCopySettingBefore = Pixmap.getBlending
-          Pixmap.setBlending(Pixmap.Blending.None)
           val tempBuffer = new Pixmap(marginBounds.width.toInt, marginBounds.height.toInt, source.getFormat)
+          val pixMapCopySettingBefore = tempBuffer.getBlending
+          tempBuffer.setBlending(Pixmap.Blending.None)
           tempBuffer.drawPixmap(source, 0, 0, source.width, source.height, 0, 0, marginBounds.width.toInt, marginBounds.height.toInt)
-          Pixmap.setBlending(pixMapCopySettingBefore)
+          tempBuffer.setBlending(pixMapCopySettingBefore)
 
           (tempBuffer, marginBounds, true)
         }

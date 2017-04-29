@@ -1,9 +1,15 @@
 val versions = new {
+
+  // Platform
   val scala     = "2.11.8"
   val java      = "1.6"
-  val project   = "0.9.85-SNAPSHOT"
+
+  // This project
+  val project   = "0.10.1-SNAPSHOT"
+
+  // Dependencies
   val libgurra  = "0.5.2-SNAPSHOT"
-  val libgdx    = "1.9.5"
+  val libgdx    = "1.9.6"
   val scalatest = "2.2.4"
   val mockito   = "1.10.19"
 }
